@@ -1,0 +1,37 @@
+{{>header}}
+
+<div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-2">
+        {{#product.image}}
+        <img class="img-thumbnail" src="/products/{{product.id}}/image">
+        {{/product.image}}
+      </div>
+      <div class="col-10">
+        <h2>Producto "{{product.name}}"</h2>
+        
+        <div>
+          <p>{{product.description}}</p>
+        </div>
+
+        <p> <b>Tiendas en las que el producto está disponible:</b></p>
+        <div>
+          <ul>
+            {{#product.shops}}
+            <li><a href="/shops/{{id}}">{{name}}</a></li>
+            {{/product.shops}}
+          </ul>
+        </div>
+        <p>
+          <button onclick="location.href='/'">Todos los productos</button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{{>footer}}

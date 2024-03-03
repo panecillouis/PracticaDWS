@@ -1,0 +1,12 @@
+{{>header}}
+
+		<h2>Productos</h2>
+		<ul class="items">
+			{{#products}}
+			<li><a href="/products/{{id}}">{{name}}</a></li>
+			{{/products}}
+		</ul>
+
+		<button onclick="location.href='/newproduct'">Nuevo producto</button>
+
+{{>footer}}

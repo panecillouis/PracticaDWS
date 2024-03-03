@@ -1,0 +1,29 @@
+{{>header}}
+
+<div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-2">
+        {{#capybara.image}}
+        <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image"  alt= "Imagen de {{capybara.name}}">
+
+        {{/capybara.image}}
+      </div>
+      <div class="col-10">
+        <h2>Capibara "{{capybara.name}}"</h2>
+        
+        <div>
+          <p>{{capybara.description}}</p>
+        </div>
+        <p>
+          <button onclick="location.href='/'">Otras capibaras</button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{{>footer}}
