@@ -21,12 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
-import com.godfathercapybara.capybara.service.ShopService;
-import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ProductService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import com.godfathercapybara.capybara.service.ShopService;
 @Controller
 public class ProductWebController {
    @Autowired
@@ -64,7 +61,7 @@ public class ProductWebController {
 	 * @return
 	 * @throws SQLException
 	 */
-	@GetMapping("/product/{id}/image")
+	@GetMapping("/products/{id}/image")
 	public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
 		Optional<Product> op = productService.findById(id);
@@ -72,7 +69,7 @@ public class ProductWebController {
 		if(op.isPresent()) {
 			Product product = op.get();
 			Resource image = imageService.getImage(product.getImage());
-			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE).body(image);
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(image);
 		}else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
 		}

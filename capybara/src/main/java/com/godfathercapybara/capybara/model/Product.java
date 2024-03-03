@@ -11,7 +11,7 @@ public class Product {
     private double price;
     private List <Shop> shops;
 
-    public Product(Long id, String name, String description, String type, double price) {
+    public Product( String name, String description, String type, double price) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -34,7 +34,7 @@ public class Product {
     }
 
     public String getImage() {
-        return image;
+        return this.image;
     }
 
     public void setImage(String image) {
@@ -81,6 +81,5 @@ public class Product {
                 ", price=" + price +
                 '}';
     }
-   
     
 }

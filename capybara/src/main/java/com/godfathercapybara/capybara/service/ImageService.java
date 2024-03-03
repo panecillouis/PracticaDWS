@@ -21,7 +21,7 @@ public class ImageService{
         String originalName = multiPartFile.getOriginalFilename();
 
         if(!originalName.matches(".*\\.(jpg|jpeg|gif|png)")){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The url is not an image resource");  
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The url is not an image resource");
         }
         
         String fileName = "image_" + UUID.randomUUID() + "_" +originalName;
@@ -32,7 +32,7 @@ public class ImageService{
         } catch (Exception ex) {
             System.err.println(ex);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't save image locally", ex);
-        } 
+        }
 
         return fileName;
     }

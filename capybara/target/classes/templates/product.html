@@ -6,7 +6,7 @@
     <div class="row">
       <div class="col-2">
         {{#product.image}}
-        <img class="img-thumbnail" src="/products/{{product.id}}/image">
+        <img class="img-thumbnail" src="/products/{{product.id}}/image" alt= "Imagen de {{product.name}}">
         {{/product.image}}
       </div>
       <div class="col-10">
@@ -25,7 +25,7 @@
           </ul>
         </div>
         <p>
-          <button onclick="location.href='/'">Todos los productos</button>
+          <button onclick="location.href='/products'">Todos los productos</button>
         </p>
       </div>
     </div>

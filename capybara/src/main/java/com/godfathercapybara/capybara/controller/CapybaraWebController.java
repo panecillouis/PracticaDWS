@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import com.godfathercapybara.capybara.service.CapybaraService;
-import com.godfathercapybara.capybara.service.ImageService;
 
 import com.godfathercapybara.capybara.model.Capybara;
+import com.godfathercapybara.capybara.service.CapybaraService;
+import com.godfathercapybara.capybara.service.ImageService;
 
 @Controller
 public class CapybaraWebController {
@@ -72,7 +72,7 @@ public class CapybaraWebController {
 	@GetMapping("/newcapybara")
 	public String newcapybara(Model model) {
 
-		return "newCapybaraPage"; 
+		return "newCapybaraPage";
 	}
 
 	@PostMapping("/newcapybara")
