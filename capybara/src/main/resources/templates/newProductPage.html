@@ -1,133 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  {{>header}}
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Times New Roman';
-      margin: 0;
-      padding: 0;
-    }
+{{>header}}
 
-
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #eeeac5;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    label {
-      display: inline-block;
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    input,
-    textarea,
-    select {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    input[type="file"] {
-      padding: 10px 15px;
-    }
-
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      padding: 10px 15px;
-    }
-
-    input[type="submit"],
-    button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #6b311c;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    input[type="submit"]:hover,
-    button:hover {
-      background-color: #6b311c;
-    }
-
-
-    button {
-      margin-right: 10px;
-    }
-
-  </style>
-</head>
-<body>
-
-<form action="/newbook" method="post" enctype="multipart/form-data" class="container">
+<form action="/newproduct" method="post" enctype="multipart/form-data">
   <h2>Nuevo Producto</h2>
   <div>
     <label>Nombre: </label>
     <input name="name" placeholder="Nombre"/>
   </div>
   <div>
-    <label>Descripción: </label>
-    <input name="description" placeholder="Descripción"/>
+    <label>DescripciÃ³n: </label>
+    <textarea name="description" placeholder="DescripciÃ³n"></textarea>
   </div>
-  <div class="form-group">
-    <label>Tipo: </label>
-    <select class="custom-select border-0 px-4" style="height: 47px;">
-        <option selected>Elige el tipo de producto</option>
-        <option value="1">Arma</option>
-        <option value="2">Comida</option>
-        <option value="3">Ropa</option>
-        <option value="4">Juguetes</option>
-    </select>
-</div>
 
-<div>
-  <label>Imagen: </label>
+  <p>Imagen: </p>
   <input type='file' name='imageField' accept=".jpg, .jpeg" />
-</div>
 
-<div>
-  <label>Tienda: </label>
+  <p>Tiendas: </p>
 
   <select name="selectedShops" multiple>
     {{#availableShops}}
     <option value="{{ id }}">{{ name }}</option>
     {{/availableShops}}
   </select>
-  
-</div>
-  
   <p>
-    <button onclick="location.href='/products'; return false;">Cancelar</button>
-    <button type="submit" value="Save">Guardar</button>
-
+    <button onclick="location.href='/'; return false;">Cancelar</button>
+    <input type="submit" value="Save"/>
   </p>
-</form>
-
-</body>
+  </form>
+  
 {{>footer}}
-
-</html>
