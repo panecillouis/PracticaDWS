@@ -1,0 +1,20 @@
+.container{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+form{
+    margin-bottom: 20px; 
+    padding: 1em;
+    border: 1px solid #ccc;
+    border-radius: 1em;
+   
+    
+}
+body {
+    background-image: url(https://www.dropbox.com/scl/fi/gv3747c30c6y2wmpmrwnm/pxfuel.jpg?rlkey=4hlrsfs9w304593rmac8qnuon&dl=0);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
+  

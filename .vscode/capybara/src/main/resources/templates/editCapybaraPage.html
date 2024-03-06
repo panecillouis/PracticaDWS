@@ -1,0 +1,43 @@
+{{>header}} 
+    <div class="container">
+    <div class="row">
+    <div class="col-2">
+      {{#capybara.image}}
+      <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image" alt= "Imagen de {{capybara.name}}">
+     {{/capybara.image}}
+    </div>
+    <form action="/capybaras/{{capybara.id}}/edit" method="post" enctype="multipart/form-data">
+           
+          <div class="col-10">
+      <div>
+        <label>Nombre: </label>
+        <input name="name" placeholder="Nombre" value = {{capybara.name}}></input>
+      </div>
+      <div>
+        <label>Decripción: </label>
+        <textarea name="description" placeholder="Descripción" value = {{capybara.description}}></textarea>
+      </div>
+      <div>
+        <label>Sexo: </label>
+        <input name="sex" placeholder="Sexo" value = {{capybara.sex}}></input>
+      </div>
+      <div>
+        <label>Precio: </label>
+        <input name="price" placeholder="Precio" value = {{capybara.price}}></input>
+      </div>
+      <div>
+        <label>Color: </label>
+        <input name="color" placeholder="Color" value = {{capybara.color}}></input>
+      </div>
+      <p>Imagen: </p>
+      
+      <input type='file' name='imageField' accept=".jpg, .jpeg"></input>
+      <p>
+        <button onclick="location.href='/capybaras'; return false;">Cancelar</button>
+        <input type="submit" value="Save"/>
+      </p>
+      </form>
+    </div>
+  </div>
+</div>
+{{>footer}}

@@ -1,0 +1,4 @@
+{
+    "codetogether.virtualCursorJoin": "ownVirtualCursor",
+    "java.compile.nullAnalysis.mode": "automatic"
+}

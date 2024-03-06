@@ -1,0 +1,38 @@
+{{>header}}
+
+<div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-2">
+        {{#capybara.image}}
+        <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image"  alt= "Imagen de {{capybara.name}}">
+        {{/capybara.image}}
+      </div>
+      <div class="col-10">
+        <h2>Capibara "{{capybara.name}}"</h2>
+        
+        <div>
+          <p>{{capybara.description}}</p>
+        </div>
+        <div>
+          <h3>Información Adicional:</h3>
+          <ul>
+            <li>Sexo: {{capybara.sex}}</li>
+            <li>Color: {{capybara.color}}</li>
+            <li>Precio: {{capybara.price}} &#8364</li>
+          </ul>
+        </div>
+        <p>
+          <button onclick="location.href='/capybaras'">Otras capibaras</button>
+          <button onclick="location.href='/capybaras/{{capybara.id}}/edit'">Editar</button>
+          <button onclick="location.href='/capybaras/{{capybara.id}}/delete'">Eliminar</button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{{>footer}}

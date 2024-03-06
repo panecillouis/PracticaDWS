@@ -1,0 +1,19 @@
+{{>header}}
+
+<div>
+    <h2>{{shop.name}}</h2>
+    <p><b>Dirección:</b> {{shop.address}}</p>
+
+    <h3>Productos disponibles en esta tienda:</h3>
+    <ul>
+        {{#shop.products}}
+        <li>
+            <a href="/products/{{id}}">{{name}}</a>
+        </li>
+        {{/shop.products}}
+    </ul>   
+    <button onclick="location.href='/shops'">Todas las tiendas</button>
+    <button onclick="location.href='/shops/{{shop.id}}/delete'">Borrar tienda</button>
+</div>
+
+{{>footer}}
