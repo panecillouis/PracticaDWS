@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Product;
 @Service
 public class ProductService {
@@ -48,5 +49,9 @@ public class ProductService {
 		products.put(id, Product);
 		return Product;
 	}
+	public void delete(long id) {
+		products.remove(id);
+	}
+	
     
 }

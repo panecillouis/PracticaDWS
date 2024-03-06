@@ -15,7 +15,12 @@
         <div>
           <p>{{product.description}}</p>
         </div>
-
+        <div>
+          <h3>Información adicional:</h3>
+          <ul>
+            <li>Precio: {{product.price}} &#8364 </li>
+            <li>Categoría: {{product.type}}</li>
+          </ul>
         <p> <b>Tiendas en las que el producto está disponible:</b></p>
         <div>
           <ul>
@@ -26,6 +31,7 @@
         </div>
         <p>
           <button onclick="location.href='/products'">Todos los productos</button>
+          <button onclick="location.href='/products/{{product.id}}/delete'">Borrar producto</button>
         </p>
       </div>
     </div>

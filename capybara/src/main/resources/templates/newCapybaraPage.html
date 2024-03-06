@@ -1,4 +1,3 @@
-
 {{>header}}
 
 <form action="/newcapybara" method="post" enctype="multipart/form-data">
@@ -8,10 +7,21 @@
     <input name="name" placeholder="Nombre"/>
   </div>
   <div>
-    <label>DecripciÃ³n: </label>
-    <textarea name="description" placeholder="DescripciÃ³n"></textarea>
+    <label>Decripción: </label>
+    <textarea name="description" placeholder="Descripción"></textarea>
   </div>
-
+  <div>
+    <label>Sexo: </label>
+    <textarea name="sex" placeholder="Sexo"></textarea>
+  </div>
+  <div>
+    <label>Precio: </label>
+    <input name="price" placeholder="Precio"/>
+  </div>
+  <div>
+    <label>Color: </label>
+    <input name="color" placeholder="Color"/>
+  //color
   <p>Imagen: </p>
   <input type='file' name='imageField' accept=".jpg, .jpeg" />
 

@@ -48,4 +48,24 @@ public class CapybaraService {
 		capybaras.put(id, capybara);
 		return capybara;
 	}
+	
+	public void delete(long id) {
+		capybaras.remove(id);
+	}
+	public Capybara findCapybaraById(long id) {
+		return capybaras.get(id);
+	}
+	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField) {
+
+		if (imageField != null && !imageField.isEmpty()){
+			String path = imageService.createImage(imageField);
+			capybara.setImage(path);
+		}
+
+		if(capybara.getImage() == null || capybara.getImage().isEmpty()) capybara.setImage("no-image.png");
+	
+		capybaras.put(id, capybara);
+	
+	}
+	
 }
