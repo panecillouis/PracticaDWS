@@ -6,7 +6,6 @@ public class Capybara {
 		private Long id = null;
 		private String sex;
 		private String color;
-		private String photo;
 		private double price;
 		private String description;
 		private String name;
@@ -67,13 +66,7 @@ public class Capybara {
 			this.color = color;
 		}
 
-		public String getPhoto() {
-			return this.photo;
-		}
-
-		public void setPhoto(String photo) {
-			this.photo = photo;
-		}
+		
 
 		
 

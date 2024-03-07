@@ -3,6 +3,8 @@ package com.godfathercapybara.capybara.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Shop {
 
 	private Long id = null;
@@ -10,7 +12,7 @@ public class Shop {
 	private String name;
 	
 	private String address;
-
+	
  	private List<Product> products;
 
 	public Shop() {}

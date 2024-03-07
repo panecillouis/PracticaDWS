@@ -93,6 +93,7 @@ public class CapybaraWebController {
 
 		return "redirect:/capybaras/"+newCapybara.getId();
 	}
+	
 	@GetMapping("/capybaras/{id}/delete")
 	public String deleteCapybara(Model model, @PathVariable long id) {
 		Optional<Capybara> capybara = capybaraService.findById(id);
