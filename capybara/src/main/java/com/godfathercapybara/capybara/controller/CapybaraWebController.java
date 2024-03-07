@@ -117,14 +117,19 @@ public class CapybaraWebController {
 	  Capybara capybara = capybaraService.findCapybaraById(id);
   	model.addAttribute("capybara", capybara);
   	return "editCapybaraPage";
-}
+	}
 	@PostMapping("/capybaras/{id}/edit")
 	public String processEditCapybaraForm(@PathVariable("id") long id, @ModelAttribute Capybara updatedCapybara, MultipartFile imageField) throws IOException {
   		// Update the capybara with the new data
  	 	capybaraService.updateCapybara(updatedCapybara,id, imageField);
   		// Redirect to the capybara's page
-  	return "redirect:/capybaras/" + id;
-}
+  		return "redirect:/capybaras/" + id;
+	}
+	@PostMapping("/capybaras/{id}/sponsor")
+	public String sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored) {
+		capybaraService.sponsorCapybara(id, isSponsored);
+		return "redirect:/capybaras/" + id;
+	}
 	
 	
 	

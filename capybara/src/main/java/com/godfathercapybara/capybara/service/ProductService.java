@@ -1,5 +1,6 @@
 package com.godfathercapybara.capybara.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +35,13 @@ public class ProductService {
 	public List<Product> findAll() {
 		return this.products.values().stream().toList();
 	}
-
+	public List<Product> findByIds(List<Long> ids) {
+		List<Product> products = new ArrayList<>();
+		for (long id : ids) {
+			products.add(this.products.get(id));
+		}
+		return products;
+	}
 	public Product save(Product Product, MultipartFile imageField) {
 
 		if (imageField != null && !imageField.isEmpty()){

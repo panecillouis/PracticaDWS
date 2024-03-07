@@ -33,7 +33,7 @@ public class DatabaseInitializer {
 
         // Create some capybaras
         Capybara Lola = new Capybara("Hembra", "Blanco", 450,
-                "Tiene problemas de pulmón.", "Lola Lolita");
+                "Tiene problemas de pulmón.", "Lola Lolita", true);
         Lola.setImage("Lola.jpg");
         
         Capybara Fernanda = new Capybara("Hembra","Verdoso", 1000, "Es una especie rarísima de Ompabara", "Fernanda");

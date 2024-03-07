@@ -1,5 +1,6 @@
 package com.godfathercapybara.capybara.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Product {
@@ -16,6 +17,7 @@ public class Product {
         this.description = description;
         this.type = type;
         this.price = price;
+        this.shops = new ArrayList<>();
     }
     public Long getId() {
         return id;
@@ -64,7 +66,7 @@ public class Product {
         this.price = price;
     }
     public List<Shop> getShops() {
-		return shops;
+		return new ArrayList<>(shops);
 	}
 
 	public void setShops(List<Shop> shops) {

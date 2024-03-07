@@ -22,7 +22,15 @@
             <li>Sexo: {{capybara.sex}}</li>
             <li>Color: {{capybara.color}}</li>
             <li>Precio: {{capybara.price}} &#8364</li>
-          </ul>
+            <form action="/capybaras/{{capybara.id}}/sponsor" method="post">
+              <input type="hidden" name="isSponsored" value="true"> 
+              <li>Apadrinada: {{#capybara.isSponsored}} Sí{{/capybara.isSponsored}}
+                  {{^capybara.isSponsored}} 
+                  No <button type="submit">Apadrinar</button>
+                  {{/capybara.isSponsored}}
+              </li>
+          </form>
+          </form>
         </div>
         <p>
           <button onclick="location.href='/capybaras'">Otras capibaras</button>

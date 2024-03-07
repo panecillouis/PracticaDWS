@@ -62,10 +62,21 @@ public class CapybaraService {
 			capybara.setImage(path);
 		}
 
-		if(capybara.getImage() == null || capybara.getImage().isEmpty()) capybara.setImage("no-image.png");
+		if(capybara.getImage() == null || capybara.getImage().isEmpty()) {
+			Capybara existingCapybara = capybaras.get(id);
+			if (existingCapybara != null) {
+				capybara.setImage(existingCapybara.getImage());
+			}
+		}
 	
 		capybaras.put(id, capybara);
 	
 	}
-	
+	public void sponsorCapybara(long id, boolean isSponsored) {
+		Capybara capybara = capybaras.get(id);
+		if (capybara != null) {
+			capybara.setIsSponsored(isSponsored);
+			capybaras.put(id, capybara);
+		}
+	}
 }

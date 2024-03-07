@@ -11,7 +11,7 @@ public class Capybara {
 		private String description;
 		private String name;
 		private String image;
-		private String godfather = null;
+		private boolean isSponsored = false;
 
 		public Capybara() {}
 
@@ -23,6 +23,23 @@ public class Capybara {
 			this.description = description;
 			this.name = name;
 	
+		}
+		
+		public Capybara(String sex, String color, double price, String description, String name, boolean isSponsored) {
+			super();
+			this.sex = sex;
+			this.color = color;
+			this.price = price;
+			this.description = description;
+			this.name = name;
+			this.isSponsored = isSponsored;
+	
+		}
+		public boolean getIsSponsored() {
+			return this.isSponsored;
+		}
+		public void setIsSponsored(boolean isSponsored) {
+			this.isSponsored = isSponsored;
 		}
 
 		public Long getId() {
@@ -91,18 +108,11 @@ public class Capybara {
 		public void setImage(String image) {
 			this.image = image;
 		}
-		public String getGodfahter()
-		{
-			return this.godfather;
-		}
-		public void setGodfather(String godfather)
-		{
-			this.godfather = godfather;
-		}
+		
 		
 
 		@Override
 		public String toString() {
-			return "Capybara [id=" + id + ", sex=" + sex + ", color=" + color + ", godfather=" + godfather + ", price=" + price + ", description=" + description + ", name=" + name +  "]";
+			return "Capybara [id=" + id + ", sex=" + sex + ", color=" + color + ", price=" + price + ", description=" + description + ", name=" + name +  "]";
 		}
 	}
