@@ -12,7 +12,7 @@ public class Product {
     public interface Shops{}
 
     @JsonView(Basico.class)
-	private long id = -1;
+	private long id = 0;
 
 	@JsonView(Basico.class)
 	private String description;

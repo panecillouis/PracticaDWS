@@ -67,7 +67,7 @@ public class CapybaraAPIController {
     
 
     @PutMapping("/{id}")
-    public ResponseEntity<Capybara> replaceCapybara(@PathVariable long id, @RequestBody Capybara newcapybara, MultipartFile imageField) {
+    public ResponseEntity<Capybara> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara, MultipartFile imageField) {
        Capybara capybara = capybaraService.findCapybaraById(id);
         if (capybara != null) {
             newcapybara.setId(id);

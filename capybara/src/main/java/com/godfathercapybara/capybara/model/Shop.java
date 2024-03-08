@@ -13,7 +13,7 @@ public class Shop {
 	}
 
 	@JsonView(Basico.class)
-	private long id = -1;
+	private long id = 0;
 
 	@JsonView(Basico.class)
 	private String name;
