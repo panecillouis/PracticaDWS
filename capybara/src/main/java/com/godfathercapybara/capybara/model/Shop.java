@@ -3,24 +3,34 @@ package com.godfathercapybara.capybara.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 public class Shop {
 
-	private Long id = null;
-	
+	public interface Basico{}
+
+	public interface Products {
+	}
+
+	@JsonView(Basico.class)
+	private long id = -1;
+
+	@JsonView(Basico.class)
 	private String name;
-	
+
+	@JsonView(Basico.class)
 	private String address;
-	
- 	private List<Product> products;
+
+	@JsonView(Products.class)
+	private List<Product> products = new ArrayList<>();
+
 
 	public Shop() {}
 
 	public Shop(String name, String address) {
+		super();
 		this.name = name;
 		this.address = address;
-		this.products = new ArrayList<>();
 	}
 
 	public Long getId() {
@@ -52,5 +62,9 @@ public class Shop {
 	}
 	public void setProducts(List<Product> products) {
 		this.products = products;
+	}
+
+	public String toString() {
+		return "Tienda {id=" + id + ", nombre=" + name + ", direccion=" + address + "}";
 	}
 }

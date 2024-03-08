@@ -3,21 +3,43 @@ package com.godfathercapybara.capybara.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 public class Product {
-    private Long id;
-    private String description;
+    public interface Basico{
+    }
+
+    public interface Shops{}
+
+    @JsonView(Basico.class)
+	private long id = -1;
+
+	@JsonView(Basico.class)
+	private String description;
+
+    @JsonView(Basico.class)
     private String image;
-    private String type;
+
+	@JsonView(Basico.class)
+	private String type;
+
+    @JsonView(Basico.class)
     private String name;
+
+    @JsonView(Basico.class)
     private double price;
-    private List <Shop> shops;
+
+	@JsonView(Shops.class)
+	private List<Shop> shops = new ArrayList<>();
+
+    public Product(){}
 
     public Product( String name, String description, String type, double price) {
+        super();
         this.name = name;
         this.description = description;
         this.type = type;
         this.price = price;
-        this.shops = new ArrayList<>();
     }
     public Long getId() {
         return id;
