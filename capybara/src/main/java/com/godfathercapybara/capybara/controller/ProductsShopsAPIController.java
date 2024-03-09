@@ -20,13 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
+import com.godfathercapybara.capybara.service.CommentService;
 import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
-
-
 
 
 @RequestMapping("/api")
@@ -37,7 +37,10 @@ public class ProductsShopsAPIController {
     @Autowired
     private ProductService productService;
 	@Autowired
+    private CommentService commentService;
+	@Autowired
 	private ImageService imageService;
+
     
     @JsonView(Product.Basic.class)
 	@GetMapping("/products/")
@@ -53,7 +56,7 @@ public class ProductsShopsAPIController {
 		return shops;
 	}
 
-	interface ProductDetail extends Product.Basic, Product.Shops, Shop.Basic {
+	interface ProductDetail extends Product.Basic, Product.Comments, Product.Shops, Shop.Basic {
 	}
 
 	@JsonView(ProductDetail.class)
@@ -98,6 +101,7 @@ public class ProductsShopsAPIController {
             return ResponseEntity.notFound().build();
         }
     }
+	
 
     @DeleteMapping("/products/{id}/image")
     public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
@@ -113,7 +117,46 @@ public class ProductsShopsAPIController {
             return ResponseEntity.notFound().build();
         }
     }
+	
 
+	@GetMapping("/products/{id}/comments")
+	public ResponseEntity<List<Comment>> getCommentsForProduct(@PathVariable long id) {
+		List<Product> products = productService.findAll();
+		int productId = Integer.parseInt(String.valueOf(id));
+		Product product = products.get(productId);
+		if (product != null) {
+            List<Comment> comments = product.getComments();
+            return ResponseEntity.ok(comments);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+	@PostMapping("/products/{id}/comments")
+    public ResponseEntity<Comment> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
+        List<Product> products = productService.findAll();
+		int productId = Integer.parseInt(String.valueOf(id));
+		Product product = products.get(productId);
+		if (product != null) {
+			productService.addComment(productId, comment);
+			commentService.save(comment);
+            return ResponseEntity.ok(comment);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+	@DeleteMapping("/products/{id}/comments/{idComment}/delete")
+	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long idComment) {
+		List<Comment> comments = commentService.findAll();
+			int commentId = Integer.parseInt(String.valueOf(idComment));
+			Comment comment = comments.get(commentId);
+        if (comment!= null) {
+			productService.deleteComment(id, idComment);
+			commentService.delete(comment.getId());
+			return ResponseEntity.ok(comment);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 	interface ShopDetail extends Shop.Basic, Shop.Products, Product.Basic {
 	}
