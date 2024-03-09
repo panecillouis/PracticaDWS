@@ -11,6 +11,8 @@ public class Product {
 
     public interface Shops{}
 
+    public interface Comments{}
+
     @JsonView(Basico.class)
 	private long id = 0;
 
@@ -31,6 +33,9 @@ public class Product {
 
 	@JsonView(Shops.class)
 	private List<Shop> shops = new ArrayList<>();
+
+    @JsonView(Comments.class)
+    private List<Comment> comments = new ArrayList<>();
 
     public Product(){}
 
@@ -94,6 +99,14 @@ public class Product {
 	public void setShops(List<Shop> shops) {
 		this.shops = shops;
 	}
+
+    public List<Comment> getComments() {
+        return new ArrayList<>(comments);
+    }
+
+    public void setComments(List<Comment> comments){
+        this.comments = comments;
+    }
     
     @Override
     public String toString() {

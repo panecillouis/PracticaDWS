@@ -1,0 +1,16 @@
+{{>header}}
+<form action="/newcomment" method="post" enctype="multipart/form-data">
+<h2>Nuevo COmmentario</h2>
+<div>
+    <label>Autor:</label>
+    <input name="name" type="text" placeholder="Autor" required>
+</div>
+<div>
+    <label>Comentario: </label>
+    <textarea name="description" placeholder="Comentario"></textarea>
+  </div>
+  <button onclick="location.href='/'; return false;">Cancelar</button>
+  <input type="submit" value="Guardar"/>
+</p>
+</form>
+{{>footer}}
