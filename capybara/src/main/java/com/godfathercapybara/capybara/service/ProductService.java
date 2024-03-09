@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Product;
 @Service
 public class ProductService {
@@ -59,6 +58,24 @@ public class ProductService {
 	public void delete(long id) {
 		products.remove(id);
 	}
+	public void updateProduct(Product product, long id, MultipartFile imageField) {
+
+		if (imageField != null && !imageField.isEmpty()){
+			String path = imageService.createImage(imageField);
+			product.setImage(path);
+		}
+
+		if(product.getImage() == null || product.getImage().isEmpty()) {
+			int productId = Integer.parseInt(String.valueOf(id));
+
+			Product existingProduct = products.get(productId);
+			if (existingProduct != null) {
+				product.setImage(existingProduct.getImage());
+			}
+		}
 	
+		products.put(id, product);
+	
+	}
     
 }
