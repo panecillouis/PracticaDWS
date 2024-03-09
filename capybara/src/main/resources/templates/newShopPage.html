@@ -1,13 +1,16 @@
 {{>header}}
 <form action="/newshop" method="post" enctype="multipart/form-data">
 <h2>Nueva Tienda</h2>
+{{#error}}
+  <p class="error-message">{{error}}</p>
+{{/error}}
 <div>
     <label>Nombre:</label>
-    <input name="name" type="text" placeholder="Nombre" required>
+    <input name="name" type="text" placeholder="Nombre" value={{#shop.name}}{{shop.name}}{{/shop.name}}>
 </div>
 <div>
     <label>Dirección</label>
-    <input name="address" type="text" placeholder="Dirección" required>
+    <input name="address" type="text" placeholder="Dirección" value={{#shop.address}}{{shop.address}}{{/shop.address}}>
 </div>
 <p>Productos: </p>
   <select name="selectedProducts" multiple>

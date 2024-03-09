@@ -7,18 +7,18 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 public class Shop {
 
-	public interface Basico{}
+	public interface Basic{}
 
 	public interface Products {
 	}
 
-	@JsonView(Basico.class)
+	@JsonView(Basic.class)
 	private long id = 0;
 
-	@JsonView(Basico.class)
+	@JsonView(Basic.class)
 	private String name;
 
-	@JsonView(Basico.class)
+	@JsonView(Basic.class)
 	private String address;
 
 	@JsonView(Products.class)

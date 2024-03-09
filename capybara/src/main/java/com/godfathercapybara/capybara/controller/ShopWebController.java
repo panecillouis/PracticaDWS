@@ -16,6 +16,7 @@ import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ProductService;
+import com.godfathercapybara.capybara.service.ValidateService;
 
 @Controller
 public class ShopWebController {
@@ -24,6 +25,9 @@ public class ShopWebController {
     private ShopService shopService;
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private ValidateService validateService;
 
     @GetMapping("/shops")
 	public String showShops(Model model) {
@@ -65,7 +69,14 @@ public class ShopWebController {
 
 	@PostMapping("/newshop")
 	public String newShopProcess(Model model, Shop shop, @RequestParam(required = false) List<Long> selectedProducts) throws IOException {
-
+		if(validateService.validateShop(shop) !=null)
+		{
+			model.addAttribute("error", validateService.validateShop(shop));
+			model.addAttribute("shop", shop);
+			model.addAttribute("availableProducts", productService.findAll());
+			return "newShopPage";
+		}
+		else{
 		if (selectedProducts != null){
 			List<Product> products = productService.findByIds(selectedProducts);
 			shop.setProducts(products);
@@ -79,6 +90,7 @@ public class ShopWebController {
 		model.addAttribute("shopId", newShop.getId());
 
 		return "redirect:/shops/"+newShop.getId();
+		}
 	}
 	
 	

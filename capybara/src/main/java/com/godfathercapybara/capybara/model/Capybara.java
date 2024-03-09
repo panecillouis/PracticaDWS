@@ -4,12 +4,12 @@ package com.godfathercapybara.capybara.model;
 public class Capybara {
 
 		private Long id = null;
-		private String sex;
-		private String color;
-		private double price;
-		private String description;
-		private String name;
-		private String image;
+		private String sex = null;
+		private String color = null;
+		private double price = 0;
+		private String description = null;
+		private String name = null;
+		private String image = null;
 		private boolean isSponsored = false;
 
 		public Capybara() {}

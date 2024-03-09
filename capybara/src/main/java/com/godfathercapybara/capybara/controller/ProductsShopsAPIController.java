@@ -31,7 +31,7 @@ import com.godfathercapybara.capybara.service.ShopService;
 
 @RequestMapping("/api")
 @RestController
-public class ProductsShopsController {
+public class ProductsShopsAPIController {
     @Autowired
     private ShopService shopService;
     @Autowired
@@ -39,21 +39,21 @@ public class ProductsShopsController {
 	@Autowired
 	private ImageService imageService;
     
-    @JsonView(Product.Basico.class)
+    @JsonView(Product.Basic.class)
 	@GetMapping("/products/")
 	public List<Product> getProducts() {
        List<Product> products = productService.findAll();
 		return products;
 	}
 
-	@JsonView(Shop.Basico.class)
+	@JsonView(Shop.Basic.class)
 	@GetMapping("/shops/")
 	public List<Shop> getShops() {
 		List<Shop> shops = shopService.findAll();
 		return shops;
 	}
 
-	interface ProductDetail extends Product.Basico, Product.Shops, Shop.Basico {
+	interface ProductDetail extends Product.Basic, Product.Shops, Shop.Basic {
 	}
 
 	@JsonView(ProductDetail.class)
@@ -99,7 +99,7 @@ public class ProductsShopsController {
         }
     }
 
-    @DeleteMapping("/prodcuts/{id}/image")
+    @DeleteMapping("/products/{id}/image")
     public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
 		List<Product> products = productService.findAll();
 		int productId = Integer.parseInt(String.valueOf(id));
@@ -115,7 +115,7 @@ public class ProductsShopsController {
     }
 
 
-	interface ShopDetail extends Shop.Basico, Shop.Products, Product.Basico {
+	interface ShopDetail extends Shop.Basic, Shop.Products, Product.Basic {
 	}
 
 	@JsonView(ShopDetail.class)
@@ -126,6 +126,7 @@ public class ProductsShopsController {
 		Shop shop = shops.get(shopId);
 		return ResponseEntity.ok(shop);
 	}
+	
 	@JsonView(ShopDetail.class)
 	@DeleteMapping("/shops/{id}")
 	public ResponseEntity<Shop> deleteShop(@PathVariable long id) {

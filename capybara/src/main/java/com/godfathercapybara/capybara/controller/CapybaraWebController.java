@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ImageService;
+import com.godfathercapybara.capybara.service.ValidateService;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -36,6 +37,8 @@ public class CapybaraWebController {
 
     @Autowired
     private ImageService imageService;
+	@Autowired
+	private ValidateService validateService;
 
 	@GetMapping("/")
 	public String showHome() {
@@ -85,13 +88,20 @@ public class CapybaraWebController {
 
 	@PostMapping("/newcapybara")
 	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField) throws IOException {
-
-
+		
+		if(validateService.validateCapybara(capybara, imageField) != null) {
+			model.addAttribute("error", validateService.validateCapybara(capybara, imageField));
+			model.addAttribute("capybara", capybara);
+			return "newCapybaraPage";
+		}
+		else{
 		Capybara newCapybara = capybaraService.save(capybara, imageField);
 
 		model.addAttribute("capybaraId", newCapybara.getId());
 
 		return "redirect:/capybaras/"+newCapybara.getId();
+		}
+		
 	}
 	
 	@GetMapping("/capybaras/{id}/delete")
@@ -116,12 +126,16 @@ public class CapybaraWebController {
 	public String showEditCapybaraForm(@PathVariable("id") long id, Model model) {
  	 
 	  Capybara capybara = capybaraService.findCapybaraById(id);
-  	model.addAttribute("capybara", capybara);
+  	  model.addAttribute("capybara", capybara);
   	return "editCapybaraPage";
 	}
 	@PostMapping("/capybaras/{id}/edit")
-	public String processEditCapybaraForm(@PathVariable("id") long id, @ModelAttribute Capybara updatedCapybara, MultipartFile imageField) throws IOException {
-  		// Update the capybara with the new data
+	public String processEditCapybaraForm(Model model, @PathVariable("id") long id, @ModelAttribute Capybara updatedCapybara, MultipartFile imageField) throws IOException {
+  		if(validateService.validateUpdatedCapybara(updatedCapybara) != null) {
+			model.addAttribute("error", validateService.validateUpdatedCapybara(updatedCapybara));
+			return "editCapybaraPage";
+		}
+		// Update the capybara with the new data
  	 	capybaraService.updateCapybara(updatedCapybara,id, imageField);
   		// Redirect to the capybara's page
   		return "redirect:/capybaras/" + id;

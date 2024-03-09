@@ -3,11 +3,13 @@
   <div class="row">
   <div class="col-2">
     {{#capybara.image}}
-    <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image" alt= "Imagen de {{capybara.name}}">
+    <img class="img-thumbnail" src="/capybaras/{{id}}/image" alt= "Imagen de {{capybara.name}}">
    {{/capybara.image}}
   </div>
     <form action="/capybaras/{{capybara.id}}/edit" method="post" enctype="multipart/form-data">
-  
+      {{#error}}
+      <p class="error-message">{{error}}</p>
+      {{/error}}
       <div>
         <label>Nombre: </label>
         <input name="name" placeholder="Nombre" value = {{capybara.name}}></input>
@@ -35,12 +37,13 @@
           <input type="checkbox" name="isSponsored" value="true" {{#capybara.isSponsored}} checked {{/capybara.isSponsored}}>
         </div>
       <p>Actualizar la imagen: </p>
-      <input type='file' name='imageField' accept=".jpg, .jpeg"></input>
-    
+      <p><input type='file' name='imageField' accept=".jpg, .jpeg"></input></p>
+      
       <p>
-        <button onclick="location.href='/'; return false;">Cancelar</button>
+        <button onclick="location.href='/capybaras'; return false;">Cancelar</button>
         <input type="submit" value="Guardar"/>
       </p>
+
       </form>
        
 {{>footer}}

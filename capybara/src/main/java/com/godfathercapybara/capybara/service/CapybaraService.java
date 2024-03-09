@@ -35,7 +35,7 @@ public class CapybaraService {
 	}
 
 	public Capybara save(Capybara capybara, MultipartFile imageField) {
-
+		
 		if (imageField != null && !imageField.isEmpty()){
 			String path = imageService.createImage(imageField);
 			capybara.setImage(path);
@@ -79,4 +79,5 @@ public class CapybaraService {
 			capybaras.put(id, capybara);
 		}
 	}
+	
 }

@@ -6,29 +6,29 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonView;
 
 public class Product {
-    public interface Basico{
+    public interface Basic{
     }
 
     public interface Shops{}
 
     public interface Comments{}
 
-    @JsonView(Basico.class)
+    @JsonView(Basic.class)
 	private long id = 0;
 
-	@JsonView(Basico.class)
+	@JsonView(Basic.class)
 	private String description;
 
-    @JsonView(Basico.class)
+    @JsonView(Basic.class)
     private String image;
 
-	@JsonView(Basico.class)
+	@JsonView(Basic.class)
 	private String type;
 
-    @JsonView(Basico.class)
+    @JsonView(Basic.class)
     private String name;
 
-    @JsonView(Basico.class)
+    @JsonView(Basic.class)
     private double price;
 
 	@JsonView(Shops.class)
@@ -106,6 +106,9 @@ public class Product {
 
     public void setComments(List<Comment> comments){
         this.comments = comments;
+    }
+    public void addComment(Comment comment){
+        this.comments.add(comment);
     }
     
     @Override

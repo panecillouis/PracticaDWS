@@ -29,9 +29,26 @@
             {{/product.shops}}
           </ul>
         </div>
+        <p><b>Comentarios:</b></p>
+        <div>
+        <ul>
+          {{#product.comments}}
+          <li>
+            <b>{{author}}</b>
+            <br>  
+            <p>{{comment}}</p>
+          
+            <p><button onclick="location.href='/products/{{product.id}}/comments/{{id}}/delete'">Borrar comentario</button> </p>
+            
+      
+          </li>
+            {{/product.comments}}
+        </ul>
+        </div>
         <p>
           <button onclick="location.href='/products'">Todos los productos</button>
           <button onclick="location.href='/products/{{product.id}}/delete'">Borrar producto</button>
+          <button onclick="location.href='/products/{{product.id}}/newcomment'">Añadir comentario</button>
         </p>
       </div>
     </div>

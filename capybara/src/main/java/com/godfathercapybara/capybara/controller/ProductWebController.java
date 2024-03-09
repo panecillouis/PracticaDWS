@@ -25,6 +25,7 @@ import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
+import com.godfathercapybara.capybara.service.ValidateService;
 @Controller
 public class ProductWebController {
    @Autowired
@@ -35,6 +36,9 @@ public class ProductWebController {
 
     @Autowired
     private ImageService imageService;
+	
+	@Autowired
+	private ValidateService validateService;
 
 	@GetMapping("/products")
 	public String showProducts(Model model) {
@@ -86,7 +90,13 @@ public class ProductWebController {
 
 	@PostMapping("/newproduct")
 	public String newProductProcess(Model model, Product product, MultipartFile imageField, @RequestParam(required = false) List<Long> selectedShops) throws IOException {
-
+		if (validateService.validateProduct(product, imageField)!=null) {
+			model.addAttribute("error", validateService.validateProduct(product, imageField));
+			model.addAttribute("product", product);
+			model.addAttribute("availableShops", shopService.findAll());
+			return "newProductPage";
+		}
+		else{
 		if (selectedShops != null){
 			List<Shop> shops = shopService.findByIds(selectedShops);
 			product.setShops(shops);
@@ -100,6 +110,7 @@ public class ProductWebController {
 		model.addAttribute("productId", newProduct.getId());
 
 		return "redirect:/products/"+newProduct.getId();
+		}
 	}
 	@GetMapping("/products/{id}/delete")
 	public String deleteProduct(Model model, @PathVariable long id) {
@@ -117,5 +128,6 @@ public class ProductWebController {
 
 	return "removedProduct";
 	}
+
     
 }

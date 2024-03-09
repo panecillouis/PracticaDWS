@@ -2,21 +2,24 @@
 
 <form action="/newproduct" method="post" enctype="multipart/form-data">
   <h2>Nuevo Producto</h2>
+  {{#error}}
+  <p class="error-message">{{error}}</p>
+  {{/error}}
   <div>
     <label>Nombre: </label>
-    <input name="name" placeholder="Nombre"/>
+    <input name="name" placeholder="Nombre" value= {{#product.name}}{{product.name}}{{/product.name}}>
   </div>
   <div>
     <label>Descripción: </label>
-    <textarea name="description" placeholder="Descripción"></textarea>
+    <textarea name="description" placeholder="Descripción">{{#product.description}}{{product.description}}{{/product.description}}</textarea>
   </div>
   <div>
     <label>Precio: </label>
-    <textarea name="price" placeholder="Precio"></textarea>
+    <textarea name="price" placeholder="Precio">{{#product.price}}{{product.price}}{{/product.price}}</textarea>
   </div>
   <div>
     <label>Categoria: </label>
-    <textarea name="type" placeholder="Tipo"></textarea>
+    <textarea name="type" placeholder="Tipo">{{#product.type}}{{product.type}}{{/product.type}}</textarea>
   </div>
   <p>Imagen: </p>
   <input type='file' name='imageField' accept=".jpg, .jpeg" />

@@ -2,28 +2,31 @@
 
 <form action="/newcapybara" method="post" enctype="multipart/form-data">
   <h2>Nueva Capibara</h2>
+  {{#error}}
+  <p class="error-message">{{error}}</p>
+  {{/error}}
   <div>
     <label>Nombre: </label>
-    <input name="name" placeholder="Nombre"></input>
+    <input name="name" placeholder="Nombre" value = {{#capybara.name}}{{capybara.name}}{{/capybara.name}}></input>
   </div>
   <div>
     <label>Decripción: </label>
-    <textarea name="description" placeholder="Descripción"></textarea>
+    <textarea name="description" placeholder="Descripción">{{#capybara.description}}{{capybara.description}}{{/capybara.description}}</textarea>
   </div>
   <div>
     <label>Sexo: </label>
-    <input name="sex" placeholder="Sexo"></input>
+    <input name="sex" placeholder="Sexo" value = {{#capybara.sex}}{{capybara.sex}}{{/capybara.sex}}></input>
   </div>
   <div>
     <label>Precio: </label>
-    <input name="price" placeholder="Precio"></input>
+    <input name="price" placeholder="Precio" value = {{#capybara.price}}{{capybara.price}}{{/capybara.price}}></input>
   </div>
   <div>
     <label>Color: </label>
-    <input name="color" placeholder="Color"></input>
+    <input name="color" placeholder="Color" value = {{#capybara.color}}{{capybara.color}}{{/capybara.color}}></input> 
   
   <p>Imagen: </p>
-  <input type='file' name='imageField' accept=".jpg, .jpeg"></input>
+  <p><input type='file' name='imageField' accept=".jpg, .jpeg"></input></p>
 
   <p>
     <button onclick="location.href='/'; return false;">Cancelar</button>

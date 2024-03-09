@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 @Service
 public class ProductService {
@@ -30,7 +30,26 @@ public class ProductService {
 	public boolean exist(long id) {
 		return this.products.containsKey(id);
 	}
-
+	public void addComment(long id, Comment comment) {
+		if(this.exist(id))
+		{
+			Product product = this.products.get(id);
+			List<Comment> comments = product.getComments();
+			comments.add(comment);
+			product.setComments(comments);
+			products.put(id, product);
+		}
+	}
+	public void deleteComment(long id, long idComment) {
+		if(this.exist(id))
+		{
+			Product product = this.products.get(id);
+			List<Comment> comments = product.getComments();
+			comments.removeIf(comment -> comment.getId() == idComment);
+			product.setComments(comments);
+			products.put(id, product);
+		}
+	}
 	public List<Product> findAll() {
 		return this.products.values().stream().toList();
 	}
