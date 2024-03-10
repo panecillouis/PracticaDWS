@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,37 +46,56 @@ public class ProductsShopsAPIController {
     
     @JsonView(Product.Basic.class)
 	@GetMapping("/products/")
-	public List<Product> getProducts() {
+	public ResponseEntity <List<Product>> getProducts() {
        List<Product> products = productService.findAll();
-		return products;
+		if(products != null) {
+			return ResponseEntity.ok(products);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 	@JsonView(Shop.Basic.class)
 	@GetMapping("/shops/")
-	public List<Shop> getShops() {
+	public ResponseEntity<List<Shop>> getShops() {
 		List<Shop> shops = shopService.findAll();
-		return shops;
+		if(shops != null) {
+			return ResponseEntity.ok(shops);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
-	interface ProductDetail extends Product.Basic, Product.Comments, Product.Shops, Shop.Basic {
+	interface ProductDetail extends Product.Basic, Product.Comments, Product.Shops, Shop.Basic, Comment.Basic {
 	}
 
 	@JsonView(ProductDetail.class)
 	@GetMapping("/products/{id}")
 	public ResponseEntity<Product> getProductById(@PathVariable long id) {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
-		return ResponseEntity.ok(product);
+		Optional <Product> productOptional = productService.findById(id);
+		Product product = productOptional.get();
+		if (product != null) {
+			return ResponseEntity.ok(product);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	@JsonView(ProductDetail.class)
 	@DeleteMapping("/products/{id}")
 	public ResponseEntity<Product> deleteProduct(@PathVariable long id) {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
+		Optional<Product> productOptional = productService.findById(id);
+		Product product = productOptional.get();
 		productService.delete(product.getId());
-		return ResponseEntity.ok(product);
+		if(productService.findById(id).isPresent()) {
+			return ResponseEntity.ok(product);
+		}
+		else
+		{
+			return ResponseEntity.notFound().build();
+		}
+
 		
 	}
 	@PostMapping("/products/")
@@ -121,9 +141,10 @@ public class ProductsShopsAPIController {
 
 	@GetMapping("/products/{id}/comments/")
 	public ResponseEntity<List<Comment>> getCommentsForProduct(@PathVariable long id) {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
+
+		
+		Optional<Product> productOptional = productService.findById(id);
+		Product product = productOptional.get();
 		if (product != null) {
             List<Comment> comments = product.getComments();
             return ResponseEntity.ok(comments);
@@ -148,37 +169,28 @@ public class ProductsShopsAPIController {
 	}
 	}
 	@DeleteMapping("/products/{id}/comments/{commentId}")
-public ResponseEntity<Void> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
-    // Buscar el producto por su ID
+	public ResponseEntity<Void> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
     List<Product> products = productService.findAll();
     int productId = Integer.parseInt(String.valueOf(id));
     Product product = products.get(productId);
     if (product == null) {
         return ResponseEntity.notFound().build();
     }
-
-    // Buscar el comentario por su ID
     Optional<Comment> optionalComment = commentService.findById(commentId);
     if (!optionalComment.isPresent()) {
         return ResponseEntity.notFound().build();
     }
 
     Comment comment = optionalComment.get();
-
-    // Verificar si el comentario pertenece al producto
     if (!product.getComments().contains(comment)) {
         return ResponseEntity.badRequest().build();
     }
-
-    // Eliminar el comentario del producto
     product.removeComment(comment);
     productService.updateProduct(product, id, null);
-
-    // Eliminar el comentario de la base de datos
     commentService.delete(commentId);
 
     return ResponseEntity.noContent().build();
-}
+	}
 
 
 
@@ -191,7 +203,12 @@ public ResponseEntity<Void> deleteCommentForProduct(@PathVariable long id, @Path
 		List<Shop> shops = shopService.findAll();
 		int shopId = Integer.parseInt(String.valueOf(id));
 		Shop shop = shops.get(shopId);
-		return ResponseEntity.ok(shop);
+		if(shop != null) {
+			return ResponseEntity.ok(shop);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	@JsonView(ShopDetail.class)

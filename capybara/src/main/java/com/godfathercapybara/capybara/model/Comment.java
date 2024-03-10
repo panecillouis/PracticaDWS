@@ -1,14 +1,18 @@
 package com.godfathercapybara.capybara.model;
 
-public class Comment {
+import com.fasterxml.jackson.annotation.JsonView;
 
+public class Comment {
+	public interface Basic{}
+		@JsonView(Basic.class)
 		private Long id = null;
+		@JsonView(Basic.class)
 		private String comment;
+		@JsonView(Basic.class)
 		private String author;
-		private Product product;
 
 		public Comment() {}
-
+		
 		public Comment(String comment, String author) {
 			super();
 			this.comment = comment;
@@ -46,8 +50,6 @@ public class Comment {
 			return "Comment [id=" + id + ", comment=" + comment + ", author=" + author +  "]";
 		}
 
-		public void setProduct(Product product) {
-			this.product = product;
-		}
+		
 	}
 

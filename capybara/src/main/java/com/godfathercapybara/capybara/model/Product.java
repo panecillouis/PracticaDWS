@@ -120,7 +120,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", image='" + image + '\'' +
                 ", type='" + type + '\'' +
-                ", price=" + price +
+                ", price=" + price + ",comentarios" +this.comments +
                 '}';
     }
     
