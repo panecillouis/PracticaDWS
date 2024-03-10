@@ -5,6 +5,7 @@ public class Comment {
 		private Long id = null;
 		private String comment;
 		private String author;
+		private Product product;
 
 		public Comment() {}
 
@@ -45,9 +46,8 @@ public class Comment {
 			return "Comment [id=" + id + ", comment=" + comment + ", author=" + author +  "]";
 		}
 
-        public void setProduct(Product product) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'setProduct'");
-        }
+		public void setProduct(Product product) {
+			this.product = product;
+		}
 	}
 

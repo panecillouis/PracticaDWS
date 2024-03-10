@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import com.godfathercapybara.capybara.model.Comment;
-import com.godfathercapybara.capybara.model.Product;
-import com.godfathercapybara.capybara.service.ProductService;
+
 import org.springframework.stereotype.Service;
+
+import com.godfathercapybara.capybara.model.Comment;
 @Service
 public class CommentService {
     
@@ -49,13 +49,4 @@ public class CommentService {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
 

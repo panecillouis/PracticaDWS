@@ -35,7 +35,7 @@ public class Product {
 	private List<Shop> shops = new ArrayList<>();
 
     @JsonView(Comments.class)
-    private List<Comment> comments = new ArrayList<>();
+    public List<Comment> comments = new ArrayList<>();
 
     public Product(){}
 
@@ -110,7 +110,9 @@ public class Product {
     public void addComment(Comment comment){
         this.comments.add(comment);
     }
-    
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+    }
     @Override
     public String toString() {
         return "Product{" +

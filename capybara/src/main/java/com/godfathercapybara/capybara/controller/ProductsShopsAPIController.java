@@ -5,6 +5,7 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +87,6 @@ public class ProductsShopsAPIController {
     }
 	@PostMapping("/products/{id}/image")
     public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image) throws IOException {
-
 		List<Product> products = productService.findAll();
 		int productId = Integer.parseInt(String.valueOf(id));
 		Product product = products.get(productId);
@@ -119,7 +119,7 @@ public class ProductsShopsAPIController {
     }
 	
 
-	@GetMapping("/products/{id}/comments")
+	@GetMapping("/products/{id}/comments/")
 	public ResponseEntity<List<Comment>> getCommentsForProduct(@PathVariable long id) {
 		List<Product> products = productService.findAll();
 		int productId = Integer.parseInt(String.valueOf(id));
@@ -131,32 +131,56 @@ public class ProductsShopsAPIController {
             return ResponseEntity.notFound().build();
         }
     }
-	@PostMapping("/products/{id}/comments")
-    public ResponseEntity<Comment> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
-        List<Product> products = productService.findAll();
+	@PostMapping("/products/{id}/comments/")
+	public ResponseEntity<Comment> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
+    List<Product> products = productService.findAll();
 		int productId = Integer.parseInt(String.valueOf(id));
 		Product product = products.get(productId);
-		if (product != null) {
-			productService.addComment(productId, comment);
-			commentService.save(comment);
-            return ResponseEntity.ok(comment);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    if(product != null) {
+        commentService.save(comment);
+		product.addComment(comment);
+		productService.updateProduct(product, productId, null);
+		URI location = fromCurrentRequest().path("/{id}").buildAndExpand(comment.getId()).toUri();
+        return ResponseEntity.created(location).body(comment);
+	
+	} else {
+		return ResponseEntity.notFound().build();
+	}
+	}
+	@DeleteMapping("/products/{id}/comments/{commentId}")
+public ResponseEntity<Void> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
+    // Buscar el producto por su ID
+    List<Product> products = productService.findAll();
+    int productId = Integer.parseInt(String.valueOf(id));
+    Product product = products.get(productId);
+    if (product == null) {
+        return ResponseEntity.notFound().build();
     }
-	@DeleteMapping("/products/{id}/comments/{idComment}/delete")
-	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long idComment) {
-		List<Comment> comments = commentService.findAll();
-			int commentId = Integer.parseInt(String.valueOf(idComment));
-			Comment comment = comments.get(commentId);
-        if (comment!= null) {
-			productService.deleteComment(id, idComment);
-			commentService.delete(comment.getId());
-			return ResponseEntity.ok(comment);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+
+    // Buscar el comentario por su ID
+    Optional<Comment> optionalComment = commentService.findById(commentId);
+    if (!optionalComment.isPresent()) {
+        return ResponseEntity.notFound().build();
     }
+
+    Comment comment = optionalComment.get();
+
+    // Verificar si el comentario pertenece al producto
+    if (!product.getComments().contains(comment)) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    // Eliminar el comentario del producto
+    product.removeComment(comment);
+    productService.updateProduct(product, id, null);
+
+    // Eliminar el comentario de la base de datos
+    commentService.delete(commentId);
+
+    return ResponseEntity.noContent().build();
+}
+
+
 
 	interface ShopDetail extends Shop.Basic, Shop.Products, Product.Basic {
 	}
@@ -188,8 +212,5 @@ public class ProductsShopsAPIController {
 
 		return ResponseEntity.created(location).body(shop);
 	}
-	
-
-
 
 }
