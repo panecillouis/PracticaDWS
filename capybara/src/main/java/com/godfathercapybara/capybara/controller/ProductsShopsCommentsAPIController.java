@@ -33,7 +33,7 @@ import com.godfathercapybara.capybara.service.ShopService;
 
 @RequestMapping("/api")
 @RestController
-public class ProductsShopsAPIController {
+public class ProductsShopsCommentsAPIController {
     @Autowired
     private ShopService shopService;
     @Autowired
