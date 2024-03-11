@@ -38,6 +38,7 @@ public class CapybaraAPIController {
         Optional<Capybara> capybaraOptional = capybaraService.findById(id);
         if (capybaraOptional.isPresent()) {
             Capybara capybara = capybaraOptional.get();
+            imageService.deleteImage(capybara.getImage());
             capybaraService.delete(capybara.getId());
             return ResponseEntity.ok(capybara);
         } else {
@@ -65,7 +66,6 @@ public class CapybaraAPIController {
     public ResponseEntity<Capybara> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) {
         capybaraService.save(capybara, imageField);
         URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
-
         return ResponseEntity.created(location).body(capybara);
     }
 

@@ -65,8 +65,9 @@ public class ProductsShopsCommentsAPIController {
 	@GetMapping("/products/{id}")
 	public ResponseEntity<Product> getProductById(@PathVariable long id) {
 		Optional<Product> productOptional = productService.findById(id);
-		Product product = productOptional.get();
-		if (product != null) {
+
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
 			return ResponseEntity.ok(product);
 		} else {
 			return ResponseEntity.notFound().build();
@@ -77,9 +78,11 @@ public class ProductsShopsCommentsAPIController {
 	@DeleteMapping("/products/{id}")
 	public ResponseEntity<Product> deleteProduct(@PathVariable long id) {
 		Optional<Product> productOptional = productService.findById(id);
-		Product product = productOptional.get();
-		productService.delete(product.getId());
-		if (productService.findById(id).isPresent()) {
+
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			imageService.deleteImage(product.getImage());
+			productService.delete(product.getId());
 			return ResponseEntity.ok(product);
 		} else {
 			return ResponseEntity.notFound().build();
@@ -99,8 +102,8 @@ public class ProductsShopsCommentsAPIController {
 	public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image)
 			throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
-		
-		if (productOptional != null) {
+
+		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
 			String path = imageService.createImage(image);
 			product.setImage(path);
@@ -116,8 +119,8 @@ public class ProductsShopsCommentsAPIController {
 	@DeleteMapping("/products/{id}/image")
 	public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
-		
-		if (productOptional != null) {
+
+		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
 			imageService.deleteImage(product.getImage());
 			product.setImage(null);
@@ -131,8 +134,9 @@ public class ProductsShopsCommentsAPIController {
 	@PostMapping("/products/{id}/comments/")
 	public ResponseEntity<Comment> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
 		Optional<Product> productOptional = productService.findById(id);
-		Product product = productOptional.get();
-		if (product != null) {
+
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
 			commentService.save(comment);
 			product.addComment(comment);
 			productService.updateProduct(product, id, null);
@@ -172,9 +176,11 @@ public class ProductsShopsCommentsAPIController {
 	@JsonView(ShopDetail.class)
 	@GetMapping("/shops/{id}")
 	public ResponseEntity<Shop> getShopById(@PathVariable long id) {
+
 		Optional<Shop> shopOptional = shopService.findById(id);
-		Shop shop = shopOptional.get();
-		if (shop != null) {
+
+		if (shopOptional.isPresent()) {
+			Shop shop = shopOptional.get();
 			return ResponseEntity.ok(shop);
 		} else {
 			return ResponseEntity.notFound().build();
@@ -185,16 +191,15 @@ public class ProductsShopsCommentsAPIController {
 	@DeleteMapping("/shops/{id}")
 	public ResponseEntity<Shop> deleteShop(@PathVariable long id) {
 		Optional<Shop> shopOptional = shopService.findById(id);
-		if(shopOptional.isPresent()) {
+		if (shopOptional.isPresent()) {
 			Shop shop = shopOptional.get();
 			shopService.delete(shop.getId());
 			return ResponseEntity.ok(shop);
-			
-		}
-		else {
+
+		} else {
 			return ResponseEntity.notFound().build();
 		}
-	
+
 	}
 
 	@PostMapping("/shops/")
