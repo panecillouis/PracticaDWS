@@ -7,6 +7,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -96,10 +98,10 @@ public class ProductsShopsCommentsAPIController {
 	@PostMapping("/products/{id}/image")
 	public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image)
 			throws IOException {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
-		if (product != null) {
+		Optional<Product> productOptional = productService.findById(id);
+		
+		if (productOptional != null) {
+			Product product = productOptional.get();
 			String path = imageService.createImage(image);
 			product.setImage(path);
 			productService.updateProduct(product, id, null);
@@ -113,27 +115,14 @@ public class ProductsShopsCommentsAPIController {
 
 	@DeleteMapping("/products/{id}/image")
 	public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
-		if (product != null) {
+		Optional<Product> productOptional = productService.findById(id);
+		
+		if (productOptional != null) {
+			Product product = productOptional.get();
 			imageService.deleteImage(product.getImage());
 			product.setImage(null);
-			productService.updateProduct(product, productId, null);
+			productService.updateProduct(product, id, null);
 			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-
-	@GetMapping("/products/{id}/comments/")
-	public ResponseEntity<List<Comment>> getCommentsForProduct(@PathVariable long id) {
-
-		Optional<Product> productOptional = productService.findById(id);
-		Product product = productOptional.get();
-		if (product != null) {
-			List<Comment> comments = product.getComments();
-			return ResponseEntity.ok(comments);
 		} else {
 			return ResponseEntity.notFound().build();
 		}
@@ -141,13 +130,12 @@ public class ProductsShopsCommentsAPIController {
 
 	@PostMapping("/products/{id}/comments/")
 	public ResponseEntity<Comment> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
+		Optional<Product> productOptional = productService.findById(id);
+		Product product = productOptional.get();
 		if (product != null) {
 			commentService.save(comment);
 			product.addComment(comment);
-			productService.updateProduct(product, productId, null);
+			productService.updateProduct(product, id, null);
 			URI location = fromCurrentRequest().path("/{id}").buildAndExpand(comment.getId()).toUri();
 			return ResponseEntity.created(location).body(comment);
 
@@ -158,17 +146,15 @@ public class ProductsShopsCommentsAPIController {
 
 	@DeleteMapping("/products/{id}/comments/{commentId}")
 	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
-		List<Product> products = productService.findAll();
-		int productId = Integer.parseInt(String.valueOf(id));
-		Product product = products.get(productId);
-		if (product == null) {
+		Optional<Product> productOptional = productService.findById(id);
+		if (!productOptional.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
+		Product product = productOptional.get();
 		Optional<Comment> optionalComment = commentService.findById(commentId);
 		if (!optionalComment.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
-
 		Comment comment = optionalComment.get();
 		if (!product.getComments().contains(comment)) {
 			return ResponseEntity.badRequest().build();
@@ -186,9 +172,8 @@ public class ProductsShopsCommentsAPIController {
 	@JsonView(ShopDetail.class)
 	@GetMapping("/shops/{id}")
 	public ResponseEntity<Shop> getShopById(@PathVariable long id) {
-		List<Shop> shops = shopService.findAll();
-		int shopId = Integer.parseInt(String.valueOf(id));
-		Shop shop = shops.get(shopId);
+		Optional<Shop> shopOptional = shopService.findById(id);
+		Shop shop = shopOptional.get();
 		if (shop != null) {
 			return ResponseEntity.ok(shop);
 		} else {
@@ -199,16 +184,17 @@ public class ProductsShopsCommentsAPIController {
 	@JsonView(ShopDetail.class)
 	@DeleteMapping("/shops/{id}")
 	public ResponseEntity<Shop> deleteShop(@PathVariable long id) {
-		List<Shop> shops = shopService.findAll();
-		int shopId = Integer.parseInt(String.valueOf(id));
-		Shop shop = shops.get(shopId);
-		if(shop != null) {
+		Optional<Shop> shopOptional = shopService.findById(id);
+		if(shopOptional.isPresent()) {
+			Shop shop = shopOptional.get();
 			shopService.delete(shop.getId());
 			return ResponseEntity.ok(shop);
+			
 		}
-		return ResponseEntity.notFound().build();
-		
-
+		else {
+			return ResponseEntity.notFound().build();
+		}
+	
 	}
 
 	@PostMapping("/shops/")

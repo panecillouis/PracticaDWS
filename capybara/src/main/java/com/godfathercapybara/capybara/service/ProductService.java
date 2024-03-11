@@ -93,9 +93,9 @@ public class ProductService {
 		}
 
 		if (product.getImage() == null || product.getImage().isEmpty()) {
-			int productId = Integer.parseInt(String.valueOf(id));
+			Optional<Product> productOptional = findById(id);
 
-			Product existingProduct = products.get(productId);
+			Product existingProduct = productOptional.get();
 			if (existingProduct != null) {
 				product.setImage(existingProduct.getImage());
 			}
