@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 public class Shop {
 
-	public interface Basic{}
+	public interface Basic {
+	}
 
 	public interface Products {
 	}
@@ -24,8 +25,8 @@ public class Shop {
 	@JsonView(Products.class)
 	private List<Product> products = new ArrayList<>();
 
-
-	public Shop() {}
+	public Shop() {
+	}
 
 	public Shop(String name, String address) {
 		super();
@@ -60,6 +61,7 @@ public class Shop {
 	public List<Product> getProducts() {
 		return products;
 	}
+
 	public void setProducts(List<Product> products) {
 		this.products = products;
 	}

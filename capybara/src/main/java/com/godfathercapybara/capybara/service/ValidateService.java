@@ -1,6 +1,5 @@
 package com.godfathercapybara.capybara.service;
 
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,15 +9,16 @@ import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import org.springframework.web.multipart.MultipartFile;
+
 @Service
 public class ValidateService {
-   
+
     public String validatePrice(String priceStr) {
 
         if (priceStr.isEmpty()) {
             return "El campo precio no puede ser nulo";
-        } 
-        
+        }
+
         try {
             double price = Double.parseDouble(priceStr);
             if (price <= 0) {
@@ -29,37 +29,34 @@ public class ValidateService {
         }
         return null; // Precio válido
     }
-    
 
     public String validateSex(String sex) {
-    if(sex.isEmpty())
-    {
-        return "El campo sexo no puede ser nulo";
-    }
-    else if(!Arrays.asList("Hembra", "Macho", "No binario").contains(sex)) {
-        return "El sexo debe ser Hembra, Macho o No binario";
+        if (sex.isEmpty()) {
+            return "El campo sexo no puede ser nulo";
+        } else if (!Arrays.asList("Hembra", "Macho", "No binario").contains(sex)) {
+            return "El sexo debe ser Hembra, Macho o No binario";
+        }
+
+        return null;
     }
 
-    return null; 
-    }
     public String validateName(String name) {
-        if(name.isEmpty())
-        {
+        if (name.isEmpty()) {
             return "El campo nombre no puede ser nulo";
         }
-        
-        return null; 
+
+        return null;
     }
+
     public String validateDescription(String description) {
-        if(description.isEmpty())
-        {
+        if (description.isEmpty()) {
             return "El campo descripción no puede ser nula";
         }
-        
-        return null; 
+
+        return null;
     }
-    public String validateImage(MultipartFile imageField)
-    {
+
+    public String validateImage(MultipartFile imageField) {
         if (imageField.isEmpty()) {
             return "La imagen no puede ser nula";
         }
@@ -68,49 +65,49 @@ public class ValidateService {
         }
         return null; // Imagen válida
     }
+
     public String validateColor(String color) {
-        if(color.isEmpty())
-        {
+        if (color.isEmpty()) {
             return "El campo color no puede ser nulo";
         }
-        
-        return null; 
+
+        return null;
     }
-    
+
     public String validatetype(String type) {
-        if(type.isEmpty())
-        {
+        if (type.isEmpty()) {
             return "El campo tipo no puede ser nulo";
         }
-        if (!(type.equals("Arma") || type.equals("Ropa") || type.equals("Juguete"))){
+        if (!(type.equals("Arma") || type.equals("Ropa") || type.equals("Juguete"))) {
             return "El tipo debe ser Arma, Ropa o Juguete";
         }
-        return null; 
+        return null;
     }
+
     public String validateAddress(String address) {
-        if(address.isEmpty())
-        {
+        if (address.isEmpty()) {
             return "El campo dirección no puede ser nula";
         }
-        
-        return null; 
+
+        return null;
     }
+
     public String validateAuthor(String author) {
-        if(author.isEmpty())
-        {
+        if (author.isEmpty()) {
             return "El campo autor no puede ser nulo";
         }
-        
-        return null; 
+
+        return null;
     }
+
     public String validateComment(String comment) {
-        if(comment.isEmpty())
-        {
+        if (comment.isEmpty()) {
             return "El campo comentario no puede ser nulo";
         }
-        
-        return null; 
+
+        return null;
     }
+
     public String validateShop(Shop shop) {
         String addressError = validateAddress(shop.getAddress());
         if (addressError != null) {
@@ -122,8 +119,8 @@ public class ValidateService {
         }
         return null; // Tienda válida
     }
-    public String validateProduct(Product product, MultipartFile imageField)
-    {
+
+    public String validateProduct(Product product, MultipartFile imageField) {
         String priceError = validatePrice(String.valueOf(product.getPrice()));
         if (priceError != null) {
             return priceError;
@@ -146,8 +143,8 @@ public class ValidateService {
         }
         return null; // Producto válido
     }
-    public String validateComment(Comment comment)
-    {
+
+    public String validateComment(Comment comment) {
         String authorError = validateAuthor(comment.getAuthor());
         if (authorError != null) {
             return authorError;
@@ -158,8 +155,8 @@ public class ValidateService {
         }
         return null; // Comentario válido
     }
-    public String validateCapybara(Capybara capybara, MultipartFile imageField)
-    {
+
+    public String validateCapybara(Capybara capybara, MultipartFile imageField) {
         String priceError = validatePrice(String.valueOf(capybara.getPrice()));
         if (priceError != null) {
             return priceError;
@@ -186,8 +183,8 @@ public class ValidateService {
         }
         return null; // Capybara is valid
     }
-    public String validateUpdatedCapybara(Capybara capybara)
-    {
+
+    public String validateUpdatedCapybara(Capybara capybara) {
         String priceError = validatePrice(String.valueOf(capybara.getPrice()));
         if (priceError != null) {
             return priceError;
@@ -204,7 +201,7 @@ public class ValidateService {
         if (descriptionError != null) {
             return descriptionError;
         }
-        
+
         String colorError = validateColor(capybara.getColor());
         if (colorError != null) {
             return colorError;

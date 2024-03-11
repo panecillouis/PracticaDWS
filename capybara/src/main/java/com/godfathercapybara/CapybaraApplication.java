@@ -1,4 +1,5 @@
 package com.godfathercapybara;
+
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import com.godfathercapybara.capybara.service.DatabaseInitializer;
 
 @SpringBootApplication
 public class CapybaraApplication {
-   
 
     public static void main(String[] args) {
         SpringApplication.run(CapybaraApplication.class, args);

@@ -1,19 +1,23 @@
-{{>header}}
-<form action="/products/{{product.id}}/newcomment" method="post" >
-<h2>Nuevo Comentario</h2>
-{{#error}}
-  <p class="error-message">{{error}}</p>
-{{/error}}
-<div>
-    <label>Autor:</label>
-    <input name="author" type="text" placeholder="Autor" value = {{#comment.author}}{{comment.author}}{{/comment.author}}>
-</div>
-<div>
-    <label>Comentario: </label>
-    <textarea name="comment" placeholder="Comentario">{{#comment.comment}}{{comment.comment}}{{/comment.comment}}</textarea>
-  </div>
-  <button onclick="location.href='/products/{{product.id}}'; return false;">Cancelar</button>
-  <input type="submit" value="Guardar"/>
-</p>
-</form>
-{{>footer}}
+{{>header2}}
+<main id="cont">
+  <form action="/products/{{product.id}}/newcomment" method="post">
+    <h2>Nuevo Comentario</h2>
+    {{#error}}
+    <p class="error-message">{{error}}</p>
+    {{/error}}
+    <div>
+      </p><label>Autor:</label></p>
+      <p><input name="author" type="text" placeholder="Autor"
+          value={{#comment.author}}{{comment.author}}{{/comment.author}}></p>
+    </div>
+    <div>
+      </p><label>Comentario: </label></p>
+      <p><textarea name="comment"
+          placeholder="Comentario">{{#comment.comment}}{{comment.comment}}{{/comment.comment}}</textarea></p>
+    </div>
+    <button id=buttom onclick="location.href='/products/{{product.id}}'; return false;">Cancelar</button>
+    <input id=buttom type="submit" value="Guardar"></input>
+    </p>
+  </form>
+</main>
+{{>footer2}}

@@ -1,12 +1,14 @@
 {{>header}}
-
-		<h2>Capibaras</h2>
-		<ul class="items">
-			{{#capybaras}}
+<section id=view>
+	<h2>Capibaras</h2>
+	<ul class="items">
+		{{#capybaras}}
+		<p id="element">
 			<li><a href="/capybaras/{{id}}">{{name}}</a></li>
-			{{/capybaras}}
-		</ul>
+		</p>
+		{{/capybaras}}
+	</ul>
 
-		<button onclick="location.href='/newcapybara'">Nueva capibara</button>
-
+	<button id="Botton" onclick="location.href='/newcapybara'">Nueva capibara</button>
+</section>
 {{>footer}}

@@ -1,4 +1,5 @@
 package com.godfathercapybara.capybara.service;
+
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,20 +13,20 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class ImageService{
-    
+public class ImageService {
+
     private static final Path IMAGES_FOLDER = Paths.get(System.getProperty("user.dir"), "images");
 
     public String createImage(MultipartFile multiPartFile) {
 
         String originalName = multiPartFile.getOriginalFilename();
 
-        if(!originalName.matches(".*\\.(jpg|jpeg|gif|png)")){
+        if (!originalName.matches(".*\\.(jpg|jpeg|gif|png)")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The url is not an image resource");
         }
-        
-        String fileName = "image_" + UUID.randomUUID() + "_" +originalName;
-        
+
+        String fileName = "image_" + UUID.randomUUID() + "_" + originalName;
+
         Path imagePath = IMAGES_FOLDER.resolve(fileName);
         try {
             multiPartFile.transferTo(imagePath);
@@ -48,13 +49,13 @@ public class ImageService{
 
     public void deleteImage(String image_url) {
         String[] tokens = image_url.split("/");
-        String image_name = tokens[tokens.length -1 ];
+        String image_name = tokens[tokens.length - 1];
 
         try {
             IMAGES_FOLDER.resolve(image_name).toFile().delete();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Can't delete local image");
         }
     }
-    
+
 }

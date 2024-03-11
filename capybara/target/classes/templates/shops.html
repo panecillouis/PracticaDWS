@@ -1,11 +1,13 @@
 {{>header}}
-
-		<h2>Tiendas</h2>
-		<ul class="items">
-			{{#shops}}
+<section id=view>
+	<h2>Tiendas</h2>
+	<ul class="items">
+		{{#shops}}
+		<p>
 			<li><a href="/shops/{{id}}">{{name}}</a></li>
-			{{/shops}}
-		</ul>
-		<button onclick="location.href='/newshop'">Nueva tienda</button>
-
+		</p>
+		{{/shops}}
+	</ul>
+	<button id="Botton" onclick="location.href='/newshop'">Nueva tienda</button>
+</section>
 {{>footer}}

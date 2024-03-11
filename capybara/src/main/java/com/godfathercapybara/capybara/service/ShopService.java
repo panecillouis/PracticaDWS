@@ -1,4 +1,5 @@
 package com.godfathercapybara.capybara.service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,20 +17,20 @@ public class ShopService {
 	private ConcurrentHashMap<Long, Shop> shops = new ConcurrentHashMap<>();
 
 	public Optional<Shop> findById(long id) {
-		if(this.shops.containsKey(id)) {
+		if (this.shops.containsKey(id)) {
 			return Optional.of(this.shops.get(id));
 		}
 		return Optional.empty();
 	}
 
-	public List<Shop> findByIds(List<Long> ids){
+	public List<Shop> findByIds(List<Long> ids) {
 		List<Shop> shops = new ArrayList<>();
-		for(long id : ids){
+		for (long id : ids) {
 			shops.add(this.shops.get(id));
 		}
 		return shops;
 	}
-	
+
 	public boolean exist(long id) {
 		return this.shops.containsKey(id);
 	}
@@ -49,6 +50,4 @@ public class ShopService {
 		this.shops.remove(id);
 	}
 
-	
 }
-

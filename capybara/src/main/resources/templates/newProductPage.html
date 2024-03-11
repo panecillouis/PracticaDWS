@@ -6,35 +6,43 @@
   <p class="error-message">{{error}}</p>
   {{/error}}
   <div>
-    <label>Nombre: </label>
-    <input name="name" placeholder="Nombre" value= {{#product.name}}{{product.name}}{{/product.name}}>
+    <p><label>Nombre:</label></p>
+    <p><input name="name" placeholder="Nombre" value={{#product.name}}{{product.name}}{{/product.name}}></p>
   </div>
   <div>
-    <label>Descripción: </label>
-    <textarea name="description" placeholder="Descripción">{{#product.description}}{{product.description}}{{/product.description}}</textarea>
+    <p><label>Descripción:</label></p>
+    <p> <textarea name="description"
+        placeholder="Descripción">{{#product.description}}{{product.description}}{{/product.description}}</textarea></p>
   </div>
   <div>
-    <label>Precio: </label>
-    <textarea name="price" placeholder="Precio">{{#product.price}}{{product.price}}{{/product.price}}</textarea>
+    <p><label>Precio:</label></p>
+    <p> <input name="price" placeholder="Precio" value={{#product.price}}{{product.price}}{{/product.price}}></input>
+    </p>
   </div>
   <div>
-    <label>Categoria: </label>
-    <textarea name="type" placeholder="Tipo">{{#product.type}}{{product.type}}{{/product.type}}</textarea>
+    <p><label>Categoría:</label></p>
+    <p>
+      <select name="type">
+        <option value="Ropa">Ropa</option>
+        <option value="Arma">Arma</option>
+        <option value="Juguete">Juguete</option>
+      </select>
+    </p>
   </div>
-  <p>Imagen: </p>
+  <p>Imagen:</p>
   <input type='file' name='imageField' accept=".jpg, .jpeg" />
- 
-  <p>Tiendas: </p>
 
-  <select name="selectedShops" multiple>
+  <p>Tiendas:</p>
+
+  <select id="choose-Shops" name="selectedShops" multiple>
     {{#availableShops}}
     <option value="{{ id }}">{{ name }}</option>
     {{/availableShops}}
   </select>
   <p>
-    <button onclick="location.href='/'; return false;">Cancelar</button>
-    <input type="submit" value="Guardar"/>
+    <button id="Cancel" onclick="location.href='/'; return false;">Cancelar</button>
+    <input type="submit" value="Guardar" />
   </p>
-  </form>
-  
+</form>
+
 {{>footer}}

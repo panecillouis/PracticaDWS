@@ -1,7 +1,5 @@
 package com.godfathercapybara.capybara.controller;
 
-
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -28,15 +26,13 @@ import com.godfathercapybara.capybara.service.ValidateService;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
 @Controller
 public class CapybaraWebController {
-    @Autowired
+	@Autowired
 	private CapybaraService capybaraService;
 
-    @Autowired
-    private ImageService imageService;
+	@Autowired
+	private ImageService imageService;
 	@Autowired
 	private ValidateService validateService;
 
@@ -71,11 +67,11 @@ public class CapybaraWebController {
 
 		Optional<Capybara> op = capybaraService.findById(id);
 
-		if(op.isPresent()) {
+		if (op.isPresent()) {
 			Capybara capybara = op.get();
 			Resource image = imageService.getImage(capybara.getImage());
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(image);
-		}else {
+		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
 		}
 	}
@@ -88,65 +84,63 @@ public class CapybaraWebController {
 
 	@PostMapping("/newcapybara")
 	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField) throws IOException {
-		
-		if(validateService.validateCapybara(capybara, imageField) != null) {
+
+		if (validateService.validateCapybara(capybara, imageField) != null) {
 			model.addAttribute("error", validateService.validateCapybara(capybara, imageField));
 			model.addAttribute("capybara", capybara);
 			return "newCapybaraPage";
-		}
-		else{
-		Capybara newCapybara = capybaraService.save(capybara, imageField);
+		} else {
+			Capybara newCapybara = capybaraService.save(capybara, imageField);
 
-		model.addAttribute("capybaraId", newCapybara.getId());
+			model.addAttribute("capybaraId", newCapybara.getId());
 
-		return "redirect:/capybaras/"+newCapybara.getId();
+			return "redirect:/capybaras/" + newCapybara.getId();
 		}
-		
+
 	}
-	
+
 	@GetMapping("/capybaras/{id}/delete")
 	public String deleteCapybara(Model model, @PathVariable long id) {
 		Optional<Capybara> capybara = capybaraService.findById(id);
-	
+
 		if (capybara.isPresent()) {
-		Capybara existingCapybara = capybara.get();
-		
-		// Delete the image
-		imageService.deleteImage(existingCapybara.getImage());
-		// Delete the capybara
-		capybaraService.delete(id);
+			Capybara existingCapybara = capybara.get();
+
+			// Delete the image
+			imageService.deleteImage(existingCapybara.getImage());
+			// Delete the capybara
+			capybaraService.delete(id);
 		}
 		model.addAttribute("name", capybara.get().getName());
 
-	return "removedcapybara";
+		return "removedcapybara";
 	}
-	
-	
+
 	@GetMapping("/capybaras/{id}/edit")
 	public String showEditCapybaraForm(@PathVariable("id") long id, Model model) {
- 	 
-	  Capybara capybara = capybaraService.findCapybaraById(id);
-  	  model.addAttribute("capybara", capybara);
-  	return "editCapybaraPage";
+
+		Capybara capybara = capybaraService.findCapybaraById(id);
+		model.addAttribute("capybara", capybara);
+		return "editCapybaraPage";
 	}
+
 	@PostMapping("/capybaras/{id}/edit")
-	public String processEditCapybaraForm(Model model, @PathVariable("id") long id, @ModelAttribute Capybara updatedCapybara, MultipartFile imageField) throws IOException {
-  		if(validateService.validateUpdatedCapybara(updatedCapybara) != null) {
+	public String processEditCapybaraForm(Model model, @PathVariable("id") long id,
+			@ModelAttribute Capybara updatedCapybara, MultipartFile imageField) throws IOException {
+		if (validateService.validateUpdatedCapybara(updatedCapybara) != null) {
 			model.addAttribute("error", validateService.validateUpdatedCapybara(updatedCapybara));
 			return "editCapybaraPage";
 		}
 		// Update the capybara with the new data
- 	 	capybaraService.updateCapybara(updatedCapybara,id, imageField);
-  		// Redirect to the capybara's page
-  		return "redirect:/capybaras/" + id;
+		capybaraService.updateCapybara(updatedCapybara, id, imageField);
+		// Redirect to the capybara's page
+		return "redirect:/capybaras/" + id;
 	}
+
 	@PostMapping("/capybaras/{id}/sponsor")
 	public String sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored) {
 		capybaraService.sponsorCapybara(id, isSponsored);
 		return "redirect:/capybaras/" + id;
 	}
-	
-	
-	
-}
 
+}

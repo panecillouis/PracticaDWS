@@ -1,26 +1,29 @@
 {{>header}}
 <form action="/newshop" method="post" enctype="multipart/form-data">
-<h2>Nueva Tienda</h2>
-{{#error}}
+  <h2>Nueva Tienda</h2>
+  {{#error}}
   <p class="error-message">{{error}}</p>
-{{/error}}
-<div>
-    <label>Nombre:</label>
-    <input name="name" type="text" placeholder="Nombre" value={{#shop.name}}{{shop.name}}{{/shop.name}}>
-</div>
-<div>
-    <label>Dirección</label>
-    <input name="address" type="text" placeholder="Dirección" value={{#shop.address}}{{shop.address}}{{/shop.address}}>
-</div>
-<p>Productos: </p>
-  <select name="selectedProducts" multiple>
+  {{/error}}
+  <div>
+    <p><label>Nombre:</label></p>
+    <p><input name="name" type="text" placeholder="Nombre" value={{#shop.name}}{{shop.name}}{{/shop.name}}></p>
+  </div>
+  <div>
+    <p><label>Dirección</label></p>
+    <p><input name="address" type="text" placeholder="Dirección"
+        value={{#shop.address}}{{shop.address}}{{/shop.address}}></p>
+  </div>
+  <p>Productos:</p>
+  <select id="choose-Products" name="selectedProducts" multiple>
     {{#availableProducts}}
-    <option value="{{ id }}">{{ name }}</option>
+    <p>
+      <option value="{{ id }}">{{ name }}</option>
+    </p>
     {{/availableProducts}}
   </select>
-<p>
-  <button onclick="location.href='/shops'; return false;">Cancelar</button>
-  <input type="submit" value="Guardar"/>
-</p>
+  <p>
+    <button id="Cancel" onclick="location.href='/shops'; return false;">Cancelar</button>
+    <input type="submit" value="Guardar" />
+  </p>
 </form>
 {{>footer}}

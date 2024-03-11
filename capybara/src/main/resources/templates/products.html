@@ -1,13 +1,15 @@
 {{>header}}
-
-		<h2>Productos</h2>
-		<ul class="items">
-			{{#products}}
+<section id=view>
+	<h2>Productos</h2>
+	<ul class="items">
+		{{#products}}
+		<p>
 			<li><a href="/products/{{id}}">{{name}}</a></li>
-			{{/products}}
-		</ul>
+		</p>
+		{{/products}}
+	</ul>
 
-		<button onclick="location.href='/newproduct'">Nuevo producto</button>
-		
+	<button id="buttom" onclick="location.href='/newproduct'">Nuevo producto</button>
+</section>
 
 {{>footer}}

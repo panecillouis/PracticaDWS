@@ -1,47 +1,48 @@
-{{>header}}
+{{>header2}}
+<main id="viewentity">
+  <div>
 
-<div>
+    <div class="container">
+      <div class="row">
+        <div class="col-2">
+          {{#capybara.image}}
+          <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image" alt="Imagen de {{capybara.name}}">
 
-  <div class="container">
-    <div class="row">
-      <div class="col-2">
-        {{#capybara.image}}
-        <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image"  alt= "Imagen de {{capybara.name}}">
-
-        {{/capybara.image}}
-      </div>
-      <div class="col-10">
-        <h2>Capibara "{{capybara.name}}"</h2>
-        
-        <div>
-          <p>{{capybara.description}}</p>
+          {{/capybara.image}}
         </div>
-        <div>
-          <h3>Información Adicional:</h3>
-          <ul>
-            <li>Sexo: {{capybara.sex}}</li>
-            <li>Color: {{capybara.color}}</li>
-            <li>Precio: {{capybara.price}} &#8364</li>
-            <form action="/capybaras/{{capybara.id}}/sponsor" method="post">
-              <input type="hidden" name="isSponsored" value="true"> 
-              <li>Apadrinada: {{#capybara.isSponsored}} Sí{{/capybara.isSponsored}}
-                  {{^capybara.isSponsored}} 
-                  No <button type="submit">Apadrinar</button>
+        <div class="col-10">
+          <h2>Capibara "{{capybara.name}}"</h2>
+
+          <div>
+            <p>{{capybara.description}}</p>
+          </div>
+          <div>
+            <h3>Información Adicional:</h3>
+            <ul>
+              <li><b>Sexo</b>: {{capybara.sex}}</li>
+              <li><b>Color</b>: {{capybara.color}}</li>
+              <li><b>Precio</b>: {{capybara.price}} &#8364</li>
+              <form action="/capybaras/{{capybara.id}}/sponsor" method="post">
+                <input type="hidden" name="isSponsored" value="true">
+                <li><b>Apadrinada</b>: {{#capybara.isSponsored}} Sí{{/capybara.isSponsored}}
+                  {{^capybara.isSponsored}}
+                  No<button id="button-sponsor" type="submit">Apadrinar</button>
                   {{/capybara.isSponsored}}
-              </li>
-          </form>
-          </form>
+                </li>
+              </form>
+            </ul>
+          </div>
+          <p>
+          <p><button id=buttom onclick="location.href='/capybaras'">Otras capibaras</button></p>
+          <p> <button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/edit'">Editar</button></p>
+          <p><button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/delete'">Eliminar</button></p>
+          </p>
         </div>
-        <p>
-          <button onclick="location.href='/capybaras'">Otras capibaras</button>
-          <button onclick="location.href='/capybaras/{{capybara.id}}/edit'">Editar</button>
-          <button onclick="location.href='/capybaras/{{capybara.id}}/delete'">Eliminar</button>
-        </p>
       </div>
     </div>
-  </div>
+</main>
 </div>
 
 
 
-{{>footer}}
+{{>footer2}}

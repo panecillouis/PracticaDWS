@@ -1,49 +1,60 @@
-{{>header}}
+{{>header2}}
+<main id="cont">
   <div class="container">
-  <div class="row">
-  <div class="col-2">
-    {{#capybara.image}}
-    <img class="img-thumbnail" src="/capybaras/{{id}}/image" alt= "Imagen de {{capybara.name}}">
-   {{/capybara.image}}
-  </div>
-    <form action="/capybaras/{{capybara.id}}/edit" method="post" enctype="multipart/form-data">
-      {{#error}}
-      <p class="error-message">{{error}}</p>
-      {{/error}}
-      <div>
-        <label>Nombre: </label>
-        <input name="name" placeholder="Nombre" value = {{capybara.name}}></input>
+    <div class="row">
+      <div class="col-2">
+
       </div>
-      <div>
-        <label>Decripción: </label>
-        <textarea name="description" placeholder="Descripción">{{capybara.description}}</textarea>
-      </div>
-      <div>
-        <label>Sexo: </label>
-        <input name="sex" placeholder="Sexo" value = {{capybara.sex}}></input>
-      </div>
-      <div>
-        <label>Precio: </label>
-        <input name="price" placeholder="Precio" value={{capybara.price}}></input>
-      </div>
-      <div>
-        <label>Color: </label>
-        <input name="color" placeholder="Color" value = {{capybara.color}}></input>
-      </div>
-      <div>
-       
+      <form action="/capybaras/{{capybara.id}}/edit" method="post" enctype="multipart/form-data">
+        <p>
+        <h2>Actualizando capibara</h2>
+        </p>
+        {{#capybara.image}}
+        <img class="img-thumbnail" src="/capybaras/{{id}}/image" alt="Imagen de {{capybara.name}}">
+        {{/capybara.image}}
+        {{#error}}
+        <p class="error-message">{{error}}</p>
+        {{/error}}
         <div>
-          <label>Apadrinada: </label>
-          <input type="checkbox" name="isSponsored" value="true" {{#capybara.isSponsored}} checked {{/capybara.isSponsored}}>
+          </p><label>Nombre: </label></p>
+          <p> <textarea name="name" placeholder="Nombre">{{capybara.name}}</textarea></p>
         </div>
-      <p>Actualizar la imagen: </p>
-      <p><input type='file' name='imageField' accept=".jpg, .jpeg"></input></p>
-      
-      <p>
-        <button onclick="location.href='/capybaras'; return false;">Cancelar</button>
-        <input type="submit" value="Guardar"/>
-      </p>
+        <div>
+          <p> <label>Decripción: </label>
+          <p>
+          <p><textarea name="description" placeholder="Descripción">{{capybara.description}}</textarea> </p>
+        </div>
+        <div>
+          <p><label>Sexo:</label></p>
+          <p>
+            <select name="sex">
+              <option value="Hembra">Hembra</option>
+              <option value="Macho">Macho</option>
+              <option value="No binario">No binario</option>
+            </select>
+          </p>
+        </div>
+        <div>
+          <p><label>Precio:</label></p>
+          <p><input name="price" placeholder="Precio" value={{capybara.price}}></input></p>
+        </div>
+        <div>
+          </p><label>Color: </label>
+          <p><textarea name="color" placeholder="Color">{{capybara.color}}</textarea></p>
+        </div>
+        <div>
+          <p><label>Apadrinada: </label>
+            <input type="checkbox" name="isSponsored" value="true" {{#capybara.isSponsored}} checked
+              {{/capybara.isSponsored}}>
+          </p>
+        </div>
+        <p><label>Actualizar la imagen:</label></p>
+        <p><input type='file' name='imageField' accept=".jpg, .jpeg"></input></p>
+
+        <p>
+          <button id="buttom" onclick="location.href='/capybaras'; return false;">Cancelar</button>
+          <input type="submit" value="Guardar"></input>
+        </p>
 
       </form>
-       
-{{>footer}}
+</main {{>footer2}}

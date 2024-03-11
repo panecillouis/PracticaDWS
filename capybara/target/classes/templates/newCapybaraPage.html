@@ -1,37 +1,48 @@
 {{>header}}
 
 <form action="/newcapybara" method="post" enctype="multipart/form-data">
+  <p>
   <h2>Nueva Capibara</h2>
+  </p>
   {{#error}}
   <p class="error-message">{{error}}</p>
   {{/error}}
   <div>
-    <label>Nombre: </label>
-    <input name="name" placeholder="Nombre" value = {{#capybara.name}}{{capybara.name}}{{/capybara.name}}></input>
+    <p><label>Nombre:</label></p>
+    <p><input name="name" placeholder="Nombre" value={{#capybara.name}}{{capybara.name}}{{/capybara.name}}></input></p>
   </div>
   <div>
-    <label>Decripción: </label>
-    <textarea name="description" placeholder="Descripción">{{#capybara.description}}{{capybara.description}}{{/capybara.description}}</textarea>
+    <p><label>Decripción:</label></p>
+    <p><textarea name="description"
+        placeholder="Descripción">{{#capybara.description}}{{capybara.description}}{{/capybara.description}}</textarea>
+    </p>
   </div>
   <div>
-    <label>Sexo: </label>
-    <input name="sex" placeholder="Sexo" value = {{#capybara.sex}}{{capybara.sex}}{{/capybara.sex}}></input>
+    <p><label>Sexo:</label></p>
+    <p>
+      <select name="sex">
+        <option value="Hembra">Hembra</option>
+        <option value="Macho">Macho</option>
+        <option value="No binario">No binario</option>
+      </select>
+    </p>
   </div>
   <div>
-    <label>Precio: </label>
-    <input name="price" placeholder="Precio" value = {{#capybara.price}}{{capybara.price}}{{/capybara.price}}></input>
+    <p><label>Precio:</label></p>
+    <p><input name="price" placeholder="Precio" value={{#capybara.price}}{{capybara.price}}{{/capybara.price}}></input>
+    </p>
   </div>
   <div>
-    <label>Color: </label>
-    <input name="color" placeholder="Color" value = {{#capybara.color}}{{capybara.color}}{{/capybara.color}}></input> 
-  
-  <p>Imagen: </p>
-  <p><input type='file' name='imageField' accept=".jpg, .jpeg"></input></p>
+    </p><label>Color:</label></p>
+    <p><input name="color" placeholder="Color" value={{#capybara.color}}{{capybara.color}}{{/capybara.color}}></input>
+    </p>
+    <p>Imagen: </p>
+    <p><input type='file' name='imageField' accept=".jpg, .jpeg"></input></p>
 
-  <p>
-    <button onclick="location.href='/'; return false;">Cancelar</button>
-    <input type="submit" value="Guardar"/>
-  </p>
-  </form>
-  
+    <p>
+      <button id="Cancel" onclick="location.href='/'; return false;">Cancelar</button>
+      <input type="submit" value="Guardar" />
+    </p>
+</form>
+
 {{>footer}}

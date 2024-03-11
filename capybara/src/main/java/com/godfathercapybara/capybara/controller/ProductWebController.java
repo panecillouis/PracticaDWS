@@ -26,17 +26,18 @@ import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
+
 @Controller
 public class ProductWebController {
-   @Autowired
+	@Autowired
 	private ShopService shopService;
 
 	@Autowired
 	private ProductService productService;
 
-    @Autowired
-    private ImageService imageService;
-	
+	@Autowired
+	private ImageService imageService;
+
 	@Autowired
 	private ValidateService validateService;
 
@@ -71,11 +72,11 @@ public class ProductWebController {
 
 		Optional<Product> op = productService.findById(id);
 
-		if(op.isPresent()) {
+		if (op.isPresent()) {
 			Product product = op.get();
 			Resource image = imageService.getImage(product.getImage());
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(image);
-		}else {
+		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
 		}
 	}
@@ -89,45 +90,45 @@ public class ProductWebController {
 	}
 
 	@PostMapping("/newproduct")
-	public String newProductProcess(Model model, Product product, MultipartFile imageField, @RequestParam(required = false) List<Long> selectedShops) throws IOException {
-		if (validateService.validateProduct(product, imageField)!=null) {
+	public String newProductProcess(Model model, Product product, MultipartFile imageField,
+			@RequestParam(required = false) List<Long> selectedShops) throws IOException {
+		if (validateService.validateProduct(product, imageField) != null) {
 			model.addAttribute("error", validateService.validateProduct(product, imageField));
 			model.addAttribute("product", product);
 			model.addAttribute("availableShops", shopService.findAll());
 			return "newProductPage";
-		}
-		else{
-		if (selectedShops != null){
-			List<Shop> shops = shopService.findByIds(selectedShops);
-			product.setShops(shops);
-			for (Shop shop : shops){
-				shop.getProducts().add(product);
+		} else {
+			if (selectedShops != null) {
+				List<Shop> shops = shopService.findByIds(selectedShops);
+				product.setShops(shops);
+				for (Shop shop : shops) {
+					shop.getProducts().add(product);
+				}
 			}
-		}
 
-		Product newProduct = productService.save(product, imageField);
+			Product newProduct = productService.save(product, imageField);
 
-		model.addAttribute("productId", newProduct.getId());
+			model.addAttribute("productId", newProduct.getId());
 
-		return "redirect:/products/"+newProduct.getId();
+			return "redirect:/products/" + newProduct.getId();
 		}
 	}
+
 	@GetMapping("/products/{id}/delete")
 	public String deleteProduct(Model model, @PathVariable long id) {
 		Optional<Product> product = productService.findById(id);
-	
+
 		if (product.isPresent()) {
-		Product existingProduct = product.get();
-		
-		// Delete the image
-		imageService.deleteImage(existingProduct.getImage());
-		// Delete the capybara
-		productService.delete(id);
+			Product existingProduct = product.get();
+
+			// Delete the image
+			imageService.deleteImage(existingProduct.getImage());
+			// Delete the capybara
+			productService.delete(id);
 		}
 		model.addAttribute("name", product.get().getName());
 
-	return "removedProduct";
+		return "removedProduct";
 	}
 
-    
 }

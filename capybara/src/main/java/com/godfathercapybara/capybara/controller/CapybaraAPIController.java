@@ -25,7 +25,6 @@ import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ImageService;
 
-
 @RequestMapping("/api/capybaras")
 @RestController
 public class CapybaraAPIController {
@@ -48,8 +47,8 @@ public class CapybaraAPIController {
 
     @GetMapping("/")
     public List<Capybara> getAllCapybaras() {
-       List<Capybara> capybaras = capybaraService.findAll();
-         return capybaras;
+        List<Capybara> capybaras = capybaraService.findAll();
+        return capybaras;
     }
 
     @GetMapping("/{id}")
@@ -64,27 +63,28 @@ public class CapybaraAPIController {
 
     @PostMapping("/")
     public ResponseEntity<Capybara> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) {
-         capybaraService.save(capybara, imageField);
-         URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
+        capybaraService.save(capybara, imageField);
+        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
 
-         return ResponseEntity.created(location).body(capybara);
+        return ResponseEntity.created(location).body(capybara);
     }
-   
-    
 
     @PutMapping("/{id}")
-    public ResponseEntity<Capybara> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara, MultipartFile imageField) {
-       Capybara capybara = capybaraService.findCapybaraById(id);
+    public ResponseEntity<Capybara> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara,
+            MultipartFile imageField) {
+        Capybara capybara = capybaraService.findCapybaraById(id);
         if (capybara != null) {
             newcapybara.setId(id);
-            capybaraService.updateCapybara(newcapybara, id,imageField);
+            capybaraService.updateCapybara(newcapybara, id, imageField);
             return ResponseEntity.ok(capybara);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PostMapping("/{id}/image")
-    public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image) throws IOException {
+    public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image)
+            throws IOException {
 
         Capybara capybara = capybaraService.findCapybaraById(id);
 
@@ -114,6 +114,3 @@ public class CapybaraAPIController {
         }
     }
 }
-
-
-

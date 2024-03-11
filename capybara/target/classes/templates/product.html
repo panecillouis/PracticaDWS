@@ -1,26 +1,28 @@
-{{>header}}
+{{>header2}}
 
-<div>
+<main id="viewentity">
+  <div class="row">
+    <div class="col-2">
+      {{#product.image}}
+      <img class="img-thumbnail" src="/products/{{product.id}}/image" alt="Imagen de {{product.name}}">
+      {{/product.image}}
+    </div>
+    <div class="col-10">
+      <h2>Producto "{{product.name}}"</h2>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-2">
-        {{#product.image}}
-        <img class="img-thumbnail" src="/products/{{product.id}}/image" alt= "Imagen de {{product.name}}">
-        {{/product.image}}
+      <div>
+        <p>{{product.description}}</p>
       </div>
-      <div class="col-10">
-        <h2>Producto "{{product.name}}"</h2>
-        
-        <div>
-          <p>{{product.description}}</p>
-        </div>
-        <div>
-          <h3>Información adicional:</h3>
-          <ul>
-            <li>Precio: {{product.price}} &#8364 </li>
-            <li>Categoría: {{product.type}}</li>
-          </ul>
+      <div>
+        <h3>Información adicional:</h3>
+        <ul>
+          <p>
+            <li><b>Precio</b>: {{product.price}} &#8364 </li>
+          </p>
+          <p>
+            <li><b>Categoría</b>: {{product.type}}</li>
+          </p>
+        </ul>
         <p> <b>Tiendas en las que el producto está disponible:</b></p>
         <div>
           <ul>
@@ -31,30 +33,28 @@
         </div>
         <p><b>Comentarios:</b></p>
         <div>
-        <ul>
-          {{#product.comments}}
-          <li>
-            <b>{{author}}</b>
-            <br>  
-            <p>{{comment}}</p>
-          
-            <p><button onclick="location.href='/products/{{product.id}}/comments/{{id}}/delete'">Borrar comentario</button> </p>
-            
-      
-          </li>
+          <ul>
+            {{#product.comments}}
+            <li>
+              <b>{{author}}</b>
+              <br>
+              <p>{{comment}}</p>
+
+              <p><button id="buttom" onclick="location.href='/products/{{product.id}}/comments/{{id}}/delete'">Borrar
+                  comentario</button> </p>
+
+
+            </li>
             {{/product.comments}}
-        </ul>
+          </ul>
         </div>
         <p>
-          <button onclick="location.href='/products'">Todos los productos</button>
-          <button onclick="location.href='/products/{{product.id}}/delete'">Borrar producto</button>
-          <button onclick="location.href='/products/{{product.id}}/newcomment'">Añadir comentario</button>
+          <button id="buttom" onclick="location.href='/products'">Todos los productos</button>
+          <button id="buttom" onclick="location.href='/products/{{product.id}}/delete'">Borrar producto</button>
+          <button id="buttom" onclick="location.href='/products/{{product.id}}/newcomment'">Añadir comentario</button>
         </p>
       </div>
     </div>
   </div>
-</div>
-
-
-
-{{>footer}}
+</main>
+{{>footer2}}

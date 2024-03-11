@@ -9,10 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.godfathercapybara.capybara.model.Capybara; 
+import com.godfathercapybara.capybara.model.Capybara;
+
 @Service
 public class CapybaraService {
-    
+
 	@Autowired
 	private ImageService imageService;
 
@@ -35,43 +36,47 @@ public class CapybaraService {
 	}
 
 	public Capybara save(Capybara capybara, MultipartFile imageField) {
-		
-		if (imageField != null && !imageField.isEmpty()){
+
+		if (imageField != null && !imageField.isEmpty()) {
 			String path = imageService.createImage(imageField);
 			capybara.setImage(path);
 		}
 
-		if(capybara.getImage() == null || capybara.getImage().isEmpty()) capybara.setImage("no-image.png");
+		if (capybara.getImage() == null || capybara.getImage().isEmpty())
+			capybara.setImage("no-image.png");
 
 		long id = nextId.getAndIncrement();
 		capybara.setId(id);
 		capybaras.put(id, capybara);
 		return capybara;
 	}
-	
+
 	public void delete(long id) {
 		capybaras.remove(id);
 	}
+
 	public Capybara findCapybaraById(long id) {
 		return capybaras.get(id);
 	}
+
 	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField) {
 
-		if (imageField != null && !imageField.isEmpty()){
+		if (imageField != null && !imageField.isEmpty()) {
 			String path = imageService.createImage(imageField);
 			capybara.setImage(path);
 		}
 
-		if(capybara.getImage() == null || capybara.getImage().isEmpty()) {
+		if (capybara.getImage() == null || capybara.getImage().isEmpty()) {
 			Capybara existingCapybara = capybaras.get(id);
 			if (existingCapybara != null) {
 				capybara.setImage(existingCapybara.getImage());
 			}
 		}
-	
+
 		capybaras.put(id, capybara);
-	
+
 	}
+
 	public void sponsorCapybara(long id, boolean isSponsored) {
 		Capybara capybara = capybaras.get(id);
 		if (capybara != null) {
@@ -79,5 +84,5 @@ public class CapybaraService {
 			capybaras.put(id, capybara);
 		}
 	}
-	
+
 }
