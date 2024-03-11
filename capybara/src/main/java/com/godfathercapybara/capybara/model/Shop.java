@@ -14,7 +14,7 @@ public class Shop {
 	}
 
 	@JsonView(Basic.class)
-	private long id = 0;
+	private Long id = null;
 
 	@JsonView(Basic.class)
 	private String name;

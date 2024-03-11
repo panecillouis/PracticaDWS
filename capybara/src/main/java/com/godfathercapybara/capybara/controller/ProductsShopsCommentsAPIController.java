@@ -44,24 +44,16 @@ public class ProductsShopsCommentsAPIController {
 
 	@JsonView(Product.Basic.class)
 	@GetMapping("/products/")
-	public ResponseEntity<List<Product>> getProducts() {
+	public List<Product> getProducts() {
 		List<Product> products = productService.findAll();
-		if (products != null) {
-			return ResponseEntity.ok(products);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return products;
 	}
 
 	@JsonView(Shop.Basic.class)
 	@GetMapping("/shops/")
-	public ResponseEntity<List<Shop>> getShops() {
+	public List<Shop> getShops() {
 		List<Shop> shops = shopService.findAll();
-		if (shops != null) {
-			return ResponseEntity.ok(shops);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return shops;
 	}
 
 	interface ProductDetail extends Product.Basic, Product.Comments, Product.Shops, Shop.Basic, Comment.Basic {
@@ -165,7 +157,7 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@DeleteMapping("/products/{id}/comments/{commentId}")
-	public ResponseEntity<Void> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
+	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
 		List<Product> products = productService.findAll();
 		int productId = Integer.parseInt(String.valueOf(id));
 		Product product = products.get(productId);
@@ -185,7 +177,7 @@ public class ProductsShopsCommentsAPIController {
 		productService.updateProduct(product, id, null);
 		commentService.delete(commentId);
 
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok(comment);
 	}
 
 	interface ShopDetail extends Shop.Basic, Shop.Products, Product.Basic {
@@ -210,8 +202,12 @@ public class ProductsShopsCommentsAPIController {
 		List<Shop> shops = shopService.findAll();
 		int shopId = Integer.parseInt(String.valueOf(id));
 		Shop shop = shops.get(shopId);
-		shopService.delete(shop.getId());
-		return ResponseEntity.ok(shop);
+		if(shop != null) {
+			shopService.delete(shop.getId());
+			return ResponseEntity.ok(shop);
+		}
+		return ResponseEntity.notFound().build();
+		
 
 	}
 
