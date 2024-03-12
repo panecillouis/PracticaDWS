@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
-import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ProductService;
+import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 @Controller
@@ -45,7 +45,7 @@ public class ShopWebController {
 			model.addAttribute("shop", shop.get());
 			return "shop";
 		} else {
-			return "shops";
+			return "redirect:/shops";
 		}
 
 	}

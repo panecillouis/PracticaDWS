@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.service.ImageService;
@@ -57,7 +56,7 @@ public class ProductWebController {
 			model.addAttribute("product", product.get());
 			return "product";
 		} else {
-			return "products";
+			return "redirect:/products";
 		}
 
 	}

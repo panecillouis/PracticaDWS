@@ -55,7 +55,7 @@ public class CapybaraWebController {
 			model.addAttribute("capybara", capybara.get());
 			return "capybara";
 		} else {
-			return "error";
+			return "redirect:/capybaras";
 		}
 
 	}
