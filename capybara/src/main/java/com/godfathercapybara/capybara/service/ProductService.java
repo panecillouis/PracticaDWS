@@ -12,12 +12,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
+import com.godfathercapybara.capybara.model.Shop;
 
 @Service
 public class ProductService {
 
 	@Autowired
 	private ImageService imageService;
+	@Autowired
+	private ShopService shopService;
 
 	private AtomicLong nextId = new AtomicLong(1L);
 	private ConcurrentHashMap<Long, Product> products = new ConcurrentHashMap<>();
@@ -103,6 +106,22 @@ public class ProductService {
 
 		products.put(id, product);
 
+	}
+
+	public void addShop(Shop shop, long productId) {
+		Product product = products.get(productId);
+		List<Shop> shops = product.getShops();
+		shops.add(shop);
+		product.setShops(shops);
+		products.put(productId, product);
+	}
+
+	public void deleteShop(long shopId, long productId) {
+		Product product = products.get(productId);
+		List<Shop> shops = product.getShops();
+		shops.remove(shopService.findById(shopId).get());
+		product.setShops(shops);
+		products.put(productId, product);
 	}
 
 }

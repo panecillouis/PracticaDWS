@@ -101,7 +101,7 @@ public class ProductWebController {
 				List<Shop> shops = shopService.findByIds(selectedShops);
 				product.setShops(shops);
 				for (Shop shop : shops) {
-					shop.getProducts().add(product);
+					shopService.addProduct(product, shop.getId());
 				}
 			}
 
@@ -122,7 +122,12 @@ public class ProductWebController {
 
 			// Delete the image
 			imageService.deleteImage(existingProduct.getImage());
-			// Delete the capybara
+			// Delete the product from the shops
+			List<Shop> shops = existingProduct.getShops();
+			for (Shop shop : shops) {
+				shopService.deleteProduct(id, shop.getId());
+			}
+			// Delete the product
 			productService.delete(id);
 		}
 		model.addAttribute("name", product.get().getName());

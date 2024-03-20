@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -82,6 +83,10 @@ public class ProductsShopsCommentsAPIController {
 		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
 			imageService.deleteImage(product.getImage());
+			List<Shop> shops = product.getShops();
+			for (Shop shop : shops) {
+				shopService.deleteProduct(id, shop.getId());
+			}
 			productService.delete(product.getId());
 			return ResponseEntity.ok(product);
 		} else {
@@ -91,8 +96,19 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/products/")
-	public ResponseEntity<Product> createProduct(@RequestBody Product product, MultipartFile imageField) {
+	public ResponseEntity<Product> createProduct(@RequestBody Product product, MultipartFile imageField, @RequestParam(required = false) List<Long> selectedShops) {
+		
+		if (selectedShops != null) {
+			List<Shop> shops = shopService.findByIds(selectedShops);
+			product.setShops(shops);
+			for (Shop shop : shops) {
+				shopService.addProduct(product, shop.getId());
+			}
+		}
+		
+	
 		productService.save(product, imageField);
+
 		URI location = fromCurrentRequest().path("/{id}").buildAndExpand(product.getId()).toUri();
 
 		return ResponseEntity.created(location).body(product);
@@ -193,7 +209,11 @@ public class ProductsShopsCommentsAPIController {
 		Optional<Shop> shopOptional = shopService.findById(id);
 		if (shopOptional.isPresent()) {
 			Shop shop = shopOptional.get();
-			shopService.delete(shop.getId());
+			List<Product> products = shop.getProducts();
+			for(Product product : products) {
+				productService.deleteShop(id, product.getId());
+			}
+			shopService.delete(id);
 			return ResponseEntity.ok(shop);
 
 		} else {
@@ -203,10 +223,17 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/shops/")
-	public ResponseEntity<Shop> createShop(@RequestBody Shop shop) {
+	public ResponseEntity<Shop> createShop(@RequestBody Shop shop, @RequestParam (required=false)List <Long> selectedProducts) {
+		
+		if (selectedProducts != null){
+			List<Product> products = productService.findByIds(selectedProducts);
+			shop.setProducts(products);
+			for (Product product : products){
+				productService.addShop(shop, product.getId());
+			}
+		}
 		shopService.save(shop);
 		URI location = fromCurrentRequest().path("/{id}").buildAndExpand(shop.getId()).toUri();
-
 		return ResponseEntity.created(location).body(shop);
 	}
 

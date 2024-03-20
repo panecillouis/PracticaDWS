@@ -53,6 +53,10 @@ public class ShopWebController {
 	public String deleteShop(Model model, @PathVariable long id) {
 		Optional <Shop> shop = shopService.findById(id);
 		if(shop.isPresent()) {
+			List<Product> products = shop.get().getProducts();
+			for(Product product : products) {
+				productService.deleteShop(id, product.getId());
+			}
 			shopService.delete(id);
 		}
 		model.addAttribute("name", shop.get().getName());
@@ -81,7 +85,7 @@ public class ShopWebController {
 			List<Product> products = productService.findByIds(selectedProducts);
 			shop.setProducts(products);
 			for (Product product : products){
-				product.getShops().add(shop);
+				productService.addShop(shop, product.getId());
 			}
 		}
 

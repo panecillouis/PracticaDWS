@@ -62,8 +62,8 @@ public class DatabaseInitializer {
                 pistola.setShops(new ArrayList<>(Arrays.asList(shop1)));
                 camiseta.setShops(new ArrayList<>(Arrays.asList(shop2)));
 
-                shop1.getProducts().add(pistola);
-                shop2.getProducts().add(camiseta);
+                shop1.setProducts(new ArrayList<>(Arrays.asList(pistola)));
+                shop2.setProducts(new ArrayList<>(Arrays.asList(camiseta)));
 
                 // Save them to the 'Fake' database
                 capybaraService.save(Lola, null);

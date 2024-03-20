@@ -49,6 +49,10 @@ public class Product {
         this.type = type;
         this.price = price;
     }
+    public Product (Long id)
+    {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
@@ -129,7 +133,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", image='" + image + '\'' +
                 ", type='" + type + '\'' +
-                ", price=" + price + ",comentarios" + this.comments +
+                ", price=" + price + ",comentarios" + this.comments + ",shops" + this.shops +
                 '}';
     }
 
