@@ -4,7 +4,9 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.text.html.Option;
@@ -32,6 +34,7 @@ import com.godfathercapybara.capybara.service.CommentService;
 import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
+import com.godfathercapybara.capybara.service.ValidateService;
 
 @RequestMapping("/api")
 @RestController
@@ -44,6 +47,8 @@ public class ProductsShopsCommentsAPIController {
 	private CommentService commentService;
 	@Autowired
 	private ImageService imageService;
+	@Autowired
+	private ValidateService validateService;
 
 	@JsonView(Product.Basic.class)
 	@GetMapping("/products/")
@@ -96,22 +101,32 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/products/")
-	public ResponseEntity<Product> createProduct(@RequestBody Product product, MultipartFile imageField, @RequestParam(required = false) List<Long> selectedShops) {
-		
-		if (selectedShops != null) {
-			List<Shop> shops = shopService.findByIds(selectedShops);
-			product.setShops(shops);
-			for (Shop shop : shops) {
-				shopService.addProduct(product, shop.getId());
-			}
+	public ResponseEntity<?> createProduct(@RequestBody Product product, MultipartFile imageField,
+			@RequestParam(required = false) List<Long> selectedShops) {
+
+		String error = validateService.validateProduct(product, imageField);
+		if (error != null) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("error", error);
+			response.put("product", product);
+			return ResponseEntity.badRequest().body(response);
 		}
-		
-	
-		productService.save(product, imageField);
 
-		URI location = fromCurrentRequest().path("/{id}").buildAndExpand(product.getId()).toUri();
+		else {
+			if (selectedShops != null) {
+				List<Shop> shops = shopService.findByIds(selectedShops);
+				product.setShops(shops);
+				for (Shop shop : shops) {
+					shopService.addProduct(product, shop.getId());
+				}
+			}
 
-		return ResponseEntity.created(location).body(product);
+			productService.save(product, imageField);
+
+			URI location = fromCurrentRequest().path("/{id}").buildAndExpand(product.getId()).toUri();
+
+			return ResponseEntity.created(location).body(product);
+		}
 	}
 
 	@PostMapping("/products/{id}/image")
@@ -148,19 +163,26 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/products/{id}/comments/")
-	public ResponseEntity<Comment> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
+	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
 		Optional<Product> productOptional = productService.findById(id);
-
-		if (productOptional.isPresent()) {
-			Product product = productOptional.get();
-			commentService.save(comment);
-			product.addComment(comment);
-			productService.updateProduct(product, id, null);
-			URI location = fromCurrentRequest().path("/{id}").buildAndExpand(comment.getId()).toUri();
-			return ResponseEntity.created(location).body(comment);
-
+		String error = validateService.validateComment(comment);
+		if (error != null) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("error", error);
+			response.put("comment", comment);
+			return ResponseEntity.badRequest().body(response);
 		} else {
-			return ResponseEntity.notFound().build();
+			if (productOptional.isPresent()) {
+				Product product = productOptional.get();
+				commentService.save(comment);
+				product.addComment(comment);
+				productService.updateProduct(product, id, null);
+				URI location = fromCurrentRequest().path("/{id}").buildAndExpand(comment.getId()).toUri();
+				return ResponseEntity.created(location).body(comment);
+
+			} else {
+				return ResponseEntity.notFound().build();
+			}
 		}
 	}
 
@@ -210,7 +232,7 @@ public class ProductsShopsCommentsAPIController {
 		if (shopOptional.isPresent()) {
 			Shop shop = shopOptional.get();
 			List<Product> products = shop.getProducts();
-			for(Product product : products) {
+			for (Product product : products) {
 				productService.deleteShop(id, product.getId());
 			}
 			shopService.delete(id);
@@ -223,18 +245,27 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/shops/")
-	public ResponseEntity<Shop> createShop(@RequestBody Shop shop, @RequestParam (required=false)List <Long> selectedProducts) {
-		
-		if (selectedProducts != null){
-			List<Product> products = productService.findByIds(selectedProducts);
-			shop.setProducts(products);
-			for (Product product : products){
-				productService.addShop(shop, product.getId());
+	public ResponseEntity<?> createShop(@RequestBody Shop shop,
+			@RequestParam(required = false) List<Long> selectedProducts) {
+
+		String error = validateService.validateShop(shop);
+		if (error != null) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("error", error);
+			response.put("shop", shop);
+			return ResponseEntity.badRequest().body(response);
+		} else {
+			if (selectedProducts != null) {
+				List<Product> products = productService.findByIds(selectedProducts);
+				shop.setProducts(products);
+				for (Product product : products) {
+					productService.addShop(shop, product.getId());
+				}
 			}
+			shopService.save(shop);
+			URI location = fromCurrentRequest().path("/{id}").buildAndExpand(shop.getId()).toUri();
+			return ResponseEntity.created(location).body(shop);
 		}
-		shopService.save(shop);
-		URI location = fromCurrentRequest().path("/{id}").buildAndExpand(shop.getId()).toUri();
-		return ResponseEntity.created(location).body(shop);
 	}
 
 }

@@ -4,7 +4,9 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ImageService;
+import com.godfathercapybara.capybara.service.ValidateService;
 
 @RequestMapping("/api/capybaras")
 @RestController
@@ -32,7 +35,8 @@ public class CapybaraAPIController {
     private CapybaraService capybaraService;
     @Autowired
     private ImageService imageService;
-
+    @Autowired
+    private ValidateService validateService;
     @DeleteMapping("/{id}")
     public ResponseEntity<Capybara> deleteCapybara(@PathVariable long id) {
         Optional<Capybara> capybaraOptional = capybaraService.findById(id);
@@ -63,23 +67,40 @@ public class CapybaraAPIController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Capybara> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) {
+    public ResponseEntity<?> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) {
+        String error = validateService.validateCapybara(capybara, imageField);
+        if (error!= null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", error);
+            response.put("capybara", capybara);  
+            return ResponseEntity.badRequest().body(response);
+		} else {
         capybaraService.save(capybara, imageField);
         URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
         return ResponseEntity.created(location).body(capybara);
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Capybara> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara,
+    public ResponseEntity<?> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara,
             MultipartFile imageField) {
+        String error = validateService.validateUpdatedCapybara(newcapybara);
+        if (error != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", error);
+            response.put("capybara", newcapybara);
+            return ResponseEntity.badRequest().body(response);
+        }
+        else{
         Capybara capybara = capybaraService.findCapybaraById(id);
         if (capybara != null) {
             newcapybara.setId(id);
             capybaraService.updateCapybara(newcapybara, id, imageField);
-            return ResponseEntity.ok(capybara);
+            return ResponseEntity.ok(newcapybara);
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
     }
 
     @PostMapping("/{id}/image")

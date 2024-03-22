@@ -137,10 +137,12 @@ public class ValidateService {
         if (descriptionError != null) {
             return descriptionError;
         }
+        /*/ 
         String imageError = validateImage(imageField);
         if (imageError != null) {
             return imageError;
         }
+         /*/
         return null; // Producto válido
     }
 
@@ -173,10 +175,12 @@ public class ValidateService {
         if (descriptionError != null) {
             return descriptionError;
         }
+        /*/
         String imageError = validateImage(imageField);
         if (imageError != null) {
             return imageError;
         }
+        /*/
         String colorError = validateColor(capybara.getColor());
         if (colorError != null) {
             return colorError;
