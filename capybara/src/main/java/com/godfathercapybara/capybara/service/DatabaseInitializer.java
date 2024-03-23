@@ -1,10 +1,13 @@
 package com.godfathercapybara.capybara.service;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +24,7 @@ public class DatabaseInitializer {
         @Autowired
         private ProductService productService;
 
-        @Autowired
-        private ShopService shopService;
+       
         @Autowired
         private CapybaraService capybaraService;
         @Autowired
@@ -31,23 +33,23 @@ public class DatabaseInitializer {
         @PostConstruct
         public void init() throws IOException {
 
-                // Create some shops
-                Shop shop1 = new Shop("CapibaraSuplementos",
-                                "Monterrey 47-1er piso, Roma Nte., Cuauhtémoc, 06700 Ciudad de México, CDMX, México");
-                Shop shop2 = new Shop("CapibaraSuplementosMadrid", "C. de Pelayo, 46, Centro, 28004 Madrid");
-
+                
+               
                 // Create some capybaras
                 Capybara Lola = new Capybara("Hembra", "Blanco", 450,
                                 "Tiene problemas de pulmón.", "Lola Lolita", true);
                 Lola.setImage("Lola.jpg");
-
+                Lola.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/Lola.jpg"))));
                 Capybara Fernanda = new Capybara("Hembra", "Verdoso", 1000, "Es una especie rarísima de Ompabara",
                                 "Fernanda");
                 Fernanda.setImage("Fernanda.jpg");
+                Fernanda.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/Fernanda.jpg"))));
                 Product pistola = new Product("Pistola", "Arma básica en defensa de capibaras", "Arma", 3092);
                 pistola.setImage("pistola.jpg");
+                pistola.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/pistola.jpg"))));
                 Product camiseta = new Product("Camiseta", "Camiseta para tu capibara", "Ropa", 15);
                 camiseta.setImage("camiseta.jpg");
+                camiseta.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/camiseta.jpg"))));
                 Comment comment1 = new Comment(
                                 "Quería compartir mi experiencia con la pistola que compré hace unos meses. He sido un aficionado a las armas de fuego durante muchos años y he probado diferentes marcas y modelos, pero esta pistola realmente me ha impresionado.",
                                 "Juan Pérez");
@@ -59,19 +61,15 @@ public class DatabaseInitializer {
 
                 pistola.setComments(new ArrayList<>(Arrays.asList(comment1, comment3)));
                 camiseta.setComments(new ArrayList<>(Arrays.asList(comment2)));
-                pistola.setShops(new ArrayList<>(Arrays.asList(shop1)));
-                camiseta.setShops(new ArrayList<>(Arrays.asList(shop2)));
 
-                shop1.setProducts(new ArrayList<>(Arrays.asList(pistola)));
-                shop2.setProducts(new ArrayList<>(Arrays.asList(camiseta)));
 
                 // Save them to the 'Fake' database
                 capybaraService.save(Lola, null);
                 capybaraService.save(Fernanda, null);
+                
                 productService.save(pistola, null);
                 productService.save(camiseta, null);
-                shopService.save(shop1);
-                shopService.save(shop2);
+
                 commentService.save(comment1);
                 commentService.save(comment2);
                 commentService.save(comment3);

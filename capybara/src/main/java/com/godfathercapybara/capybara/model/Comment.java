@@ -2,23 +2,29 @@ package com.godfathercapybara.capybara.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity 
 public class Comment {
 	public interface Basic {
 	}
 
+	@Id @JsonView(Basic.class) @GeneratedValue(strategy= GenerationType.AUTO)
+	private Long id;
 	@JsonView(Basic.class)
-	private Long id = null;
-	@JsonView(Basic.class)
-	private String comment;
+	private String text;
 	@JsonView(Basic.class)
 	private String author;
 
 	public Comment() {
 	}
 
-	public Comment(String comment, String author) {
+	public Comment(String text, String author) {
 		super();
-		this.comment = comment;
+		this.text = text;
 		this.author = author;
 
 	}
@@ -31,12 +37,12 @@ public class Comment {
 		this.id = id;
 	}
 
-	public String getComment() {
-		return this.comment;
+	public String getText() {
+		return this.text;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	public String getAuthor() {
@@ -49,7 +55,7 @@ public class Comment {
 
 	@Override
 	public String toString() {
-		return "Comment [id=" + id + ", comment=" + comment + ", author=" + author + "]";
+		return "Comment [id=" + id + ", comment=" + text + ", author=" + author + "]";
 	}
 
 }

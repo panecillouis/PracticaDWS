@@ -1,127 +1,114 @@
 package com.godfathercapybara.capybara.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
-import com.godfathercapybara.capybara.model.Shop;
+import com.godfathercapybara.capybara.repository.ProductRepository;
 
 @Service
 public class ProductService {
 
+	
+	
 	@Autowired
-	private ImageService imageService;
-	@Autowired
-	private ShopService shopService;
+	private ProductRepository productRepository;
 
 	private AtomicLong nextId = new AtomicLong(1L);
-	private ConcurrentHashMap<Long, Product> products = new ConcurrentHashMap<>();
 
 	public Optional<Product> findById(long id) {
-		if (this.products.containsKey(id)) {
-			return Optional.of(this.products.get(id));
+		if (this.exist(id)) {
+			return Optional.of(productRepository.findById(id).orElseThrow());
 		}
 		return Optional.empty();
 	}
 
 	public boolean exist(long id) {
-		return this.products.containsKey(id);
+		return productRepository.existsById(id);
 	}
 
 	public void addComment(long id, Comment comment) {
 		if (this.exist(id)) {
-			Product product = this.products.get(id);
+			Product product = productRepository.findById(id).orElseThrow();
 			List<Comment> comments = product.getComments();
 			comments.add(comment);
 			product.setComments(comments);
-			products.put(id, product);
+			productRepository.save(product);
+			
 		}
 	}
 
 	public void deleteComment(long id, long idComment) {
 		if (this.exist(id)) {
-			Product product = this.products.get(id);
+			Product product = productRepository.findById(id).orElseThrow();
 			List<Comment> comments = product.getComments();
 			comments.removeIf(comment -> comment.getId() == idComment);
 			product.setComments(comments);
-			products.put(id, product);
+			productRepository.save(product);
 		}
 	}
 
 	public List<Product> findAll() {
-		return this.products.values().stream().toList();
+		return productRepository.findAll();
 	}
 
 	public List<Product> findByIds(List<Long> ids) {
 		List<Product> products = new ArrayList<>();
 		for (long id : ids) {
-			products.add(this.products.get(id));
+			products.add(productRepository.findById(id).orElseThrow());
 		}
 		return products;
 	}
 
-	public Product save(Product Product, MultipartFile imageField) {
-
+	public Product save(Product product, MultipartFile imageField) throws IOException {
+		
 		if (imageField != null && !imageField.isEmpty()) {
-			String path = imageService.createImage(imageField);
-			Product.setImage(path);
+			product.setImage(imageField.getOriginalFilename());
+			product.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));;
 		}
 
-		if (Product.getImage() == null || Product.getImage().isEmpty())
-			Product.setImage("no-image.png");
-
+		else if (product.getImage() == null || product.getImage().isEmpty())
+		{	
+			product.setImage("no-image.png");
+			product.setImageFile(null);
+		}
 		long id = nextId.getAndIncrement();
-		Product.setId(id);
-		products.put(id, Product);
-		return Product;
+		product.setId(id);
+		productRepository.save(product);
+		return product;
+		
 	}
 
 	public void delete(long id) {
-		products.remove(id);
+		productRepository.deleteById(id);
 	}
 
-	public void updateProduct(Product product, long id, MultipartFile imageField) {
+	public void updateProduct(Product product, long id, MultipartFile imageField) throws IOException {
 
 		if (imageField != null && !imageField.isEmpty()) {
-			String path = imageService.createImage(imageField);
-			product.setImage(path);
+			product.setImage(imageField.getOriginalFilename());
+        	product.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
-
-		if (product.getImage() == null || product.getImage().isEmpty()) {
-			Optional<Product> productOptional = findById(id);
-
-			Product existingProduct = productOptional.get();
-			if (existingProduct != null) {
-				product.setImage(existingProduct.getImage());
-			}
+		
+		else if (product.getImage() == null || product.getImage().isEmpty()) {
+			Product existingProduct = productRepository.findById(id).orElseThrow();
+			product.setImageFile(existingProduct.getImageFile());
+			product.setImage(existingProduct.getImage());
 		}
-
-		products.put(id, product);
+		
+		productRepository.save(product);
 
 	}
 
-	public void addShop(Shop shop, long productId) {
-		Product product = products.get(productId);
-		List<Shop> shops = product.getShops();
-		shops.add(shop);
-		product.setShops(shops);
-		products.put(productId, product);
-	}
-
-	public void deleteShop(long shopId, long productId) {
-		Product product = products.get(productId);
-		List<Shop> shops = product.getShops();
-		shops.remove(shopService.findById(shopId).get());
-		product.setShops(shops);
-		products.put(productId, product);
-	}
+	
 
 }

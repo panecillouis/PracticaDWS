@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,11 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.service.CapybaraService;
-import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 @RequestMapping("/api/capybaras")
@@ -34,15 +33,14 @@ public class CapybaraAPIController {
     @Autowired
     private CapybaraService capybaraService;
     @Autowired
-    private ImageService imageService;
-    @Autowired
     private ValidateService validateService;
+    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Capybara> deleteCapybara(@PathVariable long id) {
         Optional<Capybara> capybaraOptional = capybaraService.findById(id);
         if (capybaraOptional.isPresent()) {
             Capybara capybara = capybaraOptional.get();
-            imageService.deleteImage(capybara.getImage());
             capybaraService.delete(capybara.getId());
             return ResponseEntity.ok(capybara);
         } else {
@@ -52,8 +50,8 @@ public class CapybaraAPIController {
 
     @GetMapping("/")
     public List<Capybara> getAllCapybaras() {
-        List<Capybara> capybaras = capybaraService.findAll();
-        return capybaras;
+
+        return capybaraService.findAll();
     }
 
     @GetMapping("/{id}")
@@ -67,40 +65,39 @@ public class CapybaraAPIController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) {
+    public ResponseEntity<?> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) throws IOException {
         String error = validateService.validateCapybara(capybara, imageField);
-        if (error!= null) {
+        if (error != null) {
             Map<String, Object> response = new HashMap<>();
             response.put("error", error);
-            response.put("capybara", capybara);  
+            response.put("capybara", capybara);
             return ResponseEntity.badRequest().body(response);
-		} else {
-        capybaraService.save(capybara, imageField);
-        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
-        return ResponseEntity.created(location).body(capybara);
+        } else {
+            capybaraService.save(capybara, imageField);
+            URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
+            return ResponseEntity.created(location).body(capybara);
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara,
-            MultipartFile imageField) {
+            MultipartFile imageField) throws IOException {
         String error = validateService.validateUpdatedCapybara(newcapybara);
         if (error != null) {
             Map<String, Object> response = new HashMap<>();
             response.put("error", error);
             response.put("capybara", newcapybara);
             return ResponseEntity.badRequest().body(response);
-        }
-        else{
-        Capybara capybara = capybaraService.findCapybaraById(id);
-        if (capybara != null) {
-            newcapybara.setId(id);
-            capybaraService.updateCapybara(newcapybara, id, imageField);
-            return ResponseEntity.ok(newcapybara);
         } else {
-            return ResponseEntity.notFound().build();
+            Optional<Capybara> capybaraOptional = capybaraService.findById(id);
+            if (capybaraOptional.isPresent()) {
+                newcapybara.setId(id);
+                capybaraService.updateCapybara(newcapybara, id, imageField);
+                return ResponseEntity.ok(newcapybara);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
-    }
     }
 
     @PostMapping("/{id}/image")
@@ -108,30 +105,21 @@ public class CapybaraAPIController {
             throws IOException {
 
         Capybara capybara = capybaraService.findCapybaraById(id);
+        URI location = fromCurrentRequest().build().toUri();
+        capybara.setImage(location.toString());
+        capybara.setImageFile(BlobProxy.generateProxy(image.getInputStream(), image.getSize()));
+        capybaraService.updateCapybara(capybara, id, image);
+        return ResponseEntity.created(location).build();
 
-        if (capybara != null) {
-            String path = imageService.createImage(image);
-            capybara.setImage(path);
-            capybaraService.updateCapybara(capybara, id, null); // Update the Capybara without changing the image
-
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-            return ResponseEntity.created(location).build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @DeleteMapping("/{id}/image")
     public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
         Capybara capybara = capybaraService.findCapybaraById(id);
 
-        if (capybara != null) {
-            imageService.deleteImage(capybara.getImage());
-            capybara.setImage(null);
-            capybaraService.updateCapybara(capybara, id, null); // Update the Capybara without the image
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        capybara.setImage("no-image.png");
+        capybara.setImageFile(null);
+        capybaraService.updateCapybara(capybara, id, null);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.godfathercapybara.capybara.controller;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class CommentWebController {
     }
 
     @PostMapping("/products/{id}/newcomment")
-    public String newCommentProcess(Model model, @PathVariable long id, Comment comment) {
+    public String newCommentProcess(Model model, @PathVariable long id, Comment comment) throws IOException {
         if (validateService.validateComment(comment) != null) {
             model.addAttribute("error", validateService.validateComment(comment));
             model.addAttribute("comment", comment);
@@ -42,8 +43,9 @@ public class CommentWebController {
         } else {
             Optional<Product> productOptional = productService.findById(id);
             if (productOptional.isPresent()) {
-                productService.addComment(id, comment);
                 commentService.save(comment);
+                productService.addComment(id, comment);
+
                 return "redirect:/products/" + id;
             } else {
                 return "products";

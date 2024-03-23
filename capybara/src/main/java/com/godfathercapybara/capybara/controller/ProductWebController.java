@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
-import com.godfathercapybara.capybara.service.ImageService;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
@@ -33,9 +31,6 @@ public class ProductWebController {
 
 	@Autowired
 	private ProductService productService;
-
-	@Autowired
-	private ImageService imageService;
 
 	@Autowired
 	private ValidateService validateService;
@@ -69,15 +64,19 @@ public class ProductWebController {
 	@GetMapping("/products/{id}/image")
 	public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
-		Optional<Product> op = productService.findById(id);
-
-		if (op.isPresent()) {
-			Product product = op.get();
-			Resource image = imageService.getImage(product.getImage());
-			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(image);
+		Optional<Product> productOptional = productService.findById(id);
+		Product product = productOptional.get();
+		if (product.getImageFile() != null) {
+			@SuppressWarnings("null")
+			Resource file = new InputStreamResource(product.getImageFile().getBinaryStream());
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
+					.contentLength(product.getImageFile().length())
+					.body(file);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
+			return ResponseEntity.notFound().build();
 		}
+
 	}
 
 	@GetMapping("/newproduct")
@@ -100,9 +99,10 @@ public class ProductWebController {
 			if (selectedShops != null) {
 				List<Shop> shops = shopService.findByIds(selectedShops);
 				product.setShops(shops);
-				for (Shop shop : shops) {
-					shopService.addProduct(product, shop.getId());
+				for(Shop shop : shops) {
+					shop.getProducts().add(product);
 				}
+				
 			}
 
 			Product newProduct = productService.save(product, imageField);
@@ -120,12 +120,10 @@ public class ProductWebController {
 		if (product.isPresent()) {
 			Product existingProduct = product.get();
 
-			// Delete the image
-			imageService.deleteImage(existingProduct.getImage());
 			// Delete the product from the shops
 			List<Shop> shops = existingProduct.getShops();
 			for (Shop shop : shops) {
-				shopService.deleteProduct(id, shop.getId());
+				shop.getProducts().remove(existingProduct);
 			}
 			// Delete the product
 			productService.delete(id);

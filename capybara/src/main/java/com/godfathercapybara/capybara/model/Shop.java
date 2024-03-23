@@ -5,6 +5,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+@Entity
 public class Shop {
 
 	public interface Basic {
@@ -12,9 +19,9 @@ public class Shop {
 
 	public interface Products {
 	}
-
+	@Id @GeneratedValue(strategy= GenerationType.AUTO)
 	@JsonView(Basic.class)
-	private Long id = null;
+	private Long id;
 
 	@JsonView(Basic.class)
 	private String name;
@@ -22,6 +29,7 @@ public class Shop {
 	@JsonView(Basic.class)
 	private String address;
 
+	@ManyToMany(cascade=CascadeType.MERGE)
 	@JsonView(Products.class)
 	private List<Product> products = new ArrayList<>();
 
@@ -59,7 +67,7 @@ public class Shop {
 	}
 
 	public List<Product> getProducts() {
-		return products;
+		return this.products;
 	}
 
 	public void setProducts(List<Product> products) {

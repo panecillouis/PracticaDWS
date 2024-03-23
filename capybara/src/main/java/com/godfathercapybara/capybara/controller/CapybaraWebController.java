@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.godfathercapybara.capybara.model.Capybara;
+import com.godfathercapybara.capybara.repository.CapybaraRepository;
 import com.godfathercapybara.capybara.service.CapybaraService;
-import com.godfathercapybara.capybara.service.ImageService;
+
 import com.godfathercapybara.capybara.service.ValidateService;
 
 @Controller
@@ -29,10 +29,11 @@ public class CapybaraWebController {
 	@Autowired
 	private CapybaraService capybaraService;
 
-	@Autowired
-	private ImageService imageService;
+	
 	@Autowired
 	private ValidateService validateService;
+	@Autowired
+	private CapybaraRepository capybaraRepository;
 
 	@GetMapping("/")
 	public String showHome() {
@@ -63,14 +64,17 @@ public class CapybaraWebController {
 	@GetMapping("/capybaras/{id}/image")
 	public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
-		Optional<Capybara> op = capybaraService.findById(id);
-
-		if (op.isPresent()) {
-			Capybara capybara = op.get();
-			Resource image = imageService.getImage(capybara.getImage());
-			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(image);
+		Capybara capybara = capybaraRepository.findById(id).orElseThrow();
+		if (capybara.getImageFile() != null) {
+			@SuppressWarnings("null")
+			Resource file = new InputStreamResource(
+					capybara.getImageFile().getBinaryStream());
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
+					.contentLength(capybara.getImageFile().length())
+					.body(file);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
+			return ResponseEntity.notFound().build();
 		}
 	}
 
@@ -101,12 +105,7 @@ public class CapybaraWebController {
 	public String deleteCapybara(Model model, @PathVariable long id) {
 		Optional<Capybara> capybara = capybaraService.findById(id);
 
-		if (capybara.isPresent()) {
-			Capybara existingCapybara = capybara.get();
-
-			// Delete the image
-			imageService.deleteImage(existingCapybara.getImage());
-			// Delete the capybara
+		if (capybara.isPresent()){
 			capybaraService.delete(id);
 		}
 		model.addAttribute("name", capybara.get().getName());

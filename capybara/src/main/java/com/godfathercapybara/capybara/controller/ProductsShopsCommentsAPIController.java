@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
-import org.apache.catalina.connector.Response;
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,17 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.service.CommentService;
-import com.godfathercapybara.capybara.service.ImageService;
+
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
@@ -45,8 +40,7 @@ public class ProductsShopsCommentsAPIController {
 	private ProductService productService;
 	@Autowired
 	private CommentService commentService;
-	@Autowired
-	private ImageService imageService;
+
 	@Autowired
 	private ValidateService validateService;
 
@@ -87,10 +81,9 @@ public class ProductsShopsCommentsAPIController {
 
 		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
-			imageService.deleteImage(product.getImage());
 			List<Shop> shops = product.getShops();
 			for (Shop shop : shops) {
-				shopService.deleteProduct(id, shop.getId());
+				shop.getProducts().remove(product);
 			}
 			productService.delete(product.getId());
 			return ResponseEntity.ok(product);
@@ -102,7 +95,7 @@ public class ProductsShopsCommentsAPIController {
 
 	@PostMapping("/products/")
 	public ResponseEntity<?> createProduct(@RequestBody Product product, MultipartFile imageField,
-			@RequestParam(required = false) List<Long> selectedShops) {
+			@RequestParam(required = false) List<Long> selectedShops) throws IOException {
 
 		String error = validateService.validateProduct(product, imageField);
 		if (error != null) {
@@ -117,7 +110,7 @@ public class ProductsShopsCommentsAPIController {
 				List<Shop> shops = shopService.findByIds(selectedShops);
 				product.setShops(shops);
 				for (Shop shop : shops) {
-					shopService.addProduct(product, shop.getId());
+					shop.getProducts().add(product);
 				}
 			}
 
@@ -134,36 +127,29 @@ public class ProductsShopsCommentsAPIController {
 			throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
 
-		if (productOptional.isPresent()) {
-			Product product = productOptional.get();
-			String path = imageService.createImage(image);
-			product.setImage(path);
-			productService.updateProduct(product, id, null);
+		Product product = productOptional.get();
+		URI location = fromCurrentRequest().build().toUri();
+		product.setImage(location.toString());
+		product.setImageFile(BlobProxy.generateProxy(image.getInputStream(), image.getSize()));
+		productService.updateProduct(product, id, image);
+		return ResponseEntity.created(location).build();
 
-			URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-			return ResponseEntity.created(location).build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
 	}
 
 	@DeleteMapping("/products/{id}/image")
 	public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
+		Product product = productOptional.get();
+		product.setImage("no-image.png");
+		product.setImageFile(null);
+		productService.updateProduct(product, id, null);
+		return ResponseEntity.noContent().build();
 
-		if (productOptional.isPresent()) {
-			Product product = productOptional.get();
-			imageService.deleteImage(product.getImage());
-			product.setImage(null);
-			productService.updateProduct(product, id, null);
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
 	}
 
 	@PostMapping("/products/{id}/comments/")
-	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment) {
+	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment)
+			throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
 		String error = validateService.validateComment(comment);
 		if (error != null) {
@@ -187,7 +173,8 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@DeleteMapping("/products/{id}/comments/{commentId}")
-	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId) {
+	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId)
+			throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
 		if (!productOptional.isPresent()) {
 			return ResponseEntity.notFound().build();
@@ -201,7 +188,7 @@ public class ProductsShopsCommentsAPIController {
 		if (!product.getComments().contains(comment)) {
 			return ResponseEntity.badRequest().build();
 		}
-		product.removeComment(comment);
+		productService.deleteComment(id, commentId);
 		productService.updateProduct(product, id, null);
 		commentService.delete(commentId);
 
@@ -227,13 +214,13 @@ public class ProductsShopsCommentsAPIController {
 
 	@JsonView(ShopDetail.class)
 	@DeleteMapping("/shops/{id}")
-	public ResponseEntity<Shop> deleteShop(@PathVariable long id) {
+	public ResponseEntity<Shop> deleteShop(@PathVariable long id) throws IOException {
 		Optional<Shop> shopOptional = shopService.findById(id);
 		if (shopOptional.isPresent()) {
 			Shop shop = shopOptional.get();
 			List<Product> products = shop.getProducts();
 			for (Product product : products) {
-				productService.deleteShop(id, product.getId());
+				product.getShops().remove(shop);
 			}
 			shopService.delete(id);
 			return ResponseEntity.ok(shop);
@@ -246,7 +233,7 @@ public class ProductsShopsCommentsAPIController {
 
 	@PostMapping("/shops/")
 	public ResponseEntity<?> createShop(@RequestBody Shop shop,
-			@RequestParam(required = false) List<Long> selectedProducts) {
+			@RequestParam(required = false) List<Long> selectedProducts) throws IOException {
 
 		String error = validateService.validateShop(shop);
 		if (error != null) {
@@ -259,7 +246,7 @@ public class ProductsShopsCommentsAPIController {
 				List<Product> products = productService.findByIds(selectedProducts);
 				shop.setProducts(products);
 				for (Product product : products) {
-					productService.addShop(shop, product.getId());
+					product.getShops().add(shop);
 				}
 			}
 			shopService.save(shop);

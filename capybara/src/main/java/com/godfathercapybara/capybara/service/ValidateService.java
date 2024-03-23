@@ -100,8 +100,8 @@ public class ValidateService {
         return null;
     }
 
-    public String validateComment(String comment) {
-        if (comment.isEmpty()) {
+    public String validateText(String text) {
+        if (text.isEmpty()) {
             return "El campo comentario no puede ser nulo";
         }
 
@@ -151,9 +151,9 @@ public class ValidateService {
         if (authorError != null) {
             return authorError;
         }
-        String commentError = validateComment(comment.getComment());
-        if (commentError != null) {
-            return commentError;
+        String textError = validateText(comment.getText());
+        if (textError != null) {
+            return textError;
         }
         return null; // Comentario válido
     }

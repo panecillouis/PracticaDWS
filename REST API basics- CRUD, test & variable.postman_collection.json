@@ -221,7 +221,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 3,\r\n    \"sex\": \"Hembra\",\r\n    \"color\": \"Marroncita\",\r\n    \"price\": \"IO\",\r\n    \"description\": \"En verdad no necesita que la apadrinen, ella es autosuficiente pero quiere algo de dinero.\",\r\n    \"name\": \"Trinidad\",\r\n    \"image\": \"Manola.jpg\",\r\n    \"isSponsored\": false\r\n}"
+							"raw": "{\r\n    \"id\": 3,\r\n    \"sex\": \"Hembra\",\r\n    \"color\": \"Marrona\",\r\n    \"price\": \"10\",\r\n    \"description\": \"En verdad no necesita que la apadrinen, ella es autosuficiente pero quiere algo de dinero.\",\r\n    \"name\": \"Trinidad\",\r\n    \"isSponsored\": false\r\n}"
 						},
 						"url": {
 							"raw": "localhost:8080/api/capybaras/3",
@@ -802,7 +802,8 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -822,7 +823,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "   {\r\n            \"comment\": \"Matadora, 3 de un tiro\",\r\n            \"author\": \"Mafia02\"\r\n    }"
+							"raw": "   {\r\n            \"text\": \"Matadora, 3 de un tiro\",\r\n            \"author\": \"Mafia02\"\r\n    }"
 						},
 						"url": {
 							"raw": "localhost:8080/api/products/1/comments/",

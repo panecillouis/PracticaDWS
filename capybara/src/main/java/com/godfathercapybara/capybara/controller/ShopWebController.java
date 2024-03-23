@@ -50,12 +50,12 @@ public class ShopWebController {
 
 	}
 	@GetMapping("/shops/{id}/delete")
-	public String deleteShop(Model model, @PathVariable long id) {
+	public String deleteShop(Model model, @PathVariable long id) throws IOException {
 		Optional <Shop> shop = shopService.findById(id);
 		if(shop.isPresent()) {
 			List<Product> products = shop.get().getProducts();
 			for(Product product : products) {
-				productService.deleteShop(id, product.getId());
+				product.getShops().remove(shop.get());
 			}
 			shopService.delete(id);
 		}
@@ -84,8 +84,8 @@ public class ShopWebController {
 		if (selectedProducts != null){
 			List<Product> products = productService.findByIds(selectedProducts);
 			shop.setProducts(products);
-			for (Product product : products){
-				productService.addShop(shop, product.getId());
+			for(Product product : products) {
+				product.getShops().add(shop);
 			}
 		}
 

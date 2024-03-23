@@ -1,88 +1,87 @@
 package com.godfathercapybara.capybara.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Capybara;
+import com.godfathercapybara.capybara.repository.CapybaraRepository;
 
 @Service
 public class CapybaraService {
 
+	
 	@Autowired
-	private ImageService imageService;
+	private CapybaraRepository capybaraRepository;
 
 	private AtomicLong nextId = new AtomicLong(1L);
-	private ConcurrentHashMap<Long, Capybara> capybaras = new ConcurrentHashMap<>();
 
 	public Optional<Capybara> findById(long id) {
-		if (this.capybaras.containsKey(id)) {
-			return Optional.of(this.capybaras.get(id));
+		if (this.exist(id)) {
+			return Optional.of(this.findCapybaraById(id));
 		}
 		return Optional.empty();
 	}
 
 	public boolean exist(long id) {
-		return this.capybaras.containsKey(id);
+		return capybaraRepository.existsById(id);
 	}
 
 	public List<Capybara> findAll() {
-		return this.capybaras.values().stream().toList();
+		return capybaraRepository.findAll();
 	}
 
-	public Capybara save(Capybara capybara, MultipartFile imageField) {
+	public Capybara save(Capybara capybara, MultipartFile imageField) throws IOException {
 
 		if (imageField != null && !imageField.isEmpty()) {
-			String path = imageService.createImage(imageField);
-			capybara.setImage(path);
+			capybara.setImage(imageField.getOriginalFilename());
+			capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
 
-		if (capybara.getImage() == null || capybara.getImage().isEmpty())
-			capybara.setImage("no-image.png");
-
-		long id = nextId.getAndIncrement();
-		capybara.setId(id);
-		capybaras.put(id, capybara);
+		else if(capybara.getImage() == null || capybara.getImage().isEmpty())
+		{	capybara.setImage("no-image.png");
+			capybara.setImageFile(null);
+		}
+		capybara.setId(nextId.getAndIncrement());
+		capybaraRepository.save(capybara);
 		return capybara;
 	}
 
 	public void delete(long id) {
-		capybaras.remove(id);
+		capybaraRepository.deleteById(id);
 	}
 
 	public Capybara findCapybaraById(long id) {
-		return capybaras.get(id);
+		return capybaraRepository.findById(id).orElseThrow();
 	}
 
-	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField) {
+	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField) throws IOException {
 
 		if (imageField != null && !imageField.isEmpty()) {
-			String path = imageService.createImage(imageField);
-			capybara.setImage(path);
+			capybara.setImage(imageField.getOriginalFilename());
+        	capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
-
-		if (capybara.getImage() == null || capybara.getImage().isEmpty()) {
-			Capybara existingCapybara = capybaras.get(id);
-			if (existingCapybara != null) {
-				capybara.setImage(existingCapybara.getImage());
-			}
+		
+		else if (capybara.getImage() == null || capybara.getImage().isEmpty()) {
+			Capybara existingCapybara = capybaraRepository.findById(id).orElseThrow();
+			capybara.setImageFile(existingCapybara.getImageFile());
+			capybara.setImage(existingCapybara.getImage());
 		}
-
-		capybaras.put(id, capybara);
+		
+		capybaraRepository.save(capybara);
 
 	}
 
 	public void sponsorCapybara(long id, boolean isSponsored) {
-		Capybara capybara = capybaras.get(id);
-		if (capybara != null) {
-			capybara.setIsSponsored(isSponsored);
-			capybaras.put(id, capybara);
-		}
+		Capybara capybara = capybaraRepository.findById(id).orElse(null);
+		capybara.setIsSponsored(isSponsored);
+		capybaraRepository.save(capybara);
 	}
 
 }

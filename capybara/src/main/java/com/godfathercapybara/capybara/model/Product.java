@@ -3,9 +3,22 @@ package com.godfathercapybara.capybara.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Lob;
+import java.sql.Blob;
+
+@Entity
 public class Product {
+
     public interface Basic {
     }
 
@@ -15,8 +28,8 @@ public class Product {
     public interface Comments {
     }
 
-    @JsonView(Basic.class)
-    private Long id = null;
+    @Id @GeneratedValue(strategy= GenerationType.AUTO) @JsonView(Basic.class)
+    private Long id;
 
     @JsonView(Basic.class)
     private String description;
@@ -24,18 +37,22 @@ public class Product {
     @JsonView(Basic.class)
     private String image;
 
+    @Lob @JsonIgnore
+	private Blob imageFile;
+
     @JsonView(Basic.class)
     private String type;
 
     @JsonView(Basic.class)
     private String name;
-
     @JsonView(Basic.class)
     private double price;
 
     @JsonView(Shops.class)
+    @ManyToMany(cascade=CascadeType.MERGE)
     private List<Shop> shops = new ArrayList<>();
 
+    @OneToMany(cascade=CascadeType.ALL)
     @JsonView(Comments.class)
     public List<Comment> comments = new ArrayList<>();
 
@@ -77,7 +94,13 @@ public class Product {
     public void setImage(String image) {
         this.image = image;
     }
-
+    public Blob getImageFile() {
+		return this.imageFile;
+	}
+	
+	public void setImageFile(Blob imageFile) {
+		this.imageFile = imageFile;
+	}
     public String getType() {
         return type;
     }
@@ -103,7 +126,7 @@ public class Product {
     }
 
     public List<Shop> getShops() {
-        return new ArrayList<>(shops);
+        return this.shops;
     }
 
     public void setShops(List<Shop> shops) {

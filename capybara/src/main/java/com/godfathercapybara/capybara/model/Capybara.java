@@ -1,14 +1,28 @@
 package com.godfathercapybara.capybara.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import java.sql.Blob;
+
+
+@Entity
 public class Capybara {
 
-	private Long id = null;
-	private String sex = null;
-	private String color = null;
-	private double price = 0;
-	private String description = null;
-	private String name = null;
-	private String image = null;
+	@Id @GeneratedValue(strategy= GenerationType.AUTO) 
+	private Long id;
+	private String sex;
+	private String color;
+	private double price;
+	private String description;
+	private String name;
+	private String image;
+	@Lob @JsonIgnore
+	private Blob imageFile;
 	private boolean isSponsored = false;
 
 	public Capybara() {
@@ -91,14 +105,19 @@ public class Capybara {
 		this.name = name;
 	}
 
+	public Blob getImageFile() {
+		return this.imageFile;
+	}
+	
+	public void setImageFile(Blob imageFile) {
+		this.imageFile = imageFile;
+	}
 	public String getImage() {
 		return this.image;
 	}
-
 	public void setImage(String image) {
 		this.image = image;
 	}
-
 	@Override
 	public String toString() {
 		return "Capybara [id=" + id + ", sex=" + sex + ", color=" + color + ", price=" + price + ", description="
