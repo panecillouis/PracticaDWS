@@ -13,7 +13,7 @@ import java.sql.Blob;
 @Entity
 public class Capybara {
 
-	@Id @GeneratedValue(strategy= GenerationType.AUTO) 
+	@Id  
 	private Long id;
 	private String sex;
 	private String color;

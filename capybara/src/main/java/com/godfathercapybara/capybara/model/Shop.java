@@ -19,7 +19,7 @@ public class Shop {
 
 	public interface Products {
 	}
-	@Id @GeneratedValue(strategy= GenerationType.AUTO)
+	@Id 
 	@JsonView(Basic.class)
 	private Long id;
 

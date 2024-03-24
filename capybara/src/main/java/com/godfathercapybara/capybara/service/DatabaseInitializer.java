@@ -67,12 +67,14 @@ public class DatabaseInitializer {
                 capybaraService.save(Lola, null);
                 capybaraService.save(Fernanda, null);
                 
-                productService.save(pistola, null);
-                productService.save(camiseta, null);
-
                 commentService.save(comment1);
                 commentService.save(comment2);
                 commentService.save(comment3);
+
+                productService.save(pistola, null);
+                productService.save(camiseta, null);
+
+                
 
         }
 

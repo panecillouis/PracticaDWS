@@ -28,7 +28,7 @@ public class Product {
     public interface Comments {
     }
 
-    @Id @GeneratedValue(strategy= GenerationType.AUTO) @JsonView(Basic.class)
+    @Id  @JsonView(Basic.class)
     private Long id;
 
     @JsonView(Basic.class)

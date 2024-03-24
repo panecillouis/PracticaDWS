@@ -12,7 +12,7 @@ public class Comment {
 	public interface Basic {
 	}
 
-	@Id @JsonView(Basic.class) @GeneratedValue(strategy= GenerationType.AUTO)
+	@Id @JsonView(Basic.class) 
 	private Long id;
 	@JsonView(Basic.class)
 	private String text;
