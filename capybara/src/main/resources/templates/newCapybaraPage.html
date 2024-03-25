@@ -1,4 +1,7 @@
 {{>header}}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
 
 <form action="/newcapybara" method="post" enctype="multipart/form-data">
   <p>
@@ -13,8 +16,8 @@
   </div>
   <div>
     <p><label>Decripción:</label></p>
-    <p><textarea name="description"
-        placeholder="Descripción">{{#capybara.description}}{{capybara.description}}{{/capybara.description}}</textarea>
+    <p><textarea name="description" style="display: none;" id="description-textarea">{{#capybara.description}}{{capybara.description}}{{/capybara.description}}</textarea>
+        <div id="editor"></div>
     </p>
   </div>
   <div>
@@ -44,5 +47,12 @@
       <input type="submit" value="Guardar" />
     </p>
 </form>
-
+<script>
+  const quill = new Quill('#editor', {
+    theme: 'snow'
+  });
+  quill.on('text-change', function () {
+    document.getElementById('description-textarea').value = quill.root.innerHTML;
+  });
+</script>
 {{>footer}}
