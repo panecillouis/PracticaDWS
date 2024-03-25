@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.service.CommentService;
-
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
@@ -52,9 +52,9 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@JsonView(Shop.Basic.class)
-	@GetMapping("/shops/")
-	public List<Shop> getShops() {
-		List<Shop> shops = shopService.findAll();
+	@GetMapping("/shops")
+	public List<Shop> getShops(@RequestParam(required = false) String address) {
+		List<Shop> shops = shopService.findAll(address);
 		return shops;
 	}
 

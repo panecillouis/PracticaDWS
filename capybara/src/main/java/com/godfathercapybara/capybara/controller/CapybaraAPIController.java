@@ -48,10 +48,10 @@ public class CapybaraAPIController {
         }
     }
 
-    @GetMapping("/")
-    public List<Capybara> getAllCapybaras() {
+    @GetMapping("")
+    public List<Capybara> getAllCapybaras(@RequestParam(required = false) Boolean isSponsored, @RequestParam(required = false) Double price, @RequestParam(required = false) String sex) {
 
-        return capybaraService.findAll();
+        return capybaraService.findAll(isSponsored, price, sex);
     }
 
     @GetMapping("/{id}")

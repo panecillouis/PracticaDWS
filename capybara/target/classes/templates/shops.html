@@ -1,6 +1,18 @@
 {{>header}}
 <section id=view>
 	<h2>Tiendas</h2>
+
+	<form class="row" action="/shops">
+		<div class="col">
+			<input name="address" type="text" class="form-control" placeholder="City">
+		</div>
+		
+		<div class="col">
+			<input class="btn btn-outline-primary" type="submit" value="Search">
+		</div>
+
+	</form>
+
 	<ul class="items">
 		{{#shops}}
 		<p>

@@ -3,15 +3,16 @@ package com.godfathercapybara.capybara.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.repository.ShopRepository;
-import com.godfathercapybara.capybara.model.Product;
+
+import jakarta.persistence.EntityManager;
 
 
 @Service
@@ -19,6 +20,10 @@ public class ShopService {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private EntityManager entityManager;
+
 	@Autowired
 	private ShopRepository shopRepository;
 
@@ -46,6 +51,26 @@ public class ShopService {
 	public List<Shop> findAll() {
 		return shopRepository.findAll();
 	}
+	@SuppressWarnings("unchecked")
+	public List<Shop> findAll(String address) {
+		String query = "SELECT * FROM shop";
+		if(isNotEmptyField(address)) {
+			query+=" WHERE";
+		}
+		if(isNotEmptyField(address)) {
+			query+=" address LIKE '%"+address +"%'";
+		}
+		if (!query.startsWith("SELECT")) {
+			query = query.substring(5);
+		}
+		return (List<Shop>) entityManager.createNativeQuery(query, Shop.class).getResultList();
+	}
+
+	private boolean isNotEmptyField(String field) {
+		return field != null && !field.isEmpty();
+	}
+
+
 	public Shop save(Shop shop) {
 		long id = nextId.getAndIncrement();
 		shop.setId(id);

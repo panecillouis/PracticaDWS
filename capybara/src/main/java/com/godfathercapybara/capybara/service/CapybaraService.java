@@ -13,10 +13,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.repository.CapybaraRepository;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class CapybaraService {
 
 	
+	@Autowired
+	private EntityManager entityManager;
+
 	@Autowired
 	private CapybaraRepository capybaraRepository;
 
@@ -36,6 +41,35 @@ public class CapybaraService {
 	public List<Capybara> findAll() {
 		return capybaraRepository.findAll();
 	}
+	@SuppressWarnings("unchecked")
+	public List<Capybara> findAll(Boolean isSponsored, Double price, String sex) {
+		String query = "SELECT * FROM capybara";
+		if( isSponsored!=null || price!=null || isNotEmptyField(sex)) {
+			query+=" WHERE";
+		}
+		if(isSponsored!=null) {
+			query+=" is_sponsored= "+isSponsored + " AND";
+		}
+		if(price!=null) {
+			query+=" price <"+price + " AND";
+		}
+		
+		if(isNotEmptyField(sex)) {
+			query+=" sex='"+sex +"'"+ " AND";
+		}
+		if (query.endsWith("AND")) {
+			query = query.substring(0, query.length() - 4);
+		}
+		if (!query.startsWith("SELECT")) {
+			query = query.substring(5);
+		}
+		return (List<Capybara>) entityManager.createNativeQuery(query, Capybara.class).getResultList();
+	}
+
+	private boolean isNotEmptyField(String field) {
+		return field != null && !field.isEmpty();
+	}
+	
 
 	public Capybara save(Capybara capybara, MultipartFile imageField) throws IOException {
 

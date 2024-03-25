@@ -1,6 +1,36 @@
 {{>header}}
 <section id=view>
 	<h2>Capibaras</h2>
+
+	<form class="row" action="/capybaras">
+		<div class="col">
+			<select class="form-select" name="isSponsored">
+				<option selected value="">Select isSponsored</option>
+				<option value="1">SI</option>
+				<option value="0">NO</option>
+			</select>
+		</div>
+		<div class="col">
+			<input name="price" type="number" class="form-control" placeholder="Max Price">
+		</div>
+		<div class="col">
+			<select class="form-select" name="sex">
+				<option selected value="">Select sex</option>
+				<option value="Hembra">Hembra</option>
+        		<option value="Macho">Macho</option>
+        		<option value="No binario">No binario</option>
+			</select>
+		</div>
+		
+		<div class="col">
+			<input class="btn btn-outline-primary" type="submit" value="Search">
+		</div>
+
+	</form>
+
+
+
+
 	<ul class="items">
 		{{#capybaras}}
 		<p id="element">

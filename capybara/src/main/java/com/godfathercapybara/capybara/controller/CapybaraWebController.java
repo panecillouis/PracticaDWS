@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.repository.CapybaraRepository;
 import com.godfathercapybara.capybara.service.CapybaraService;
-
 import com.godfathercapybara.capybara.service.ValidateService;
 
 @Controller
@@ -41,9 +40,9 @@ public class CapybaraWebController {
 	}
 
 	@GetMapping("/capybaras")
-	public String showCapybaras(Model model) {
+	public String showCapybaras(Model model, @RequestParam(required = false) Boolean isSponsored, @RequestParam(required = false) Double price, @RequestParam(required = false) String sex) {
 
-		model.addAttribute("capybaras", capybaraService.findAll());
+		model.addAttribute("capybaras", capybaraService.findAll(isSponsored, price, sex));
 
 		return "capybaras";
 	}

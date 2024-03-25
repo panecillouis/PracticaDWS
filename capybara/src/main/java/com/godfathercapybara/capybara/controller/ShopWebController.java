@@ -30,9 +30,9 @@ public class ShopWebController {
 	private ValidateService validateService;
 
     @GetMapping("/shops")
-	public String showShops(Model model) {
+	public String showShops(Model model, @RequestParam(required = false) String address) {
 
-		model.addAttribute("shops", shopService.findAll());
+		model.addAttribute("shops", shopService.findAll(address));
 
 		return "shops";
 	}
