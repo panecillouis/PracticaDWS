@@ -36,9 +36,9 @@ public class ProductWebController {
 	private ValidateService validateService;
 
 	@GetMapping("/products")
-	public String showProducts(Model model) {
+	public String showProducts(Model model, @RequestParam(required = false) Boolean comment, @RequestParam(required = false) Double price, @RequestParam(required = false) String type) {
 
-		model.addAttribute("products", productService.findAll());
+		model.addAttribute("products", productService.findAll(comment, price, type));
 
 		return "products";
 	}

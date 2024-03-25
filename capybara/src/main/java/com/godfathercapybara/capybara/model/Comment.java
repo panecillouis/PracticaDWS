@@ -3,8 +3,6 @@ package com.godfathercapybara.capybara.model;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity 
@@ -18,6 +16,7 @@ public class Comment {
 	private String text;
 	@JsonView(Basic.class)
 	private String author;
+	
 
 	public Comment() {
 	}

@@ -45,9 +45,9 @@ public class ProductsShopsCommentsAPIController {
 	private ValidateService validateService;
 
 	@JsonView(Product.Basic.class)
-	@GetMapping("/products/")
-	public List<Product> getProducts() {
-		List<Product> products = productService.findAll();
+	@GetMapping("/products")
+	public List<Product> getProducts(@RequestParam(required = false) Boolean comment, @RequestParam(required = false) Double price, @RequestParam(required = false) String type) {
+		List<Product> products = productService.findAll(comment, price, type);
 		return products;
 	}
 

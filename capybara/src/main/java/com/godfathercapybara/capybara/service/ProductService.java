@@ -15,11 +15,16 @@ import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.repository.ProductRepository;
 
+import jakarta.persistence.EntityManager;
+
+
 @Service
 public class ProductService {
 
 	
-	
+	@Autowired
+	private EntityManager entityManager;
+
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -60,6 +65,36 @@ public class ProductService {
 	public List<Product> findAll() {
 		return productRepository.findAll();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Product> findAll(Boolean comment, Double price, String type) {
+		String query = "SELECT DISTINCT p.* FROM product p";
+		if(comment!=null) {
+			query+=" INNER JOIN product_comments pc ON p.id = pc.product_id";
+		}
+		if(price!=null || isNotEmptyField(type)) {
+			query+=" WHERE";
+		}
+		if(price!=null) {
+			query+=" price <"+price + " AND";
+		}
+		
+		if(isNotEmptyField(type)) {
+			query+=" type='"+type +"'"+ " AND";
+		}
+		if (query.endsWith("AND")) {
+			query = query.substring(0, query.length() - 4);
+		}
+		if (!query.startsWith("SELECT")) {
+			query = query.substring(5);
+		}
+		return (List<Product>) entityManager.createNativeQuery(query, Product.class).getResultList();
+	}
+
+	private boolean isNotEmptyField(String field) {
+		return field != null && !field.isEmpty();
+	}
+	
 
 	public List<Product> findByIds(List<Long> ids) {
 		List<Product> products = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.godfathercapybara.capybara.model;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +9,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Lob;
-import java.sql.Blob;
 
 @Entity
 public class Product {
@@ -45,6 +43,7 @@ public class Product {
 
     @JsonView(Basic.class)
     private String name;
+
     @JsonView(Basic.class)
     private double price;
 
