@@ -1,13 +1,12 @@
 package com.godfathercapybara.capybara.model;
 
+import java.sql.Blob;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-import java.sql.Blob;
 
 
 @Entity
@@ -20,6 +19,7 @@ public class Capybara {
 	private double price;
 	private String description;
 	private String name;
+	private String analytics;
 	private String image;
 	@Lob @JsonIgnore
 	private Blob imageFile;
@@ -118,6 +118,13 @@ public class Capybara {
 	public void setImage(String image) {
 		this.image = image;
 	}
+	public String getAnalytics() {
+		return this.analytics;
+	}
+	public void setAnalytics(String analytics) {
+		this.analytics = analytics;
+	}
+
 	@Override
 	public String toString() {
 		return "Capybara [id=" + id + ", sex=" + sex + ", color=" + color + ", price=" + price + ", description="

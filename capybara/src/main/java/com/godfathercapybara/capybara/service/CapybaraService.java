@@ -71,10 +71,11 @@ public class CapybaraService {
 	}
 	
 
-	public Capybara save(Capybara capybara, MultipartFile imageField) throws IOException {
+	public Capybara save(Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
 
-		if (imageField != null && !imageField.isEmpty()) {
+		if (imageField != null && analyticsField != null && !imageField.isEmpty() && !analyticsField.isEmpty()) {
 			capybara.setImage(imageField.getOriginalFilename());
+			capybara.setAnalytics(analyticsField.getOriginalFilename());
 			capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
 
@@ -82,6 +83,10 @@ public class CapybaraService {
 		{	capybara.setImage("no-image.png");
 			capybara.setImageFile(null);
 		}
+		else if(capybara.getAnalytics() == null || capybara.getAnalytics().isEmpty())
+		{	capybara.setAnalytics("no-analytics.pdf");
+		}
+
 		capybara.setId(nextId.getAndIncrement());
 		capybaraRepository.save(capybara);
 		return capybara;
@@ -95,17 +100,19 @@ public class CapybaraService {
 		return capybaraRepository.findById(id).orElseThrow();
 	}
 
-	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField) throws IOException {
+	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
 
-		if (imageField != null && !imageField.isEmpty()) {
+		if (imageField != null && !imageField.isEmpty() && analyticsField != null && !analyticsField.isEmpty()) {
 			capybara.setImage(imageField.getOriginalFilename());
+			capybara.setAnalytics(analyticsField.getOriginalFilename());
         	capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
 		
-		else if (capybara.getImage() == null || capybara.getImage().isEmpty()) {
+		else if (capybara.getImage() == null || capybara.getImage().isEmpty() || capybara.getAnalytics() == null || capybara.getAnalytics().isEmpty()) {
 			Capybara existingCapybara = capybaraRepository.findById(id).orElseThrow();
 			capybara.setImageFile(existingCapybara.getImageFile());
 			capybara.setImage(existingCapybara.getImage());
+			capybara.setAnalytics(existingCapybara.getAnalytics());
 		}
 		
 		capybaraRepository.save(capybara);

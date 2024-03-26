@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Capybara;
+import com.godfathercapybara.capybara.service.AnalyticsService;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
@@ -34,13 +35,15 @@ public class CapybaraAPIController {
     private CapybaraService capybaraService;
     @Autowired
     private ValidateService validateService;
-    
+    @Autowired
+    private AnalyticsService analyticsService;
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Capybara> deleteCapybara(@PathVariable long id) {
         Optional<Capybara> capybaraOptional = capybaraService.findById(id);
         if (capybaraOptional.isPresent()) {
             Capybara capybara = capybaraOptional.get();
+            analyticsService.deleteAnalytics(capybara.getAnalytics());
             capybaraService.delete(capybara.getId());
             return ResponseEntity.ok(capybara);
         } else {
@@ -65,15 +68,15 @@ public class CapybaraAPIController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField) throws IOException {
-        String error = validateService.validateCapybara(capybara, imageField);
+    public ResponseEntity<?> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
+        String error = validateService.validateCapybara(capybara, imageField, analyticsField);
         if (error != null) {
             Map<String, Object> response = new HashMap<>();
             response.put("error", error);
             response.put("capybara", capybara);
             return ResponseEntity.badRequest().body(response);
         } else {
-            capybaraService.save(capybara, imageField);
+            capybaraService.save(capybara, imageField, analyticsField);
             URI location = fromCurrentRequest().path("/{id}").buildAndExpand(capybara.getId()).toUri();
             return ResponseEntity.created(location).body(capybara);
         }
@@ -81,7 +84,7 @@ public class CapybaraAPIController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara,
-            MultipartFile imageField) throws IOException {
+            MultipartFile imageField, MultipartFile analyticsField) throws IOException {
         String error = validateService.validateUpdatedCapybara(newcapybara);
         if (error != null) {
             Map<String, Object> response = new HashMap<>();
@@ -92,7 +95,7 @@ public class CapybaraAPIController {
             Optional<Capybara> capybaraOptional = capybaraService.findById(id);
             if (capybaraOptional.isPresent()) {
                 newcapybara.setId(id);
-                capybaraService.updateCapybara(newcapybara, id, imageField);
+                capybaraService.updateCapybara(newcapybara, id, imageField, analyticsField);
                 return ResponseEntity.ok(newcapybara);
             } else {
                 return ResponseEntity.notFound().build();
@@ -100,26 +103,28 @@ public class CapybaraAPIController {
         }
     }
 
-    @PostMapping("/{id}/image")
-    public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image)
+    @PostMapping("/{id}/files")
+    public ResponseEntity<Object> uploadImage(@PathVariable long id, @RequestParam MultipartFile image, @RequestParam MultipartFile analytics)
             throws IOException {
 
         Capybara capybara = capybaraService.findCapybaraById(id);
         URI location = fromCurrentRequest().build().toUri();
         capybara.setImage(location.toString());
+        capybara.setAnalytics(location.toString());
         capybara.setImageFile(BlobProxy.generateProxy(image.getInputStream(), image.getSize()));
-        capybaraService.updateCapybara(capybara, id, image);
+        capybaraService.updateCapybara(capybara, id, image,analytics);
         return ResponseEntity.created(location).build();
 
     }
 
-    @DeleteMapping("/{id}/image")
+    @DeleteMapping("/{id}/files")
     public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
         Capybara capybara = capybaraService.findCapybaraById(id);
 
         capybara.setImage("no-image.png");
+        capybara.setAnalytics("no-analytics.pdf");
         capybara.setImageFile(null);
-        capybaraService.updateCapybara(capybara, id, null);
+        capybaraService.updateCapybara(capybara, id, null, null);
         return ResponseEntity.noContent().build();
     }
 }

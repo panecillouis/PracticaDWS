@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ValidateService {
@@ -63,7 +64,16 @@ public class ValidateService {
         if (!Objects.requireNonNull(imageField.getContentType()).startsWith("image/")) {
             return "El archivo debe ser una imagen";
         }
-        return null; // Imagen válida
+        return null; // Image valid
+    }
+    public String validateAnalytics(MultipartFile analyticsField) {
+        if (analyticsField.isEmpty()) {
+            return "La analitica no puede ser nula";
+        }
+        if (!Objects.requireNonNull(analyticsField.getContentType()).startsWith("analytics/")) {
+            return "El archivo debe ser un pdf";
+        }
+        return null; // Analytic valid
     }
 
     public String validateColor(String color) {
@@ -158,7 +168,7 @@ public class ValidateService {
         return null; // Comentario válido
     }
 
-    public String validateCapybara(Capybara capybara, MultipartFile imageField) {
+    public String validateCapybara(Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) {
         String priceError = validatePrice(String.valueOf(capybara.getPrice()));
         if (priceError != null) {
             return priceError;
@@ -179,6 +189,12 @@ public class ValidateService {
         String imageError = validateImage(imageField);
         if (imageError != null) {
             return imageError;
+        }
+        /*/
+        /*/
+        String analyticsError = validateAnalytics(analyticsField);
+        if (analyticsError != null) {
+            return analyticsError;
         }
         /*/
         String colorError = validateColor(capybara.getColor());

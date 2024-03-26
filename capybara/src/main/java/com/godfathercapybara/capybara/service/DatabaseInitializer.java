@@ -3,7 +3,6 @@ package com.godfathercapybara.capybara.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
-import com.godfathercapybara.capybara.model.Shop;
 
 import jakarta.annotation.PostConstruct;
 
@@ -33,17 +31,17 @@ public class DatabaseInitializer {
         @PostConstruct
         public void init() throws IOException {
 
-                
-               
                 // Create some capybaras
                 Capybara Lola = new Capybara("Hembra", "Blanco", 450,
                                 "Tiene problemas de pulmón.", "Lola Lolita", true);
                 Lola.setImage("Lola.jpg");
                 Lola.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/Lola.jpg"))));
+                Lola.setAnalytics("analytics_of_Lola.pdf");
                 Capybara Fernanda = new Capybara("Hembra", "Verdoso", 1000, "Es una especie rarísima de Ompabara",
                                 "Fernanda");
                 Fernanda.setImage("Fernanda.jpg");
                 Fernanda.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/Fernanda.jpg"))));
+                Fernanda.setAnalytics("analytics_of_Fernanda.pdf");
                 Product pistola = new Product("Pistola", "Arma básica en defensa de capibaras", "Arma", 3092);
                 pistola.setImage("pistola.jpg");
                 pistola.setImageFile(BlobProxy.generateProxy(Files.readAllBytes(Paths.get("images/pistola.jpg"))));
@@ -64,8 +62,8 @@ public class DatabaseInitializer {
 
 
                 // Save them to the 'Fake' database
-                capybaraService.save(Lola, null);
-                capybaraService.save(Fernanda, null);
+                capybaraService.save(Lola, null, null);
+                capybaraService.save(Fernanda, null, null);
                 
                 commentService.save(comment1);
                 commentService.save(comment2);

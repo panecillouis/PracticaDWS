@@ -7,7 +7,6 @@
         <div class="col-2">
           {{#capybara.image}}
           <img class="img-thumbnail" src="/capybaras/{{capybara.id}}/image" alt="Imagen de {{capybara.name}}">
-
           {{/capybara.image}}
         </div>
         <div class="col-10">
@@ -36,13 +35,15 @@
           <p><button id=buttom onclick="location.href='/capybaras'">Otras capibaras</button></p>
           <p> <button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/edit'">Editar</button></p>
           <p><button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/delete'">Eliminar</button></p>
+          <p>
+            <a href="/capybaras/{{capybara.id}}/analytics" download>
+              <button id="buttom">Ver la analitica</button>
+            </a>
+          </p>
           </p>
         </div>
       </div>
     </div>
 </main>
 </div>
-
-
-
 {{>footer2}}

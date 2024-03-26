@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.repository.CapybaraRepository;
+import com.godfathercapybara.capybara.service.AnalyticsService;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
@@ -27,8 +30,8 @@ import com.godfathercapybara.capybara.service.ValidateService;
 public class CapybaraWebController {
 	@Autowired
 	private CapybaraService capybaraService;
-
-	
+	@Autowired
+	private AnalyticsService analyticsService;
 	@Autowired
 	private ValidateService validateService;
 	@Autowired
@@ -59,7 +62,19 @@ public class CapybaraWebController {
 		}
 
 	}
+	@GetMapping("/capybaras/{id}/analytics")
+	public ResponseEntity<Object> downloadAnalytics(@PathVariable long id) throws SQLException {
 
+		Optional<Capybara> op = capybaraService.findById(id);
+
+		if (op.isPresent()) {
+			Capybara capybara = op.get();
+			Resource analytics = analyticsService.getAnalytics(capybara.getAnalytics());
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "analytics/pdf").body(analytics);
+		} else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Analytics not found");
+		}
+	}
 	@GetMapping("/capybaras/{id}/image")
 	public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
@@ -76,7 +91,6 @@ public class CapybaraWebController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-
 	@GetMapping("/newcapybara")
 	public String newcapybara(Model model) {
 
@@ -84,14 +98,14 @@ public class CapybaraWebController {
 	}
 
 	@PostMapping("/newcapybara")
-	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField) throws IOException {
+	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
 
-		if (validateService.validateCapybara(capybara, imageField) != null) {
-			model.addAttribute("error", validateService.validateCapybara(capybara, imageField));
+		if (validateService.validateCapybara(capybara, imageField, analyticsField) != null) {
+			model.addAttribute("error", validateService.validateCapybara(capybara, imageField, analyticsField));
 			model.addAttribute("capybara", capybara);
 			return "newCapybaraPage";
 		} else {
-			Capybara newCapybara = capybaraService.save(capybara, imageField);
+			Capybara newCapybara = capybaraService.save(capybara, imageField, analyticsField);
 
 			model.addAttribute("capybaraId", newCapybara.getId());
 
@@ -105,7 +119,10 @@ public class CapybaraWebController {
 		Optional<Capybara> capybara = capybaraService.findById(id);
 
 		if (capybara.isPresent()){
+			Capybara existingCapybara = capybara.get();
 			capybaraService.delete(id);
+			// Delete the analytics
+			analyticsService.deleteAnalytics(existingCapybara.getAnalytics());
 		}
 		model.addAttribute("name", capybara.get().getName());
 
@@ -122,13 +139,13 @@ public class CapybaraWebController {
 
 	@PostMapping("/capybaras/{id}/edit")
 	public String processEditCapybaraForm(Model model, @PathVariable("id") long id,
-			@ModelAttribute Capybara updatedCapybara, MultipartFile imageField) throws IOException {
+			@ModelAttribute Capybara updatedCapybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
 		if (validateService.validateUpdatedCapybara(updatedCapybara) != null) {
 			model.addAttribute("error", validateService.validateUpdatedCapybara(updatedCapybara));
 			return "editCapybaraPage";
 		}
 		// Update the capybara with the new data
-		capybaraService.updateCapybara(updatedCapybara, id, imageField);
+		capybaraService.updateCapybara(updatedCapybara, id, imageField, analyticsField);
 		// Redirect to the capybara's page
 		return "redirect:/capybaras/" + id;
 	}
