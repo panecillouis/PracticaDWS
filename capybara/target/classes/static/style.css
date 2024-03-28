@@ -176,7 +176,7 @@ body {
   }
 
   label {
-    /* Tamaño y alineación uniforme */
+   
     display: inline-block;
     width: 90px;
     text-align: center;

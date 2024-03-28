@@ -1,21 +1,21 @@
 {{>header}}
 <section id=view>
 	<h2>Capibaras</h2>
-
+	
 	<form class="row" action="/capybaras">
 		<div class="col">
 			<select class="form-select" name="isSponsored">
-				<option selected value="">Select isSponsored</option>
-				<option value="1">SI</option>
-				<option value="0">NO</option>
+				<option selected value="">Capis apadrinadas y no apadrinadas</option>
+				<option value="1">Sí</option>
+				<option value="0">No</option>
 			</select>
 		</div>
 		<div class="col">
-			<input name="price" type="number" class="form-control" placeholder="Max Price">
+			<input name="price" type="number" class="form-control" placeholder="Precio máximo">
 		</div>
 		<div class="col">
 			<select class="form-select" name="sex">
-				<option selected value="">Select sex</option>
+				<option selected value="">Cualquier sexo</option>
 				<option value="Hembra">Hembra</option>
         		<option value="Macho">Macho</option>
         		<option value="No binario">No binario</option>
@@ -23,7 +23,7 @@
 		</div>
 		
 		<div class="col">
-			<input class="btn btn-outline-primary" type="submit" value="Search">
+			<input class="btn btn-outline-primary" type="submit" value="Buscar">
 		</div>
 
 	</form>

@@ -76,7 +76,7 @@ public class ProductService {
 			query+=" WHERE";
 		}
 		if(price!=null) {
-			query+=" price <"+price + " AND";
+			query+=" price <="+price + " AND";
 		}
 		
 		if(isNotEmptyField(type)) {

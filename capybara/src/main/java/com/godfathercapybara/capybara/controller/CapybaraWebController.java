@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.repository.CapybaraRepository;
@@ -64,21 +64,25 @@ public class CapybaraWebController {
 	}
 	@GetMapping("/capybaras/{id}/analytics")
 	public ResponseEntity<Object> downloadAnalytics(@PathVariable long id) throws SQLException {
+		
+		Capybara capybara = capybaraService.findCapybaraById(id);
+		Resource analytics = analyticsService.getAnalytics(capybara.getAnalytics());
+			if (capybara.getAnalytics() != null) {
+			String mimeType = "application/pdf";
 
-		Optional<Capybara> op = capybaraService.findById(id);
-
-		if (op.isPresent()) {
-			Capybara capybara = op.get();
-			Resource analytics = analyticsService.getAnalytics(capybara.getAnalytics());
-			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "analytics/pdf").body(analytics);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(mimeType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + analytics.getFilename() + "\"")
+                .body(analytics);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Analytics not found");
+			return ResponseEntity.notFound().build();
 		}
+		
 	}
 	@GetMapping("/capybaras/{id}/image")
 	public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
-		Capybara capybara = capybaraRepository.findById(id).orElseThrow();
+		Capybara capybara = capybaraService.findCapybaraById(id);
 		if (capybara.getImageFile() != null) {
 			@SuppressWarnings("null")
 			Resource file = new InputStreamResource(
@@ -119,10 +123,7 @@ public class CapybaraWebController {
 		Optional<Capybara> capybara = capybaraService.findById(id);
 
 		if (capybara.isPresent()){
-			Capybara existingCapybara = capybara.get();
 			capybaraService.delete(id);
-			// Delete the analytics
-			analyticsService.deleteAnalytics(existingCapybara.getAnalytics());
 		}
 		model.addAttribute("name", capybara.get().getName());
 

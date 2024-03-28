@@ -1,17 +1,17 @@
 {{>header}}
 <section id=view>
 	<h2>Productos</h2>
-
+	
 	<form class="row" action="/products">
 		<div class="col">
-			<input type="radio" name="comment" value="1"> Con comentarios
+			<input type="radio" name="comment" value="1">Con comentarios
 		</div>
 		<div class="col">
-			<input name="price" type="number" class="form-control" placeholder="Max Price">
+			<input name="price" type="number" class="form-control" placeholder="Precio máximo">
 		</div>
 		<div class="col">
 			<select class="form-select" name="type">
-				<option selected value="">Select type</option>
+				<option selected value="">Cualquier tipo</option>
 				<option value="Ropa">Ropa</option>
 				<option value="Arma">Arma</option>
 				<option value="Juguete">Juguete</option>
@@ -19,7 +19,7 @@
 		</div>
 		
 		<div class="col">
-			<input class="btn btn-outline-primary" type="submit" value="Search">
+			<input class="btn btn-outline-primary" type="submit" value="Buscar">
 		</div>
 
 	</form>
