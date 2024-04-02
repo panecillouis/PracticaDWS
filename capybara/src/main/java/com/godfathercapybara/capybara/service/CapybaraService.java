@@ -7,13 +7,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.repository.CapybaraRepository;
-import com.godfathercapybara.capybara.service.AnalyticsService;
 
 import jakarta.persistence.EntityManager;
 
@@ -103,7 +101,11 @@ public class CapybaraService {
 
 	public void delete(long id) {
 		Capybara existingCapybara = this.findCapybaraById(id);
-		analyticsService.deleteAnalytics(existingCapybara.getAnalytics());
+		String analyticsPdfName = existingCapybara.getAnalytics();
+    
+		if (analyticsPdfName != null && !analyticsPdfName.isEmpty()) {
+			analyticsService.deleteAnalytics(analyticsPdfName);
+		}
 		capybaraRepository.deleteById(id);
 	}
 
