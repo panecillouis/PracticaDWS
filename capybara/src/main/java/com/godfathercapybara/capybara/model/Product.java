@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
@@ -51,7 +52,7 @@ public class Product {
     @ManyToMany(cascade=CascadeType.MERGE)
     private List<Shop> shops = new ArrayList<>();
 
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
     @JsonView(Comments.class)
     public List<Comment> comments = new ArrayList<>();
 
