@@ -1,14 +1,10 @@
 
 package com.godfathercapybara.capybara.service;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 
 import org.springframework.core.io.Resource;
@@ -23,14 +19,21 @@ public class AnalyticsService {
 
     private static final Path PDFS_FOLDER = Paths.get(System.getProperty("user.dir"), "analytics");
 
+  
     public String createAnalytics(MultipartFile multiPartFile) {
 
         String originalName = multiPartFile.getOriginalFilename();
     
+        Path path = Paths.get(PDFS_FOLDER.toString() + "/" + originalName);
+        String dest = Paths.get(PDFS_FOLDER.toString()).toString();
+        if(!path.normalize().startsWith(dest))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid path");
+        
+        }
         if (!originalName.matches(".*\\.pdf")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The URL does not represent a PDF resource");
         }
-    
         Path pdfPath = PDFS_FOLDER.resolve(originalName);
     
         try {
@@ -45,7 +48,15 @@ public class AnalyticsService {
     
 
     public Resource getAnalytics(String pdfName) {
-        Path pdfPath = PDFS_FOLDER.resolve(pdfName);
+
+        Path path = Paths.get(PDFS_FOLDER.toString() + "/" + pdfName);
+        String source = Paths.get(PDFS_FOLDER.toString()).toString();
+        if(!path.normalize().startsWith(source))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid path");
+        
+        }
+        Path pdfPath = PDFS_FOLDER.resolve(pdfName); 
         try {
             return new UrlResource(pdfPath.toUri());
         } catch (MalformedURLException e) {
@@ -54,6 +65,7 @@ public class AnalyticsService {
     }
 
     public void deleteAnalytics(String pdfName) {
+        
         try {
             PDFS_FOLDER.resolve(pdfName).toFile().delete();
         } catch (Exception e) {
