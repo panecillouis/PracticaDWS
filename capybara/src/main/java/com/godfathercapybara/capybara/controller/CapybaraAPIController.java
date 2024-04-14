@@ -36,6 +36,8 @@ import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist; 
 
 @RequestMapping("/api/capybaras")
 @RestController
@@ -79,6 +81,8 @@ public class CapybaraAPIController {
     @PostMapping("/")
     public ResponseEntity<?> createCapybara(@RequestBody Capybara capybara, MultipartFile imageField,
             MultipartFile analyticsField) throws IOException {
+        capybara.setDescription(Jsoup.clean(capybara.getDescription(), Safelist.relaxed()));
+
         String error = validateService.validateCapybara(capybara, imageField, analyticsField);
         if (error != null) {
             Map<String, Object> response = new HashMap<>();

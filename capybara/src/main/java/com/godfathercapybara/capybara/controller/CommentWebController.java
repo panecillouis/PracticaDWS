@@ -3,6 +3,8 @@ package com.godfathercapybara.capybara.controller;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +37,9 @@ public class CommentWebController {
 
     @PostMapping("/products/{id}/newcomment")
     public String newCommentProcess(Model model, @PathVariable long id, Comment comment) throws IOException {
+        
+        comment.setText(Jsoup.clean(comment.getText(), Safelist.relaxed()));
+
         if (validateService.validateComment(comment) != null) {
             model.addAttribute("error", validateService.validateComment(comment));
             model.addAttribute("comment", comment);

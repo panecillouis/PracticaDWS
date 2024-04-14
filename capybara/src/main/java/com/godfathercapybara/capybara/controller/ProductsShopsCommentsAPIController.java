@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.hibernate.engine.jdbc.BlobProxy;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -105,7 +107,7 @@ public class ProductsShopsCommentsAPIController {
 	@PostMapping("/products/")
 	public ResponseEntity<?> createProduct(@RequestBody Product product, MultipartFile imageField,
 			@RequestParam(required = false) List<Long> selectedShops) throws IOException {
-
+				
 		String error = validateService.validateProduct(product, imageField);
 		if (error != null) {
 			Map<String, Object> response = new HashMap<>();
@@ -182,6 +184,8 @@ public class ProductsShopsCommentsAPIController {
 	@PostMapping("/products/{id}/comments/")
 	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment)
 			throws IOException {
+		comment.setText(Jsoup.clean(comment.getText(), Safelist.relaxed()));
+
 		Optional<Product> productOptional = productService.findById(id);
 		String error = validateService.validateComment(comment);
 		if (error != null) {

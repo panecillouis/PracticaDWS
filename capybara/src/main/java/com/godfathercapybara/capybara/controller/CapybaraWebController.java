@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import org.springframework.http.MediaType;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -103,6 +105,8 @@ public class CapybaraWebController {
 
 	@PostMapping("/newcapybara")
 	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
+		
+		capybara.setDescription(Jsoup.clean(capybara.getDescription(), Safelist.relaxed()));
 
 		if (validateService.validateCapybara(capybara, imageField, analyticsField) != null) {
 			model.addAttribute("error", validateService.validateCapybara(capybara, imageField, analyticsField));
