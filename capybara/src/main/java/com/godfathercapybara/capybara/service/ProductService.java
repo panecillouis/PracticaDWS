@@ -16,7 +16,7 @@ import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.repository.ProductRepository;
 
 import jakarta.persistence.EntityManager;
-
+import jakarta.persistence.Query;
 
 @Service
 public class ProductService {
@@ -68,28 +68,33 @@ public class ProductService {
 
 	@SuppressWarnings("unchecked")
 	public List<Product> findAll(Boolean comment, Double price, String type) {
-		String query = "SELECT DISTINCT p.* FROM product p";
+		StringBuilder query = new StringBuilder("SELECT DISTINCT p.* FROM product p");
 		if(comment!=null) {
-			query+=" INNER JOIN product_comments pc ON p.id = pc.product_id";
+			query.append(" INNER JOIN product_comments pc ON p.id = pc.product_id");
 		}
 		if(price!=null || isNotEmptyField(type)) {
-			query+=" WHERE";
+			query.append(" WHERE");
 		}
 		if(price!=null) {
-			query+=" price <="+price + " AND";
+			query.append(" price <= :price AND");
 		}
 		
 		if(isNotEmptyField(type)) {
-			query+=" type='"+type +"'"+ " AND";
+			query.append(" type= :type AND");
 		}
-		if (query.endsWith("AND")) {
-			query = query.substring(0, query.length() - 4);
+		if (query.toString().endsWith("AND")) {
+			query.setLength(query.length() - 4);
 		}
-		if (!query.startsWith("SELECT")) {
-			query = query.substring(5);
-		}
-		return (List<Product>) entityManager.createNativeQuery(query, Product.class).getResultList();
+		Query jpaQuery = entityManager.createNativeQuery(query.toString(), Product.class);
+		if(price!=null) {
+            jpaQuery.setParameter("price", price);
+        }
+		if(isNotEmptyField(type)) {
+            jpaQuery.setParameter("type", type);
+        }
+		return jpaQuery.getResultList();
 	}
+
 
 	private boolean isNotEmptyField(String field) {
 		return field != null && !field.isEmpty();

@@ -13,7 +13,7 @@ import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.repository.ShopRepository;
 
 import jakarta.persistence.EntityManager;
-
+import jakarta.persistence.Query;
 
 @Service
 public class ShopService {
@@ -53,17 +53,18 @@ public class ShopService {
 	}
 	@SuppressWarnings("unchecked")
 	public List<Shop> findAll(String address) {
-		String query = "SELECT * FROM shop";
+		StringBuilder query = new StringBuilder("SELECT * FROM shop");
 		if(isNotEmptyField(address)) {
-			query+=" WHERE";
+			query.append(" WHERE");
 		}
 		if(isNotEmptyField(address)) {
-			query+=" address LIKE '%"+address +"%'";
+			query.append(" address LIKE :address");
 		}
-		if (!query.startsWith("SELECT")) {
-			query = query.substring(5);
+		Query jpaQuery = entityManager.createNativeQuery(query.toString(), Shop.class);
+		if (address != null) {
+			jpaQuery.setParameter("address", "%" + address + "%");
 		}
-		return (List<Shop>) entityManager.createNativeQuery(query, Shop.class).getResultList();
+		return jpaQuery.getResultList();
 	}
 
 	private boolean isNotEmptyField(String field) {

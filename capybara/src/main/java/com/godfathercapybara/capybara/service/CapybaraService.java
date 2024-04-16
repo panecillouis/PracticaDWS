@@ -14,6 +14,7 @@ import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.repository.CapybaraRepository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 @Service
 public class CapybaraService {
@@ -46,28 +47,40 @@ public class CapybaraService {
 	}
 	@SuppressWarnings("unchecked")
 	public List<Capybara> findAll(Boolean isSponsored, Double price, String sex) {
-		String query = "SELECT * FROM capybara";
+		StringBuilder query = new StringBuilder("SELECT * FROM capybara");
+		
 		if( isSponsored!=null || price!=null || isNotEmptyField(sex)) {
-			query+=" WHERE";
+			query.append(" WHERE");
 		}
 		if(isSponsored!=null) {
-			query+=" is_sponsored= "+isSponsored + " AND";
+			query.append(" is_sponsored = :isSponsored AND");
 		}
 		if(price!=null) {
-			query+=" price <="+price + " AND";
+			query.append(" price <= :price AND");
 		}
 		
 		if(isNotEmptyField(sex)) {
-			query+=" sex='"+sex +"'"+ " AND";
+			query.append(" sex = :sex AND");
 		}
-		if (query.endsWith("AND")) {
-			query = query.substring(0, query.length() - 4);
+		if (query.toString().endsWith("AND")) {
+			query.setLength(query.length() - 4);
 		}
-		if (!query.startsWith("SELECT")) {
-			query = query.substring(5);
-		}
-		return (List<Capybara>) entityManager.createNativeQuery(query, Capybara.class).getResultList();
+		Query jpaQuery = entityManager.createNativeQuery(query.toString(), Capybara.class);
+    if (isSponsored != null) {
+        jpaQuery.setParameter("isSponsored", isSponsored);
+    }
+    if (price != null) {
+        jpaQuery.setParameter("price", price);
+    }
+    if (isNotEmptyField(sex)) {
+        jpaQuery.setParameter("sex", sex);
+    }
+
+    return jpaQuery.getResultList();
 	}
+
+
+
 
 	private boolean isNotEmptyField(String field) {
 		return field != null && !field.isEmpty();
