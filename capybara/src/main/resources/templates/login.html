@@ -1,0 +1,20 @@
+{{>header}}
+
+	<form action="/login" method="post" enctype="multipart/form-data">
+	<h2>Login</h2>
+	{{#error}}
+  	<p class="error-message">{{error}}</p>
+  	{{/error}}
+	<div>
+        <label>Username:</label>
+        <p><input name="username" type="text" placeholder="Username"
+			value={{#user.name}}{{user.name}}{{/user.name}}></p>
+    </div>
+	<div>
+        <label>Password:</label>
+        <p><input name="password" type="password" placeholder="Password"
+            value={{#user.password}}{{user.password}}{{/user.password}}></p>
+    </div>
+		<input type="submit" value="Sign In" />
+	</form>
+{{>footer}}

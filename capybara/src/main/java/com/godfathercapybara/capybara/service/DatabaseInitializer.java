@@ -8,11 +8,14 @@ import java.util.Arrays;
 
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
+import com.godfathercapybara.capybara.model.User;
+import com.godfathercapybara.capybara.repository.UserRepository;
 
 import jakarta.annotation.PostConstruct;
 
@@ -21,12 +24,14 @@ public class DatabaseInitializer {
 
         @Autowired
         private ProductService productService;
-
-       
         @Autowired
         private CapybaraService capybaraService;
         @Autowired
         private CommentService commentService;
+        @Autowired
+        private UserRepository userRepository;
+        @Autowired
+        private PasswordEncoder passwordEncoder;
 
         @PostConstruct
         public void init() throws IOException {
@@ -72,8 +77,11 @@ public class DatabaseInitializer {
                 productService.save(pistola, null);
                 productService.save(camiseta, null);
 
-                
+                User user = new User("user", passwordEncoder.encode("pass"), "USER");
+                userRepository.save(user);
 
+                User admin = new User("admin", passwordEncoder.encode("adminpass"), "USER", "ADMIN");
+                userRepository.save(admin);
         }
 
 }
