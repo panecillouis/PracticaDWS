@@ -25,7 +25,7 @@ public class UserAPIController {
 		Principal principal = request.getUserPrincipal();
 		
 		if(principal != null) {
-			return ResponseEntity.ok(userRepository.findByName(principal.getName()).orElseThrow());
+			return ResponseEntity.ok(userRepository.findByUsername(principal.getName()).orElseThrow());
 		} else {
 			return ResponseEntity.notFound().build();
 		}

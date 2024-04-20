@@ -15,7 +15,6 @@ import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.User;
-import com.godfathercapybara.capybara.repository.UserRepository;
 
 import jakarta.annotation.PostConstruct;
 
@@ -29,7 +28,7 @@ public class DatabaseInitializer {
         @Autowired
         private CommentService commentService;
         @Autowired
-        private UserRepository userRepository;
+        private UserService userService;
         @Autowired
         private PasswordEncoder passwordEncoder;
 
@@ -78,10 +77,10 @@ public class DatabaseInitializer {
                 productService.save(camiseta, null);
 
                 User user = new User("user", passwordEncoder.encode("pass"), "USER");
-                userRepository.save(user);
+                userService.save(user);
 
-                User admin = new User("admin", passwordEncoder.encode("adminpass"), "USER", "ADMIN");
-                userRepository.save(admin);
+                User admin = new User("admin", passwordEncoder.encode("adminpass"), "ADMIN");
+                userService.saveAdmin(admin);
         }
 
 }

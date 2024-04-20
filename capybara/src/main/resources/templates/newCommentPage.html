@@ -9,9 +9,7 @@
     <p class="error-message">{{error}}</p>
     {{/error}}
     <div>
-      </p><label>Autor:</label></p>
-      <p><input name="author" type="text" placeholder="Autor"
-          value={{#comment.author}}{{comment.author}}{{/comment.author}}></p>
+      </p><label>Autor:</label>{{#user.username}}&nbsp;{{user.username}}{{/user.username}}<p>
     </div>
     <div>
       </p><label>Comentario: </label></p>

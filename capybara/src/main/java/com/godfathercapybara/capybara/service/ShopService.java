@@ -1,5 +1,6 @@
 package com.godfathercapybara.capybara.service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,13 +8,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
+import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.repository.ShopRepository;
-
+import com.godfathercapybara.capybara.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class ShopService {
@@ -27,6 +32,9 @@ public class ShopService {
 	@Autowired
 	private ShopRepository shopRepository;
 
+	@Autowired
+	private UserService userService;
+	
 	private AtomicLong nextId = new AtomicLong(1L);
 
 	public Optional<Shop> findById(long id) {
@@ -96,6 +104,24 @@ public class ShopService {
 			products.remove(productService.findById(productId).get());
 			shop.setProducts(products);
 			shopRepository.save(shop);
+	}
+	@ModelAttribute
+	public void addAttributes(Model model, HttpServletRequest request) {
+
+		Principal principal = request.getUserPrincipal();
+
+		if(principal != null) {
+		
+			model.addAttribute("logged", true);	
+			String name = principal.getName();
+			Optional<User> userOptional = userService.findByUsername(name);
+			User user= userOptional.get();
+			model.addAttribute("user", user);		
+			model.addAttribute("admin", request.isUserInRole("ADMIN"));
+			
+		} else {
+			model.addAttribute("logged", false);
+		}
 	}
 
 }

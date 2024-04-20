@@ -1,20 +1,22 @@
 {{>header}}
 
-	<form action="/login" method="post" enctype="multipart/form-data">
+	<form action="/login" method="post" enctype="multipart/form-data" >
 	<h2>Login</h2>
 	{{#error}}
   	<p class="error-message">{{error}}</p>
   	{{/error}}
 	<div>
-        <label>Username:</label>
-        <p><input name="username" type="text" placeholder="Username"
-			value={{#user.name}}{{user.name}}{{/user.name}}></p>
+        <p><label>Nombre de usuario:</label></p>
+        <p><input name="username" type="text" placeholder="Nombre de Usuario"
+			value={{#user.username}}{{user.username}}{{/user.username}}></p>
     </div>
 	<div>
-        <label>Password:</label>
-        <p><input name="password" type="password" placeholder="Password"
-            value={{#user.password}}{{user.password}}{{/user.password}}></p>
+       <p><label>Contraseña:</label></p>
+        <p><input name="password" type="password" placeholder="Contraseña"></p>
     </div>
-		<input type="submit" value="Sign In" />
+		
+		<input type="submit" value="Iniciar sesión"/>
+		<button id="Cancel" onclick="location.href='/'; return false;">Cancelar</button>
+		<button onclick="location.href='/signup'; return false;">Registrarse</button>
 	</form>
 {{>footer}}

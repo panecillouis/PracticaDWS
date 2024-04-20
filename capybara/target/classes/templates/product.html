@@ -39,10 +39,12 @@
               <b>{{author}}</b>
               <br>
               <p>{{{text}}}</p>
-
+              {{#logged}}
+              {{#admin}}
               <p><button id="buttom" onclick="location.href='/products/{{product.id}}/comments/{{id}}/delete'">Borrar
                   comentario</button> </p>
-
+              {{/admin}}
+              {{/logged}}
 
             </li>
             {{/product.comments}}
@@ -50,8 +52,12 @@
         </div>
         <p>
           <button id="buttom" onclick="location.href='/products'">Todos los productos</button>
+          {{#logged}}
+          {{#admin}}
           <button id="buttom" onclick="location.href='/products/{{product.id}}/delete'">Borrar producto</button>
+          {{/admin}}
           <button id="buttom" onclick="location.href='/products/{{product.id}}/newcomment'">Añadir comentario</button>
+          {{/logged}}
         </p>
       </div>
     </div>

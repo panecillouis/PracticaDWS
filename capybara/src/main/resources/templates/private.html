@@ -1,0 +1,25 @@
+{{>header2}}
+<main id="viewentity">
+
+	{{#success}}
+	<p class="success-message">{{success}}</p>
+	{{/success}}
+	
+	<h2>Hola {{user.username}}</h2>
+	<h3>Información de la cuenta:</h3>
+	{{#user.name}}<p><b>Nombre:</b> {{user.name}}</p>{{/user.name}}
+	{{#user.lastName}}<p><b>Apellido:</b> {{user.lastName}}</p>{{/user.lastName}}
+	{{#user.email}}<p><b>Correo Electrónico:</b> {{user.email}}</p>{{/user.email}}
+
+
+		<p>
+		<button id="buttom" onclick="location.href='/logout'">Cerrar Sesión</button>
+		<button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button>
+		<button id="buttom" onclick="location.href='/users/{{user.id}}/edit'">Editar Cuenta</button>
+		</p>
+	
+	
+
+</main>
+{{>footer2}}
+

@@ -1,0 +1,44 @@
+{{>header2}}
+<main id="cont">
+  <div class="container">
+      
+      <form action="/users/{{user.id}}/edit" method="post" enctype="multipart/form-data">
+        <p>
+        <h2>Actualizando información de la cuenta</h2>
+        </p>
+        {{#error}}
+        <p class="error-message">{{error}}</p>
+        {{/error}}
+        <div>
+          <p>
+          <label>Nombre de Usuario: </label></p>
+          <p> <textarea name="username" placeholder="Nombre de Usuario">{{user.username}}</textarea></p>
+        </div>
+        <div>
+          </p><label>Nombre: </label></p>
+          <p> <textarea name="name" placeholder="Nombre">{{user.name}}</textarea></p>
+        </div>
+        <div>
+          </p><label>Apellido: </label></p>
+          <p> <textarea name="lastName" placeholder="Apellido">{{user.lastName}}</textarea></p>
+        </div>
+        <div>
+          </p><label>Correo Electrónico: </label></p>
+          <p> <textarea name="email" placeholder="Correo Electrónico">{{user.email}}</textarea></p>
+        <p>
+          <label>Cambiar contraseña: </label></p>
+          <p> <textarea name="password" placeholder="Contraseña"></textarea></p>
+        </div>
+        <div>
+          <label>Confirmar Contraseña: </label></p>
+          <p> <textarea name="confirmPassword" placeholder="Confirmar Contraseña"></textarea></p>
+        </div>
+        <p>
+          <button id="buttom" onclick="location.href='/user/{{user.id}}'; return false;">Cancelar</button>
+          <input type="submit" value="Guardar"></input>
+        </p>
+
+      </form>
+     </div>
+    </main>
+ {{>footer2}}

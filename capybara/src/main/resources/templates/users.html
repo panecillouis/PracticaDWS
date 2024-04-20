@@ -1,0 +1,14 @@
+{{>header}}
+<section id=view>
+	<h2>Usuarios</h2>
+	
+	<ul class="items">
+		{{#users}}
+		<p id="element">
+			<li><a href="/users/{{id}}">{{username}}</a> <button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button></li>
+		</p>
+		{{/users}}
+	</ul>
+
+</section>
+{{>footer}}

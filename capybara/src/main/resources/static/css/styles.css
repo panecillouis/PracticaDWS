@@ -249,6 +249,13 @@ figure {
 
 
 }
+#wrapper #main-content .success-message {
+    color: blue;
+    font-weight: bold;
+    font-size: 30px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+}
 
 #wrapper #main-content form {
 

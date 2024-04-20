@@ -1,6 +1,7 @@
 package com.godfathercapybara.capybara.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,9 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
+import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
+import com.godfathercapybara.capybara.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ProductWebController {
@@ -34,6 +40,9 @@ public class ProductWebController {
 
 	@Autowired
 	private ValidateService validateService;
+
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/products")
 	public String showProducts(Model model, @RequestParam(required = false) Boolean comment, @RequestParam(required = false) Double price, @RequestParam(required = false) String type) {
@@ -131,6 +140,24 @@ public class ProductWebController {
 		model.addAttribute("name", product.get().getName());
 
 		return "removedProduct";
+	}
+	@ModelAttribute
+	public void addAttributes(Model model, HttpServletRequest request) {
+
+		Principal principal = request.getUserPrincipal();
+
+		if(principal != null) {
+		
+			model.addAttribute("logged", true);	
+			String name = principal.getName();
+			Optional<User> userOptional = userService.findByUsername(name);
+			User user= userOptional.get();
+			model.addAttribute("user", user);		
+			model.addAttribute("admin", request.isUserInRole("ADMIN"));
+			
+		} else {
+			model.addAttribute("logged", false);
+		}
 	}
 
 }

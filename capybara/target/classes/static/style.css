@@ -145,6 +145,11 @@ body {
   font-weight: bold;
   font-size: 20px;
 }
+#cont .success-message {
+  color: blue;
+  font-weight: bold;
+  font-size: 20px;
+}
 
 #cont form {
 

@@ -1,6 +1,7 @@
 package com.godfathercapybara.capybara.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -22,10 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Capybara;
-import com.godfathercapybara.capybara.repository.CapybaraRepository;
 import com.godfathercapybara.capybara.service.AnalyticsService;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class CapybaraWebController {
@@ -35,13 +37,8 @@ public class CapybaraWebController {
 	private AnalyticsService analyticsService;
 	@Autowired
 	private ValidateService validateService;
-	@Autowired
-	private CapybaraRepository capybaraRepository;
-
-	@GetMapping("/")
-	public String showHome() {
-		return "index";
-	}
+	
+	
 
 	@GetMapping("/capybaras")
 	public String showCapybaras(Model model, @RequestParam(required = false) Boolean isSponsored, @RequestParam(required = false) Double price, @RequestParam(required = false) String sex) {
@@ -159,5 +156,19 @@ public class CapybaraWebController {
 		capybaraService.sponsorCapybara(id, isSponsored);
 		return "redirect:/capybaras/" + id;
 	}
+	@ModelAttribute
+	public void addAttributes(Model model, HttpServletRequest request) {
 
+		Principal principal = request.getUserPrincipal();
+
+		if(principal != null) {
+		
+			model.addAttribute("logged", true);		
+			model.addAttribute("userName", principal.getName());
+			model.addAttribute("admin", request.isUserInRole("ADMIN"));
+			
+		} else {
+			model.addAttribute("logged", false);
+		}
+	}
 }
