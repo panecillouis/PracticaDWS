@@ -2,6 +2,7 @@ package com.godfathercapybara.capybara.service;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,20 @@ public class ValidateService {
             return "El nombre de usuario ya existe";
         }
 
+        return null;
+    }
+    public String validateUsernameUpdated(String username, long id)
+    {
+        if (username.isEmpty()) {
+            return "El campo nombre de usuario no puede ser nulo";
+        }
+        Optional<User> userOptional = userService.findByUsername(username);
+        User user1 = userOptional.get();
+        Optional<User> userid = userService.findById(id);
+        User user2 = userid.get();
+        if(username.equals(user1) && user2.getId()!=user1.getId()) {
+            return "El nombre de usuario ya existe";
+        }
         return null;
     }
 
@@ -288,7 +303,7 @@ public class ValidateService {
         return null; // User is valid
     }
     public String validateUpdatedUser(User user, String confirmPassword) {
-        String usernameError = validateUsername(user.getUsername());
+        String usernameError = validateUsernameUpdated(user.getUsername(), user.getId());
         if (usernameError != null) {
             return usernameError;
         }
@@ -300,11 +315,8 @@ public class ValidateService {
         if (lastNameError != null) {
             return lastNameError;
         }
-        String emailError = validateEmail(user.getEmail());
-        if (emailError != null) {
-            return emailError;
-        }
-        if(user.getPassword()!=null) {
+       
+        if(!user.getPassword().isEmpty()) {
             String passwordError = validatePassword(user.getPassword(), confirmPassword);
             if (passwordError != null) {
                 return passwordError;

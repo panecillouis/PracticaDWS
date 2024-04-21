@@ -5,7 +5,7 @@
 	<ul class="items">
 		{{#users}}
 		<p id="element">
-			<li><a href="/users/{{id}}">{{username}}</a> <button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button></li>
+			<li>{{username}}<button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button></li>
 		</p>
 		{{/users}}
 	</ul>

@@ -10,28 +10,31 @@
         <p class="error-message">{{error}}</p>
         {{/error}}
         <div>
-          <p>
-          <label>Nombre de Usuario: </label></p>
-          <p> <textarea name="username" placeholder="Nombre de Usuario">{{user.username}}</textarea></p>
+          <p><label>Nombre de Usuario:</label></p>
+          <p><input name="username" type="text" placeholder="Nombre de Usuario"
+         value={{#user.username}}{{user.username}}{{/user.username}}></p>
         </div>
         <div>
-          </p><label>Nombre: </label></p>
-          <p> <textarea name="name" placeholder="Nombre">{{user.name}}</textarea></p>
+         <p><label>Contraseña:</label></p>
+          <p><input name="password" type="password" placeholder="Contraseña"></p>
         </div>
         <div>
-          </p><label>Apellido: </label></p>
-          <p> <textarea name="lastName" placeholder="Apellido">{{user.lastName}}</textarea></p>
+          <p><label>Confirmar Contraseña:</label></p>
+          <p><input name="confirmPassword" type="password" placeholder="Confirmar Contraseña"></p>
         </div>
         <div>
-          </p><label>Correo Electrónico: </label></p>
-          <p> <textarea name="email" placeholder="Correo Electrónico">{{user.email}}</textarea></p>
-        <p>
-          <label>Cambiar contraseña: </label></p>
-          <p> <textarea name="password" placeholder="Contraseña"></textarea></p>
+          <p><label>Nombre:</label></p>
+          <p><input name="name" type="text" placeholder="Nombre"
+               value={{#user.name}}{{user.name}}{{/user.name}}></p>
         </div>
         <div>
-          <label>Confirmar Contraseña: </label></p>
-          <p> <textarea name="confirmPassword" placeholder="Confirmar Contraseña"></textarea></p>
+          <p><label>Apellido:</label></p>
+          <p><input name="lastName" type="text" placeholder="Apellido"
+               value={{#user.lastName}}{{user.lastName}}{{/user.lastName}}></p>
+        </div>
+        <div>
+          <p><label>Correo Electrónico:</label></p>
+          <p><input name="email" type="email" placeholder="Correo Electrónico"></p>
         </div>
         <p>
           <button id="buttom" onclick="location.href='/user/{{user.id}}'; return false;">Cancelar</button>

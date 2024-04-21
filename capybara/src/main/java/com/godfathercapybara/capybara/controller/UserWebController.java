@@ -75,18 +75,7 @@ public class UserWebController {
 		model.addAttribute("users", userService.findAll());
 		return "users";
 	}
-	@GetMapping("/users/{id}")
-	public String showUser(Model model, @PathVariable long id) {
-		Optional <User> user = userService.findById(id);
-		if(user.isPresent()) {
-			model.addAttribute("user", user.get());
-			return "private";
-		}
-		else{
-			return "redirect:/";
-		}
-		
-	}
+	
 	
 	
 	@GetMapping("/user/home")

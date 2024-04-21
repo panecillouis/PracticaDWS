@@ -12,8 +12,10 @@
         {{/shop.products}}
     </ul>
 
-    <button id="buttom" onclick="location.href='/shops'">Todas las tiendas</button>
-    <button id="buttom" onclick="location.href='/shops/{{shop.id}}/delete'">Borrar tienda</button>
-
+    <button id="buttom" onclick="location.href='/shops'">Todas las tiendas</button>ç
+    {{#logged}}
+    {{#admin}}
+    <button id="buttom" onclick="location.href='/shops/{{shop.id}}/delete'">Borrar tienda</button>    {{/admin}}
+    {{/logged}}
 </main>
 {{>footer2}}
