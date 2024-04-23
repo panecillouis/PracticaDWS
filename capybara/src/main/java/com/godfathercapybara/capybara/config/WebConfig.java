@@ -12,6 +12,17 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/error/404").setViewName("error/404");
     }
+
+    @Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	    registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+    	registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/");
+    	registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
+    	registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
+        registry.addResourceHandler("/style.css").addResourceLocations("classpath:/static/style.css");
+
+    }
     
 
 }

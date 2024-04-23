@@ -14,9 +14,10 @@
        <p><label>Contraseña:</label></p>
         <p><input name="password" type="password" placeholder="Contraseña"></p>
     </div>
+	<input type="hidden" name="_csrf" value="{{token}}"/>
 		
 		<input type="submit" value="Iniciar sesión"/>
 		<button id="Cancel" onclick="location.href='/'; return false;">Cancelar</button>
-		<button onclick="location.href='/signup'; return false;">Registrarse</button>
+		<button id="Cancel" onclick="location.href='/signup'; return false;">Registrarse</button>
 	</form>
 {{>footer}}

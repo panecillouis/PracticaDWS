@@ -5,24 +5,20 @@ import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.UserService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -41,16 +37,15 @@ public class UserWebController {
 		return "index";
 	}
 
-	@RequestMapping("/login")
-	public String login() {
+	@GetMapping("/login")
+	public String login(Model model, HttpServletRequest request) {
 		return "login";
-	}      
-
+	}
 	@RequestMapping("/loginerror")
 	public String loginerror() {
 		return "loginerror";
 	}
-	@GetMapping("/signup")
+	@RequestMapping("/signup")
 	public String register() {
 		return "signup";
 	}
@@ -115,11 +110,11 @@ public class UserWebController {
 
 		if(principal != null) {
 		
-			model.addAttribute("logged", true);	
+			model.addAttribute("logged", true);
 			String name = principal.getName();
 			Optional<User> userOptional = userService.findByUsername(name);
 			User user= userOptional.get();
-			model.addAttribute("user", user);		
+			model.addAttribute("user", user);
 			model.addAttribute("admin", request.isUserInRole("ADMIN"));
 			
 		} else {

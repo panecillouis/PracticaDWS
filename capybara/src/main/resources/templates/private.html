@@ -1,4 +1,4 @@
-{{>header2}}
+{{>header}}
 <main id="viewentity">
 
 	{{#success}}
@@ -13,6 +13,8 @@
 
 
 		<p>
+			<input type="hidden" name="_csrf" value="{{token}}"/>
+
 		<button id="buttom" onclick="location.href='/logout'">Cerrar Sesión</button>
 		<button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button>
 		<button id="buttom" onclick="location.href='/users/{{user.id}}/edit'">Editar Cuenta</button>
@@ -21,5 +23,5 @@
 	
 
 </main>
-{{>footer2}}
+{{>footer}}
 
