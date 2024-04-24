@@ -99,29 +99,30 @@
 
 #viewentity #buttom {
   font-family: 'Cambria', Cochin, Georgia, Times, 'Times New Roman', serif;
-  font-size: 20px;
-  color: black;
-  text-align: "center";
-  width: 300px;
-  height: 40px;
-  display: inline-block;
-  box-sizing: border-box;
-  border: 2px solid black;
-  margin-top: 10px;
-  margin-bottom: 10px;
+    font-size: 20px;
+    color: black;
+    text-align: center;
+    width: 300px;
+    height: 40px;
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid black;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: auto;
 
-  .button:hover {
-    color: #d2b356;
+    .button:hover {
+        color: #d2b356;
+        border-color: #d2b356;
+    }
 
-    border-color: #d2b356;
-  }
-
-  .button:focus {
-    border-color: green;
-  }
+    .button:focus {
+        border-color: green;
+    }
 }
 
-#cont h2 {
+#cont 
+h2 {
   font-size: 50px;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   font-weight: bold;
@@ -132,10 +133,11 @@
 }
 
 body {
+  
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  margin: auto;
+  
   background-color: #ede5db;
   text-align: center;
 }
@@ -150,13 +152,14 @@ body {
   font-weight: bold;
   font-size: 20px;
 }
-
+#cont{
+  margin-top: 50px; 
+  margin-bottom: 50px;
+}
 #cont form {
 
-  text-align: "center";
-  margin-top: 50px;
-  margin-bottom: 50px;
-
+  text-align: center;
+  margin: 0 auto;
   width: 400px;
 
   padding: 1em;
@@ -183,7 +186,7 @@ body {
   label {
    
     display: inline-block;
-    width: 90px;
+    
     text-align: center;
     font-size: 20px;
     font-family: 'Cambria', Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -207,8 +210,8 @@ body {
     width: 300px;
     height: 40px;
     box-sizing: border-box;
-    padding: 10px;
     font-size: 20px;
+    border-color:black;
   }
 
   input:focus,

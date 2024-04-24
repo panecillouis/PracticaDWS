@@ -106,20 +106,22 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(authorize -> authorize
 					.requestMatchers("/users").hasRole("ADMIN")
 					.requestMatchers("/users/**").authenticated()
-					.requestMatchers("/user/home").authenticated()
 					.requestMatchers("/capybaras/*/edit").hasRole("ADMIN")
 					.requestMatchers("/capybaras/*/sponsor").hasRole("USER")
 					.requestMatchers("/capybaras/*/delete").hasRole("ADMIN")
 					.requestMatchers("/newcapybara").hasRole("ADMIN")
-					.requestMatchers("/capybaras/*/analytics").hasRole("USER")
+					.requestMatchers("/capybaras/*/analytics").hasAnyRole("USER","ADMIN")
 					.requestMatchers("/capybaras/**").permitAll()
 					.requestMatchers("products/*/delete").hasRole("ADMIN")
-					.requestMatchers("/products/*/comments/*/delete").hasAnyRole("USER")
+					.requestMatchers("/products/*/comments/*/delete").hasAnyRole("ADMIN")
 					.requestMatchers("/products/*/newcomment").hasAnyRole("ADMIN", "USER")
 					.requestMatchers("/products/**").permitAll()
 					.requestMatchers("/shops/*/delete").hasRole("ADMIN")
 					.requestMatchers("/newshop").hasRole("ADMIN")
 					.requestMatchers("/shops/**").permitAll()
+					.requestMatchers("login").anonymous()
+					.requestMatchers("loginerror").anonymous()
+					.requestMatchers("signup").anonymous()
 					.anyRequest().permitAll()
 
 			);
@@ -127,7 +129,7 @@ public class SecurityConfig {
 		http.formLogin(formLogin -> formLogin
 					.loginPage("/login")
 					.failureUrl("/loginerror")
-					.defaultSuccessUrl("/user/home")
+					.defaultSuccessUrl("/users/home")
 					.permitAll()
 			);
 		

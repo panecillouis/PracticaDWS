@@ -23,6 +23,7 @@
               <li><b>Precio</b>: {{capybara.price}} &#8364</li>
               {{#logged}}
               <form action="/capybaras/{{capybara.id}}/sponsor" method="post">
+                <input type="hidden" name="_csrf" value="{{token}}" type="submit" value="Cerrar sesión"/>
                 <input type="hidden" name="isSponsored" value="true">
                 <li><b>Apadrinada</b>: {{#capybara.isSponsored}} Sí{{/capybara.isSponsored}}
                   {{^capybara.isSponsored}}
@@ -36,11 +37,13 @@
           <p>
           <p><button id=buttom onclick="location.href='/capybaras'">Otras capibaras</button></p>
           {{#logged}}
-          {{#admin}}
+          {{#admin }}
           <p> <button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/edit'">Editar</button></p>
           {{/admin}}
-       
+          {{#mine}}
           <p><button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/analytics'" download>Ver la analitica</button></p>
+          {{/mine}}
+          
           {{#admin}}
           <p><button id=buttom onclick="location.href='/capybaras/{{capybara.id}}/delete'">Eliminar</button></p>
           {{/admin}}

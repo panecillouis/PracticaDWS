@@ -11,6 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/error/404").setViewName("error/404");
+
     }
 
     @Override
@@ -21,12 +22,12 @@ public class WebConfig implements WebMvcConfigurer {
     	registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
         registry.addResourceHandler("/style.css").addResourceLocations("classpath:/static/style.css");
-        registry.addResourceHandler("/user/static/**").addResourceLocations("classpath:/static/");
-    	registry.addResourceHandler("/user/css/**").addResourceLocations("classpath:/static/css/");
-    	registry.addResourceHandler("/user/js/**").addResourceLocations("classpath:/static/js/");
-    	registry.addResourceHandler("/user/images/**").addResourceLocations("classpath:/static/images/");
-        registry.addResourceHandler("/user/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
-        registry.addResourceHandler("/user/style.css").addResourceLocations("classpath:/static/style.css");
+        registry.addResourceHandler("/users/static/**").addResourceLocations("classpath:/static/");
+    	registry.addResourceHandler("/users/css/**").addResourceLocations("classpath:/static/css/");
+    	registry.addResourceHandler("/users/js/**").addResourceLocations("classpath:/static/js/");
+    	registry.addResourceHandler("/users/images/**").addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/users/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
+        registry.addResourceHandler("/users/style.css").addResourceLocations("classpath:/static/style.css");
         
     }
     }

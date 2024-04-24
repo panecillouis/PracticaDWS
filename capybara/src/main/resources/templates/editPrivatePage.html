@@ -3,6 +3,8 @@
   <div class="container">
       
       <form action="/users/{{user.id}}/edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="{{token}}">
+
         <p>
         <h2>Actualizando información de la cuenta</h2>
         </p>
@@ -37,7 +39,7 @@
           <p><input name="email" type="email" placeholder="Correo Electrónico"></p>
         </div>
         <p>
-          <button id="buttom" onclick="location.href='/user/{{user.id}}'; return false;">Cancelar</button>
+          <button id="buttom" onclick="location.href='/users/home'; return false;">Cancelar</button>
           <input type="submit" value="Guardar"></input>
         </p>
 

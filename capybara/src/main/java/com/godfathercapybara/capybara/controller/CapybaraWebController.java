@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,11 +44,10 @@ public class CapybaraWebController {
 	private ValidateService validateService;
 	@Autowired
 	private UserService userService;
-	
-	
 
 	@GetMapping("/capybaras")
-	public String showCapybaras(Model model, @RequestParam(required = false) Boolean isSponsored, @RequestParam(required = false) Double price, @RequestParam(required = false) String sex) {
+	public String showCapybaras(Model model, @RequestParam(required = false) Boolean isSponsored,
+			@RequestParam(required = false) Double price, @RequestParam(required = false) String sex) {
 
 		model.addAttribute("capybaras", capybaraService.findAll(isSponsored, price, sex));
 
@@ -55,34 +55,55 @@ public class CapybaraWebController {
 	}
 
 	@GetMapping("/capybaras/{id}")
-	public String showCapybara(Model model, @PathVariable long id) {
+	public String showCapybara(Model model, @PathVariable long id, HttpServletRequest request) {
 
 		Optional<Capybara> capybara = capybaraService.findById(id);
 		if (capybara.isPresent()) {
 			model.addAttribute("capybara", capybara.get());
+			Principal principal = request.getUserPrincipal();
+			if (principal != null) {
+				String userName = principal.getName();
+				Optional<User> userOptional = userService.findByUsername(userName);
+				User user = userOptional.get();
+				if (userService.isMyCapybara(user.getId(), id) || request.isUserInRole("ADMIN")) {
+					model.addAttribute("mine", true);
+				}
+			}
 			return "capybara";
 		} else {
 			return "redirect:/capybaras";
 		}
 
 	}
+
 	@GetMapping("/capybaras/{id}/analytics")
-	public ResponseEntity<Object> downloadAnalytics(@PathVariable long id) throws SQLException {
-		
+	public ResponseEntity<Object> downloadAnalytics(@PathVariable long id, HttpServletRequest request)
+			throws SQLException {
+
 		Capybara capybara = capybaraService.findCapybaraById(id);
 		Resource analytics = analyticsService.getAnalytics(capybara.getAnalytics());
-			if (capybara.getAnalytics() != null) {
-			String mimeType = "application/pdf";
+		Principal principal = request.getUserPrincipal();
+		if (principal != null) {
+			String userName = principal.getName();
+			Optional<User> userOptional = userService.findByUsername(userName);
+			User user = userOptional.get();
+			if (capybara.getAnalytics() != null && (userService.isMyCapybara(user.getId(), id) || request.isUserInRole("ADMIN"))) {
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(mimeType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + analytics.getFilename() + "\"")
-                .body(analytics);
+				String mimeType = "application/pdf";
+				return ResponseEntity.ok()
+						.contentType(MediaType.parseMediaType(mimeType))
+						.header(HttpHeaders.CONTENT_DISPOSITION,
+								"attachment; filename=\"" + analytics.getFilename() + "\"")
+						.body(analytics);
+			} else {
+				return ResponseEntity.notFound().build();
+			}
 		} else {
 			return ResponseEntity.notFound().build();
 		}
-		
+
 	}
+
 	@GetMapping("/capybaras/{id}/image")
 	public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
@@ -99,6 +120,7 @@ public class CapybaraWebController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
 	@GetMapping("/newcapybara")
 	public String newcapybara(Model model) {
 
@@ -106,8 +128,9 @@ public class CapybaraWebController {
 	}
 
 	@PostMapping("/newcapybara")
-	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
-		
+	public String newcapybaraProcess(Model model, Capybara capybara, MultipartFile imageField,
+			MultipartFile analyticsField) throws IOException {
+
 		capybara.setDescription(Jsoup.clean(capybara.getDescription(), Safelist.relaxed()));
 
 		if (validateService.validateCapybara(capybara, imageField, analyticsField) != null) {
@@ -128,7 +151,7 @@ public class CapybaraWebController {
 	public String deleteCapybara(Model model, @PathVariable long id) {
 		Optional<Capybara> capybara = capybaraService.findById(id);
 
-		if (capybara.isPresent()){
+		if (capybara.isPresent()) {
 			capybaraService.delete(id);
 		}
 		model.addAttribute("name", capybara.get().getName());
@@ -146,7 +169,8 @@ public class CapybaraWebController {
 
 	@PostMapping("/capybaras/{id}/edit")
 	public String processEditCapybaraForm(Model model, @PathVariable("id") long id,
-			@ModelAttribute Capybara updatedCapybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
+			@ModelAttribute Capybara updatedCapybara, MultipartFile imageField, MultipartFile analyticsField)
+			throws IOException {
 		if (validateService.validateUpdatedCapybara(updatedCapybara) != null) {
 			model.addAttribute("error", validateService.validateUpdatedCapybara(updatedCapybara));
 			return "editCapybaraPage";
@@ -156,35 +180,39 @@ public class CapybaraWebController {
 		// Redirect to the capybara's page
 		return "redirect:/capybaras/" + id;
 	}
-	
-	@SuppressWarnings("rawtypes")
-    @GetMapping("/capybaras/{id}/sponsor")
-	public ResponseEntity<Object> sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored, HttpServletRequest request) {
+
+	@PostMapping("/capybaras/{id}/sponsor")
+	public String sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored,
+			HttpServletRequest request) {
 		Principal principal = request.getUserPrincipal();
 		String userName = principal.getName();
-		Optional<User> user = userService.findByUsername(userName);
+		Optional<User> userOptional = userService.findByUsername(userName);
+		User user = userOptional.get();
 		capybaraService.sponsorCapybara(id, isSponsored);
-		if(user.isPresent() && isSponsored==true)
-		{
-			userService.addCapybara(user.get().getId(), id);
-			return ResponseEntity.ok().build();
+		if (userOptional.isPresent() && isSponsored == true && user.getCapybara() == null) {
+			userService.addCapybara(userOptional.get().getId(), id);
+		} else if (userOptional.isPresent() && isSponsored == false && user.getCapybara() != null
+				&& userService.isMyCapybara(user.getId(), id)) {
+			userService.removeCapybara(userOptional.get().getId(), id);
 		}
-		return ResponseEntity.badRequest().build();
-		
+		return "redirect:/capybaras/" + id;
+
 	}
+
 	@ModelAttribute
 	public void addAttributes(Model model, HttpServletRequest request) {
 
 		Principal principal = request.getUserPrincipal();
 
-		if(principal != null) {
-		
-			model.addAttribute("logged", true);		
+		if (principal != null) {
+
+			model.addAttribute("logged", true);
 			model.addAttribute("userName", principal.getName());
 			model.addAttribute("admin", request.isUserInRole("ADMIN"));
-			
+
 		} else {
 			model.addAttribute("logged", false);
+			
 		}
 	}
 }

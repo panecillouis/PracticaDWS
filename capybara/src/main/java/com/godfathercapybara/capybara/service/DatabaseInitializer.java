@@ -81,6 +81,7 @@ public class DatabaseInitializer {
 
                 User admin = new User("admin", passwordEncoder.encode("adminpass"), "ADMIN");
                 userService.saveAdmin(admin);
+                userService.addCapybara(user.getId(), Lola.getId());
         }
 
 }

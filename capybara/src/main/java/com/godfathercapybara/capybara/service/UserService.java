@@ -128,5 +128,33 @@ public class UserService {
 		user.setCapybara(capybara);
 		userRepository.save(user);
 	}
+	public void removeCapybara(long id, long capybaraId) {
+		User user = userRepository.findById(id).orElseThrow();
+		user.setCapybara(null);
+		userRepository.save(user);
+	}
+	public boolean isMyCapybara(long id, long capybaraId) {
+		User user = userRepository.findById(id).orElseThrow();
+		Capybara capybara = entityManager.find(Capybara.class, capybaraId);
+		if(user.getCapybara() == null)
+		{
+			return false;
+		}
+		if(user.getCapybara() == capybara)
+		{
+			return true;
+		}
+		return false;
+	}
+	public boolean isUser(long id, long id2)  {
+		User user = userRepository.findById(id).orElseThrow();
+		User user2 = userRepository.findById(id2).orElseThrow();
+		if(user == user2)
+		{
+			return true;
+		}
+		return false;
+	}
+
 
 }

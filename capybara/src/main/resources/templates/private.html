@@ -1,29 +1,43 @@
 {{>header}}
-<section id=view>
-
+	
+	<section id="user">
+	{{#user.capybara}}
+	<h2>Hola padrino {{user.username}}</h2>
+	{{/user.capybara}}
+	{{^user.capybara}}
+	<h2>Hola {{user.username}}</h2>
+	{{/user.capybara}}
 	{{#success}}
 	<p class="success-message">{{success}}</p>
 	{{/success}}
-	
-	<h2>Hola {{user.username}}</h2>
 	<h3>Información de la cuenta:</h3>
 	{{#user.name}}<p><b>Nombre:</b> {{user.name}}</p>{{/user.name}}
 	{{#user.lastName}}<p><b>Apellido:</b> {{user.lastName}}</p>{{/user.lastName}}
 	{{#user.email}}<p><b>Correo Electrónico:</b> {{user.email}}</p>{{/user.email}}
-	{{#user.capybara}}<p><b>Mi capibara:  </b><button id="Botton" onclick="location.href='/capybaras/{{user.capybara.id}}'">Ir a mi capybara</button> </p>{{/user.capybara}}
+	{{#user.capybara}}
+	<p>
+		<b>Mi capibara:&nbsp;&nbsp;&nbsp;</b> 
+		
+		<button id="Botton" onclick="location.href='/capybaras/{{user.capybara.id}}'"> Ver a {{user.capybara.name}} </button> 
+	</p>
+	{{/user.capybara}}
 	
 
-		<p>
-			<form action="/logout" method="post">
-			<input type="hidden" name="_csrf" value="{{token}}" type="submit" value="Cerrar sesión"/>
-			<button id="Botton" onclick="location.href='/logout'">Cerrar Sesión</button>
+		<p style="text-align:center">
 			<button id="Botton" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button>
 			<button id="Botton" onclick="location.href='/users/{{user.id}}/edit'">Editar Cuenta</button>
-		</form>
+		
+			{{#admin}}
+			<button id="Botton" onclick="location.href='/users'">Todos los usuarios</button>
+			{{/admin}}
 		</p>
+			<form action="/logout" method="post">
+				<input type="hidden" name="_csrf" value="{{token}}" type="submit" value="Cerrar sesión"/>
+				<button id="Botton" onclick="location.href='/logout'">Cerrar Sesión</button>
+			</form>
+			
 	
 	
-
 	</section>
 {{>footer}}
 

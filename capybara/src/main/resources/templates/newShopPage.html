@@ -1,5 +1,7 @@
 {{>header}}
 <form action="/newshop" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="{{token}}">
+
   <h2>Nueva Tienda</h2>
   {{#error}}
   <p class="error-message">{{error}}</p>

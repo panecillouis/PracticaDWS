@@ -1,14 +1,26 @@
 {{>header}}
-<section id=view>
-	<h2>Usuarios</h2>
-	
-	<ul class="items">
-		{{#users}}
-		<p id="element">
-			<li>{{username}}<button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button></li>
-		</p>
-		{{/users}}
-	</ul>
+<section id="view">
+  <h2>Usuarios</h2>
 
+  <table style="border-collapse: collapse; width: 100%; margin: 20px auto;">
+    <thead>
+      <tr>
+        <th style="background-color: #f0f0f0;">Nombre de Usuario</th>
+        <th style="background-color: #f0f0f0;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#users}}
+      <tr>
+        <td style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: rgb(241, 241, 241);" >{{username}}</td>
+        <td style="padding: 8px; text-align: left; border: 1px solid #ddd; background-color: rgb(241, 241, 241);">
+          <button id="deleteButton-{{id}}" style="padding: 5px 10px; background-color: #dc3545; color: white; border: none; cursor: pointer;" onclick="location.href='/users/{{id}}/delete'">Borrar Cuenta</button>
+          <button id="editButton-{{id}}" style="padding: 5px 10px; background-color: #3578dc; color: white; border: none; cursor: pointer;" onclick="location.href='/users/{{id}}/edit'">Editar Cuenta</button>
+
+        </td>
+      </tr>
+      {{/users}}
+    </tbody>
+  </table>
 </section>
 {{>footer}}

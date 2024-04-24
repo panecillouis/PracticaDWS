@@ -5,6 +5,9 @@ import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,7 @@ import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -42,65 +46,129 @@ public class UserWebController {
 	}
 
 	@GetMapping("/login")
-	public String login(Model model, HttpServletRequest request) {
-		return "login";
+	public String login() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || auth instanceof AnonymousAuthenticationToken) {
+			return "login";
+		} else {
+			return "redirect:/users/home";
+		}
 	}
+
 	@RequestMapping("/loginerror")
 	public String loginerror() {
+
 		return "loginerror";
 	}
-	
-	@RequestMapping("/signup")
+
+	@GetMapping("/signup")
 	public String register() {
-		return "signup";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || auth instanceof AnonymousAuthenticationToken) {
+			return "signup";
+		} else {
+			return "redirect:/users/home";
+		}
 	}
+
 	@PostMapping("/signup")
 	public String processRegister(Model model, @ModelAttribute User user, String confirmPassword) {
-		if(validateService.validateUser(user, confirmPassword)!=null) {
+
+		if (validateService.validateUser(user, confirmPassword) != null) {
 			model.addAttribute("error", validateService.validateUser(user, confirmPassword));
 			model.addAttribute("user", user);
 			return "signup";
-		}
-		else{
+		} else {
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			userService.save(user);
-			String success="Usuario "+ user.getUsername() +" registrado con éxito.";
-			model.addAttribute("user",user);
-			model.addAttribute("success",success);
+			String success = "Usuario " + user.getUsername() + " registrado con éxito.";
+			model.addAttribute("user", user);
+			model.addAttribute("success", success);
 			return "private";
 		}
 	}
+
 	@GetMapping("/users")
 	public String showUsers(Model model) {
 		model.addAttribute("users", userService.findAll());
 		return "users";
 	}
-	
-	
-	
-	@GetMapping("/user/home")
-	public String privatePage( Model model) {
-	
+
+	@GetMapping("/users/home")
+	public String privatePage(Model model) {
+
 		return "private";
 	}
+
 	@GetMapping("/users/{id}/delete")
-	public String deleteUser(Model model, @PathVariable long id) {
-		Optional <User> user = userService.findById(id);
-		if(user.isPresent()) {
-			userService.delete(id);
+	public String deleteUser(Model model, @PathVariable long id, HttpServletRequest request) {
+		Optional<User> user = userService.findById(id);
+		Principal principal = request.getUserPrincipal();
+		if (principal != null) {
+			String name = principal.getName();
+			Optional<User> userOptional = userService.findByUsername(name);
+			User userLogged = userOptional.get();
+			if ((userOptional.isPresent()) && (userService.isUser(userLogged.getId(), id)|| request.isUserInRole("ADMIN"))) {
+				userService.delete(id);
+				model.addAttribute("name", user.get().getUsername());
+				return "removedUser";
+			} else {
+				return "redirect:/login";
+			}
+		} else {
+			return "redirect:/login";
 		}
-		model.addAttribute("name", user.get().getUsername());
-		return "removedUser";
+
 	}
+	@GetMapping("/users/{id}")
+	public String getUser(@PathVariable long id, Model model, HttpServletRequest request) {
+		Principal principal = request.getUserPrincipal();
+		if(principal !=null)
+		{
+			String name = principal.getName();
+			Optional<User> userOptionalLogged = userService.findByUsername(name);
+			User userLogged = userOptionalLogged.get();
+			Optional<User> user = userService.findById(id);
+			if((userOptionalLogged.isPresent()) && (userService.isUser(userLogged.getId(), id)|| request.isUserInRole("ADMIN"))){
+				model.addAttribute("user", user.get());
+				return "private";
+			}
+			else{
+				return "redirect:/login";
+			}
+
+		}
+		else{
+			return "redirect:/login";
+		
+		}
+	}
+	
+
 	@GetMapping("/users/{id}/edit")
-	public String showEditUserForm(@PathVariable("id") long id, Model model) {
-		User user = userService.findUserById(id);
-		model.addAttribute("user", user);
-		return "editPrivatePage";
+	public String showEditUserForm(@PathVariable("id") long id, Model model, HttpServletRequest request) {
+		Principal principal = request.getUserPrincipal();
+		if (principal != null) {
+			String name = principal.getName();
+			Optional<User> userOptional = userService.findByUsername(name);
+			User userLogged = userOptional.get();
+			if ((userOptional.isPresent()) && (userService.isUser(userLogged.getId(), id)|| request.isUserInRole("ADMIN"))) {
+				User user = userService.findUserById(id);
+				model.addAttribute("user", user);
+				return "editPrivatePage";
+			} else {
+				return "redirect:/login";
+			}
+		} else {
+			return "redirect:/login";
+
+		}
 	}
+
 	@PostMapping("/users/{id}/edit")
-	public String processEditUserForm(Model model, @PathVariable("id") long id, @ModelAttribute User updatedUser, String confirmPassword) throws IOException {
-		if(validateService.validateUpdatedUser(updatedUser, confirmPassword)!=null) {
+	public String processEditUserForm(Model model, @PathVariable("id") long id, @ModelAttribute User updatedUser,
+			String confirmPassword) throws IOException {
+		if (validateService.validateUpdatedUser(updatedUser, confirmPassword) != null) {
 			model.addAttribute("error", validateService.validateUpdatedUser(updatedUser, confirmPassword));
 			return "editPrivatePage";
 		}
@@ -108,23 +176,24 @@ public class UserWebController {
 
 		return "redirect:/";
 	}
+
 	@ModelAttribute
 	public void addAttributes(Model model, HttpServletRequest request) {
 
 		Principal principal = request.getUserPrincipal();
 
-		if(principal != null) {
-		
+		if (principal != null) {
+
 			model.addAttribute("logged", true);
 			String name = principal.getName();
 			Optional<User> userOptional = userService.findByUsername(name);
-			User user= userOptional.get();
+			User user = userOptional.get();
 			model.addAttribute("user", user);
 			model.addAttribute("admin", request.isUserInRole("ADMIN"));
-			
+
 		} else {
 			model.addAttribute("logged", false);
 		}
 	}
-	
+
 }

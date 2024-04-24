@@ -44,53 +44,77 @@ public class CommentWebController {
     }
 
     @PostMapping("/products/{id}/newcomment")
-    public String newCommentProcess(Model model, @PathVariable long id, Comment comment, User user) throws IOException {
-        
+    public String newCommentProcess(Model model, @PathVariable long id, Comment comment, HttpServletRequest request)
+            throws IOException {
+
         comment.setText(Jsoup.clean(comment.getText(), Safelist.relaxed()));
-
-        if (validateService.validateComment(comment) != null) {
-            model.addAttribute("error", validateService.validateComment(comment));
-            model.addAttribute("comment", comment);
-            model.addAttribute("product", productService.findById(id).get());
-            return "newCommentPage";
+        Principal principal = request.getUserPrincipal();
+        if (principal == null) {
+            return "redirect:/login";
         } else {
-            Optional<Product> productOptional = productService.findById(id);
-            if (productOptional.isPresent()) {
-                comment.setAuthor(user.getUsername());
-                commentService.save(comment);
-                productService.addComment(id, comment);
-
-                return "redirect:/products/" + id;
+            String name = principal.getName();
+            comment.setAuthor(name);
+            if (validateService.validateComment(comment) != null) {
+                model.addAttribute("error", validateService.validateComment(comment));
+                model.addAttribute("comment", comment);
+                model.addAttribute("product", productService.findById(id).get());
+                return "newCommentPage";
             } else {
-                return "products";
+                Optional<Product> productOptional = productService.findById(id);
+                if (productOptional.isPresent()) {
+                    commentService.save(comment);
+                    productService.addComment(id, comment);
+
+                    return "redirect:/products/" + id;
+                } else {
+                    return "products";
+                }
             }
         }
     }
 
     @GetMapping("/products/{id}/comments/{idComment}/delete")
-    public String deleteComment(Model model, @PathVariable long id, @PathVariable long idComment) {
+    public String deleteComment(Model model, @PathVariable long id, @PathVariable long idComment,
+            HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        if (principal == null) {
+            return "redirect:/login";
+        } else {
+            String name = principal.getName();
+            Optional<User> userOptional = userService.findByUsername(name);
+            User user = userOptional.get();
+            String author = commentService.findById(idComment).get().getAuthor();
+            Optional<User> userComment = userService.findByUsername(author);
+            User userC = userComment.get();
+            if (userOptional.isPresent() && userComment.isPresent()
+                    && (userService.isUser(id, userC.getId()) || request.isUserInRole("ADMIN"))) {
+                productService.deleteComment(id, idComment);
+                commentService.delete(idComment);
+                return "redirect:/products/" + id;
+            } else {
+                return "redirect:/products/" + id;
 
-        productService.deleteComment(id, idComment);
-        commentService.delete(idComment);
-        return "redirect:/products/" + id;
+            }
+        }
     }
+
     @ModelAttribute
-	public void addAttributes(Model model, HttpServletRequest request) {
+    public void addAttributes(Model model, HttpServletRequest request) {
 
-		Principal principal = request.getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
 
-		if(principal != null) {
-		
-			model.addAttribute("logged", true);	
-			String name = principal.getName();
-			Optional<User> userOptional = userService.findByUsername(name);
-			User user= userOptional.get();
-			model.addAttribute("user", user);		
-			model.addAttribute("admin", request.isUserInRole("ADMIN"));
-			
-		} else {
-			model.addAttribute("logged", false);
-		}
-	}
+        if (principal != null) {
+
+            model.addAttribute("logged", true);
+            String name = principal.getName();
+            Optional<User> userOptional = userService.findByUsername(name);
+            User user = userOptional.get();
+            model.addAttribute("user", user);
+            model.addAttribute("admin", request.isUserInRole("ADMIN"));
+
+        } else {
+            model.addAttribute("logged", false);
+        }
+    }
 
 }

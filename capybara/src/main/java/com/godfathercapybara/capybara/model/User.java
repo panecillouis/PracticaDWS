@@ -35,9 +35,9 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    public User() {
+   
+	public User() {
 	}
-
 	public User(String username, String encodedPassword, String... roles) {
 		this.username = username;
 		this.password = encodedPassword;
