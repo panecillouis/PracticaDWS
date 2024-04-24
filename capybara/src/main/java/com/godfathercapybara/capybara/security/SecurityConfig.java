@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.godfathercapybara.capybara.security.jwt.JwtRequestFilter;
@@ -106,6 +108,7 @@ public class SecurityConfig {
 					.requestMatchers("/users/**").authenticated()
 					.requestMatchers("/user/home").authenticated()
 					.requestMatchers("/capybaras/*/edit").hasRole("ADMIN")
+					.requestMatchers("/capybaras/*/sponsor").hasRole("USER")
 					.requestMatchers("/capybaras/*/delete").hasRole("ADMIN")
 					.requestMatchers("/newcapybara").hasRole("ADMIN")
 					.requestMatchers("/capybaras/*/analytics").hasRole("USER")
@@ -117,7 +120,6 @@ public class SecurityConfig {
 					.requestMatchers("/shops/*/delete").hasRole("ADMIN")
 					.requestMatchers("/newshop").hasRole("ADMIN")
 					.requestMatchers("/shops/**").permitAll()
-					.requestMatchers("/").permitAll()
 					.anyRequest().permitAll()
 
 			);
@@ -135,7 +137,8 @@ public class SecurityConfig {
 					.permitAll()
 			);
 		
-
+		http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+			.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()));
 		return http.build();
 	}
 

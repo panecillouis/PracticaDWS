@@ -8,9 +8,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.repository.UserRepository;
-
+import com.godfathercapybara.capybara.service.CapybaraService;
 import jakarta.persistence.EntityManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -120,6 +121,12 @@ public class UserService {
 	public boolean isUser(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow();
 		return user.getRoles().contains("USER");
+	}
+	public void addCapybara(long id, long capybaraId) {
+		User user = userRepository.findById(id).orElseThrow();
+		Capybara capybara = entityManager.find(Capybara.class, capybaraId);
+		user.setCapybara(capybara);
+		userRepository.save(user);
 	}
 
 }

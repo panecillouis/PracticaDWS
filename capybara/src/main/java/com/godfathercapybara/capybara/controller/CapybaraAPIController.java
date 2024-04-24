@@ -119,7 +119,7 @@ public class CapybaraAPIController {
     @PostMapping("/{id}/analytics")
     public ResponseEntity<Object> uploadAnalytics(@PathVariable long id, @RequestParam MultipartFile analytics)
             throws IOException {
-
+                
         Capybara capybara = capybaraService.findCapybaraById(id);
         URI location = fromCurrentRequest().build().toUri();
         String path = analyticsService.createAnalytics(analytics);

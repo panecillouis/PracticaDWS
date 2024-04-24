@@ -5,6 +5,8 @@ import java.security.Principal;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import javax.print.attribute.standard.PrinterName;
+
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.godfathercapybara.capybara.model.Capybara;
+import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.AnalyticsService;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
-
+import com.godfathercapybara.capybara.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -37,6 +41,8 @@ public class CapybaraWebController {
 	private AnalyticsService analyticsService;
 	@Autowired
 	private ValidateService validateService;
+	@Autowired
+	private UserService userService;
 	
 	
 
@@ -151,10 +157,19 @@ public class CapybaraWebController {
 		return "redirect:/capybaras/" + id;
 	}
 
-	@PostMapping("/capybaras/{id}/sponsor")
-	public String sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored) {
+	@GetMapping("/capybaras/{id}/sponsor")
+	public ResponseEntity sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored, HttpServletRequest request) {
+		Principal principal = request.getUserPrincipal();
+		String userName = principal.getName();
+		Optional<User> user = userService.findByUsername(userName);
 		capybaraService.sponsorCapybara(id, isSponsored);
-		return "redirect:/capybaras/" + id;
+		if(user.isPresent() && isSponsored==true)
+		{
+			userService.addCapybara(user.get().getId(), id);
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.badRequest().build();
+		
 	}
 	@ModelAttribute
 	public void addAttributes(Model model, HttpServletRequest request) {

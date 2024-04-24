@@ -1,5 +1,5 @@
 {{>header}}
-<main id="viewentity">
+<section id=view>
 
 	{{#success}}
 	<p class="success-message">{{success}}</p>
@@ -10,18 +10,20 @@
 	{{#user.name}}<p><b>Nombre:</b> {{user.name}}</p>{{/user.name}}
 	{{#user.lastName}}<p><b>Apellido:</b> {{user.lastName}}</p>{{/user.lastName}}
 	{{#user.email}}<p><b>Correo Electrónico:</b> {{user.email}}</p>{{/user.email}}
-
+	{{#user.capybara}}<p><b>Mi capibara:  </b><button id="Botton" onclick="location.href='/capybaras/{{user.capybara.id}}'">Ir a mi capybara</button> </p>{{/user.capybara}}
+	
 
 		<p>
-			<input type="hidden" name="_csrf" value="{{token}}"/>
-
-		<button id="buttom" onclick="location.href='/logout'">Cerrar Sesión</button>
-		<button id="buttom" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button>
-		<button id="buttom" onclick="location.href='/users/{{user.id}}/edit'">Editar Cuenta</button>
+			<form action="/logout" method="post">
+			<input type="hidden" name="_csrf" value="{{token}}" type="submit" value="Cerrar sesión"/>
+			<button id="Botton" onclick="location.href='/logout'">Cerrar Sesión</button>
+			<button id="Botton" onclick="location.href='/users/{{user.id}}/delete'">Borrar Cuenta</button>
+			<button id="Botton" onclick="location.href='/users/{{user.id}}/edit'">Editar Cuenta</button>
+		</form>
 		</p>
 	
 	
 
-</main>
+	</section>
 {{>footer}}
 

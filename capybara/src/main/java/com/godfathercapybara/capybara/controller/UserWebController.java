@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.UserService;
+import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +30,8 @@ public class UserWebController {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private ValidateService validateService;
+	@Autowired
+	private CapybaraService capybaraService;
 
 	@Autowired
 	private UserService userService;
@@ -45,6 +49,7 @@ public class UserWebController {
 	public String loginerror() {
 		return "loginerror";
 	}
+	
 	@RequestMapping("/signup")
 	public String register() {
 		return "signup";
@@ -75,7 +80,7 @@ public class UserWebController {
 	
 	@GetMapping("/user/home")
 	public String privatePage( Model model) {
-
+	
 		return "private";
 	}
 	@GetMapping("/users/{id}/delete")

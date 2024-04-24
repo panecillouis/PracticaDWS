@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -27,6 +28,9 @@ public class User {
     private String username;
     
     private String password;
+
+	@OneToOne
+	private Capybara capybara;
     
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
@@ -97,6 +101,12 @@ public class User {
 
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+	public void setCapybara(Capybara capybara) {
+		this.capybara = capybara;
+	}
+	public Capybara getCapybara() {
+		return this.capybara;
 	}
 
 }

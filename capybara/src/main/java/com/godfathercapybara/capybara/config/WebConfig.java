@@ -21,9 +21,15 @@ public class WebConfig implements WebMvcConfigurer {
     	registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
         registry.addResourceHandler("/style.css").addResourceLocations("classpath:/static/style.css");
-
+        registry.addResourceHandler("/user/static/**").addResourceLocations("classpath:/static/");
+    	registry.addResourceHandler("/user/css/**").addResourceLocations("classpath:/static/css/");
+    	registry.addResourceHandler("/user/js/**").addResourceLocations("classpath:/static/js/");
+    	registry.addResourceHandler("/user/images/**").addResourceLocations("classpath:/static/images/");
+        registry.addResourceHandler("/user/favicon.ico").addResourceLocations("classpath:/static/favicon.ico");
+        registry.addResourceHandler("/user/style.css").addResourceLocations("classpath:/static/style.css");
+        
+    }
     }
     
 
-}
 
