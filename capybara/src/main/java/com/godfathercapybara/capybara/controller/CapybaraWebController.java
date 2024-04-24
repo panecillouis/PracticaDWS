@@ -156,9 +156,10 @@ public class CapybaraWebController {
 		// Redirect to the capybara's page
 		return "redirect:/capybaras/" + id;
 	}
-
-	@GetMapping("/capybaras/{id}/sponsor")
-	public ResponseEntity sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored, HttpServletRequest request) {
+	
+	@SuppressWarnings("rawtypes")
+    @GetMapping("/capybaras/{id}/sponsor")
+	public ResponseEntity<Object> sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored, HttpServletRequest request) {
 		Principal principal = request.getUserPrincipal();
 		String userName = principal.getName();
 		Optional<User> user = userService.findByUsername(userName);
