@@ -106,7 +106,7 @@ public class ProductsShopsCommentsAPIController {
 
 	}
 
-	@PostMapping("/products/")
+	@PostMapping("/products")
 	public ResponseEntity<?> createProduct(@RequestBody Product product, MultipartFile imageField,
 			@RequestParam(required = false) List<Long> selectedShops) throws IOException {
 				
@@ -183,7 +183,7 @@ public class ProductsShopsCommentsAPIController {
 
 	}
 
-	@PostMapping("/products/{id}/comments/")
+	@PostMapping("/products/{id}/comments")
 	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment, HttpServletRequest request)
 			throws IOException {
 		comment.setText(Jsoup.clean(comment.getText(), Safelist.relaxed()));
@@ -276,7 +276,7 @@ public class ProductsShopsCommentsAPIController {
 
 	}
 
-	@PostMapping("/shops/")
+	@PostMapping("/shops")
 	public ResponseEntity<?> createShop(@RequestBody Shop shop,
 			@RequestParam(required = false) List<Long> selectedProducts) throws IOException {
 

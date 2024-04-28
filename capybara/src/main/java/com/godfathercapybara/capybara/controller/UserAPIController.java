@@ -88,6 +88,7 @@ public class UserAPIController {
 				if (userService.isUser(userLogged.getId(), id) || request.isUserInRole("ADMIN")) {
 					newuser.setId(id);
 					userService.updateUser(newuser, id);
+					
 					return ResponseEntity.ok(newuser);
 				} else {
 					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

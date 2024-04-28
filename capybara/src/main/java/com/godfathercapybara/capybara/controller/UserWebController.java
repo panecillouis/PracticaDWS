@@ -17,14 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.UserService;
 import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -172,6 +170,7 @@ public class UserWebController {
 			model.addAttribute("error", validateService.validateUpdatedUser(updatedUser, confirmPassword));
 			return "editPrivatePage";
 		}
+		
 		userService.updateUser(updatedUser, id);
 
 		return "redirect:/";

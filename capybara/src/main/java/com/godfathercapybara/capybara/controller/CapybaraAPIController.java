@@ -1,6 +1,6 @@
 package com.godfathercapybara.capybara.controller;
 
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.*;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 import java.io.IOException;
 import java.net.URI;
@@ -165,9 +165,9 @@ public class CapybaraAPIController {
 				&& userService.isMyCapybara(user.getId(), id)) {
 			userService.removeCapybara(userOptional.get().getId(), id);
 		}
-        capybaraService.updateCapybara(capybara, id, null, null);
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.ok().body("La operación se realizó con éxito");
+
 
 	}
 
@@ -210,7 +210,7 @@ public class CapybaraAPIController {
 								"attachment; filename=\"" + analytics.getFilename() + "\"")
 						.body(analytics);
 			} else {
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 			}
 		} else {
 			return ResponseEntity.notFound().build();
