@@ -9,7 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.godfathercapybara.capybara.service.CapybaraService;
+import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +34,8 @@ public class UserLoginService {
 
 	@Autowired
 	private JwtCookieManager cookieUtil;
+
+
 
 	public ResponseEntity<AuthResponse> login(LoginRequest loginRequest, String encryptedAccessToken, String 
 			encryptedRefreshToken) {
@@ -138,4 +144,5 @@ public class UserLoginService {
 		httpHeaders.add(HttpHeaders.SET_COOKIE,
 				cookieUtil.createRefreshTokenCookie(token.getTokenValue(), token.getDuration()).toString());
 	}
+
 }
