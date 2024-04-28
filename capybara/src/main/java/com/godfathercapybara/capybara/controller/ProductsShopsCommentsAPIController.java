@@ -4,6 +4,7 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
@@ -41,6 +41,8 @@ import com.godfathercapybara.capybara.service.CommentService;
 import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("/api")
 @RestController
@@ -182,10 +184,16 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/products/{id}/comments/")
-	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment)
+	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment, HttpServletRequest request)
 			throws IOException {
 		comment.setText(Jsoup.clean(comment.getText(), Safelist.relaxed()));
-
+		Principal principal = request.getUserPrincipal();
+        if (principal == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+		else{
+			String name = principal.getName();
+            comment.setAuthor(name);
 		Optional<Product> productOptional = productService.findById(id);
 		String error = validateService.validateComment(comment);
 		if (error != null) {
@@ -205,6 +213,7 @@ public class ProductsShopsCommentsAPIController {
 			} else {
 				return ResponseEntity.notFound().build();
 			}
+		}
 		}
 	}
 

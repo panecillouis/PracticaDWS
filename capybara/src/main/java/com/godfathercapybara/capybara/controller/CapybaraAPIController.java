@@ -4,6 +4,7 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +35,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.godfathercapybara.capybara.model.Capybara;
+import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.AnalyticsService;
 import com.godfathercapybara.capybara.service.CapybaraService;
-import com.godfathercapybara.capybara.service.ValidateService; 
+import com.godfathercapybara.capybara.service.UserService;
+import com.godfathercapybara.capybara.service.ValidateService;
+
+import jakarta.servlet.http.HttpServletRequest; 
 
 @RequestMapping("/api/capybaras")
 @RestController
@@ -47,6 +52,8 @@ public class CapybaraAPIController {
     private ValidateService validateService;
     @Autowired
     private AnalyticsService analyticsService;
+    @Autowired
+    private UserService userService;
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Capybara> deleteCapybara(@PathVariable long id) {
@@ -142,6 +149,28 @@ public class CapybaraAPIController {
 
     }
 
+    @PostMapping("/{id}/sponsor")
+	public ResponseEntity<Object> sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored,
+			HttpServletRequest request) throws IOException {
+        Capybara capybara = capybaraService.findCapybaraById(id);
+        URI location = fromCurrentRequest().build().toUri();
+		Principal principal = request.getUserPrincipal();
+		String userName = principal.getName();
+		Optional<User> userOptional = userService.findByUsername(userName);
+		User user = userOptional.get();
+		capybaraService.sponsorCapybara(id, isSponsored);
+		if (userOptional.isPresent() && isSponsored == true && user.getCapybara() == null) {
+			userService.addCapybara(userOptional.get().getId(), id);
+		} else if (userOptional.isPresent() && isSponsored == false && user.getCapybara() != null
+				&& userService.isMyCapybara(user.getId(), id)) {
+			userService.removeCapybara(userOptional.get().getId(), id);
+		}
+        capybaraService.updateCapybara(capybara, id, null, null);
+
+        return ResponseEntity.created(location).build();
+
+	}
+
     @DeleteMapping("/{id}/analytics")
     public ResponseEntity<Object> deleteAnalytics(@PathVariable long id) throws IOException {
         Capybara capybara = capybaraService.findCapybaraById(id);
@@ -163,23 +192,30 @@ public class CapybaraAPIController {
     }
 
     @GetMapping("/{id}/analytics")
-    public ResponseEntity<Object> downloadPDF(@PathVariable long id) {
+    public ResponseEntity<Object> downloadPDF(@PathVariable long id, HttpServletRequest request) throws SQLException{
 
         Capybara capybara = capybaraService.findCapybaraById(id);
         Resource analytics = analyticsService.getAnalytics(capybara.getAnalytics());
+		Principal principal = request.getUserPrincipal();
+        if (principal != null) {
+			String userName = principal.getName();
+			Optional<User> userOptional = userService.findByUsername(userName);
+			User user = userOptional.get();
+			if (capybara.getAnalytics() != null && (userService.isMyCapybara(user.getId(), id) || request.isUserInRole("ADMIN"))) {
 
-        if (analytics == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "PDF not found");
-        }
-
-        String mimeType = "application/pdf";
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(mimeType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + analytics.getFilename() + "\"")
-                .body(analytics);
+				String mimeType = "application/pdf";
+				return ResponseEntity.ok()
+						.contentType(MediaType.parseMediaType(mimeType))
+						.header(HttpHeaders.CONTENT_DISPOSITION,
+								"attachment; filename=\"" + analytics.getFilename() + "\"")
+						.body(analytics);
+			} else {
+				return ResponseEntity.notFound().build();
+			}
+		} else {
+			return ResponseEntity.notFound().build();
+		}
     }
-
     @SuppressWarnings("null")
     @GetMapping("/{id}/image")
     public ResponseEntity<Resource> downloadImage(@PathVariable long id) {
@@ -202,5 +238,6 @@ public class CapybaraAPIController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Can't retrieve capybara image", ex);
         }
     }
+    
 
 }

@@ -6,15 +6,14 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.repository.UserRepository;
-import com.godfathercapybara.capybara.service.CapybaraService;
+
 import jakarta.persistence.EntityManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserService {
@@ -108,7 +107,18 @@ public class UserService {
 		else{
 			user.setPassword(findUserById(id).getPassword());
 		}
-	
+		if(user.getCapybara()==null)
+		{
+			user.setCapybara(findUserById(id).getCapybara());
+		}
+		if(user.getRoles()==null)
+		{
+			user.setRoles(findUserById(id).getRoles());
+		}
+		if(user.getEmail()==null)
+		{
+			user.setEmail(findUserById(id).getEmail());
+		}
 		userRepository.save(user);
 
 	}

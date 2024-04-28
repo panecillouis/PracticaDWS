@@ -63,12 +63,13 @@ public class SecurityConfig {
 		http
 			.authorizeHttpRequests(authorize -> authorize
                     // PRIVATE ENDPOINTS
-                    .requestMatchers(HttpMethod.GET,"/api/capybaras/*/analytics").hasRole("USER")
+                    .requestMatchers(HttpMethod.GET,"/api/capybaras/*/analytics").hasAnyRole("USER","ADMIN")
                     .requestMatchers(HttpMethod.POST,"/api/capybaras/**").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.POST,"/api/capybaras/*/sponsor").hasRole("USER")
                     .requestMatchers(HttpMethod.POST,"/api/products/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST,"/api/products/*/comments").hasAnyRole("USER")
+                    .requestMatchers(HttpMethod.POST,"/api/products/*/comments").hasAnyRole("USER","ADMIN")
                     .requestMatchers(HttpMethod.POST,"/api/shops/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT,"/api/capybaras/**").hasRole("USER")
+                    .requestMatchers(HttpMethod.PUT,"/api/capybaras/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers(HttpMethod.DELETE,"/api/books/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE,"/api/capybaras/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE,"/api/products/**").hasRole("ADMIN")
