@@ -1,5 +1,6 @@
 {{>header}}
-	
+<input type="hidden" name="_csrf" value="{{token}}">
+
 	<section id="user">
 	{{#user.capybara}}
 	<h2>Hola padrino {{user.username}}</h2>

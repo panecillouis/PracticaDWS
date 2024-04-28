@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.godfathercapybara.capybara.model.User;
-import com.godfathercapybara.capybara.service.UserService;
 import com.godfathercapybara.capybara.service.CapybaraService;
+import com.godfathercapybara.capybara.service.UserService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -164,13 +164,14 @@ public class UserWebController {
 	}
 
 	@PostMapping("/users/{id}/edit")
-	public String processEditUserForm(Model model, @PathVariable("id") long id, @ModelAttribute User updatedUser,
-			String confirmPassword) throws IOException {
-		if (validateService.validateUpdatedUser(updatedUser, confirmPassword) != null) {
-			model.addAttribute("error", validateService.validateUpdatedUser(updatedUser, confirmPassword));
+	public String processEditUserForm(Model model, @PathVariable("id") long id, @ModelAttribute User updatedUser) throws IOException {
+		String confirmPassword = updatedUser.getPassword();
+		String error = validateService.validateUpdatedUser(updatedUser, confirmPassword);
+		if (error != null) {
+			model.addAttribute("error",  error);
 			return "editPrivatePage";
 		}
-		
+		updatedUser.setId(id);
 		userService.updateUser(updatedUser, id);
 
 		return "redirect:/";
