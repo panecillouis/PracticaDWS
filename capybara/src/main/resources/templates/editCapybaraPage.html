@@ -7,8 +7,8 @@
       </div>
       <form action="/capybaras/{{capybara.id}}/edit" method="post" enctype="multipart/form-data">
       
-        <input type="hidden" name="_csrf" value="{{token}}">
-        
+        {{>csrf}} 
+
         <p>
         <h2>Actualizando capibara</h2>
         </p>

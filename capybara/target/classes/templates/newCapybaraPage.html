@@ -4,7 +4,7 @@
 
 
 <form class= normal-form action="/newcapybara" method="post" enctype="multipart/form-data">
-  <input type="hidden" name="_csrf" value="{{token}}">
+  {{>csrf}} 
 
   <p>
   <h2>Nueva Capibara</h2>

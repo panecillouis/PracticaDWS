@@ -119,6 +119,10 @@ public class UserService {
 		{
 			user.setEmail(findUserById(id).getEmail());
 		}
+		if(user.getUsername()==null)
+		{
+			user.setUsername(findUserById(id).getUsername());
+		}
 		userRepository.save(user);
 
 	}
@@ -150,20 +154,14 @@ public class UserService {
 		{
 			return false;
 		}
-		if(user.getCapybara() == capybara)
+		if(user.getCapybara().getId() == capybara.getId())
 		{
 			return true;
 		}
 		return false;
 	}
 	public boolean isUser(long id, long id2)  {
-		User user = userRepository.findById(id).orElseThrow();
-		User user2 = userRepository.findById(id2).orElseThrow();
-		if(user == user2)
-		{
-			return true;
-		}
-		return false;
+		return id == id2;
 	}
 
 

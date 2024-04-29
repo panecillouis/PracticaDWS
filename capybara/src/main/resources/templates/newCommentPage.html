@@ -4,7 +4,7 @@
 
 <main id="cont">
   <form action="/products/{{product.id}}/newcomment" method="post">
-    <input type="hidden" name="_csrf" value="{{token}}">
+    {{>csrf}} 
 
     <h2>Nuevo Comentario</h2>
     {{#error}}

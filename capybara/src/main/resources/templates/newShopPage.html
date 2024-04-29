@@ -1,6 +1,6 @@
 {{>header}}
-<form action="/newshop" method="post" enctype="multipart/form-data">
-  <input type="hidden" name="_csrf" value="{{token}}">
+<form class="normal-form" action="/newshop" method="post" enctype="multipart/form-data">
+  {{>csrf}} 
 
   <h2>Nueva Tienda</h2>
   {{#error}}

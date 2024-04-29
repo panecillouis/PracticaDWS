@@ -19,7 +19,6 @@ import jakarta.persistence.Query;
 @Service
 public class CapybaraService {
 
-	
 	@Autowired
 	private EntityManager entityManager;
 
@@ -45,66 +44,62 @@ public class CapybaraService {
 	public List<Capybara> findAll() {
 		return capybaraRepository.findAll();
 	}
+
 	@SuppressWarnings("unchecked")
 	public List<Capybara> findAll(Boolean isSponsored, Double price, String sex) {
 		StringBuilder query = new StringBuilder("SELECT * FROM capybara");
-		
-		if( isSponsored!=null || price!=null || isNotEmptyField(sex)) {
+
+		if (isSponsored != null || price != null || isNotEmptyField(sex)) {
 			query.append(" WHERE");
 		}
-		if(isSponsored!=null) {
+		if (isSponsored != null) {
 			query.append(" is_sponsored = :isSponsored AND");
 		}
-		if(price!=null) {
+		if (price != null) {
 			query.append(" price <= :price AND");
 		}
-		
-		if(isNotEmptyField(sex)) {
+
+		if (isNotEmptyField(sex)) {
 			query.append(" sex = :sex AND");
 		}
 		if (query.toString().endsWith("AND")) {
 			query.setLength(query.length() - 4);
 		}
 		Query jpaQuery = entityManager.createNativeQuery(query.toString(), Capybara.class);
-    if (isSponsored != null) {
-        jpaQuery.setParameter("isSponsored", isSponsored);
-    }
-    if (price != null) {
-        jpaQuery.setParameter("price", price);
-    }
-    if (isNotEmptyField(sex)) {
-        jpaQuery.setParameter("sex", sex);
-    }
+		if (isSponsored != null) {
+			jpaQuery.setParameter("isSponsored", isSponsored);
+		}
+		if (price != null) {
+			jpaQuery.setParameter("price", price);
+		}
+		if (isNotEmptyField(sex)) {
+			jpaQuery.setParameter("sex", sex);
+		}
 
-    return jpaQuery.getResultList();
+		return jpaQuery.getResultList();
 	}
-
-
-
 
 	private boolean isNotEmptyField(String field) {
 		return field != null && !field.isEmpty();
 	}
-	
 
 	public Capybara save(Capybara capybara, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
 
-		if (imageField != null  && !imageField.isEmpty()) {
+		if (imageField != null && !imageField.isEmpty()) {
 			capybara.setImage(imageField.getOriginalFilename());
-			
+
 			capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
-		if(analyticsField != null && !analyticsField.isEmpty()) {
+		if (analyticsField != null && !analyticsField.isEmpty()) {
 			capybara.setAnalytics(analyticsField.getOriginalFilename());
-			String path =  analyticsService.createAnalytics(analyticsField);
+			String path = analyticsService.createAnalytics(analyticsField);
 		}
 
-		else if(capybara.getImage() == null || capybara.getImage().isEmpty())
-		{	capybara.setImage("no-image.png");
+		else if (capybara.getImage() == null || capybara.getImage().isEmpty()) {
+			capybara.setImage("no-image.png");
 			capybara.setImageFile(null);
-		}
-		else if(capybara.getAnalytics() == null || capybara.getAnalytics().isEmpty())
-		{	capybara.setAnalytics("no-analytics.pdf");
+		} else if (capybara.getAnalytics() == null || capybara.getAnalytics().isEmpty()) {
+			capybara.setAnalytics("no-analytics.pdf");
 		}
 
 		capybara.setId(nextId.getAndIncrement());
@@ -112,10 +107,10 @@ public class CapybaraService {
 		return capybara;
 	}
 
-	public void delete(long id) throws IOException{
+	public void delete(long id) throws IOException {
 		Capybara existingCapybara = this.findCapybaraById(id);
 		String analyticsPdfName = existingCapybara.getAnalytics();
-    
+
 		if (analyticsPdfName != null && !analyticsPdfName.isEmpty()) {
 			analyticsService.deleteAnalytics(analyticsPdfName);
 		}
@@ -126,27 +121,25 @@ public class CapybaraService {
 		return capybaraRepository.findById(id).orElseThrow();
 	}
 
-	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField, MultipartFile analyticsField) throws IOException {
+	public void updateCapybara(Capybara capybara, long id, MultipartFile imageField, MultipartFile analyticsField)
+			throws IOException {
 
-		if (imageField != null && !imageField.isEmpty() ) {
+		if (imageField != null && !imageField.isEmpty()) {
 			capybara.setImage(imageField.getOriginalFilename());
-        	capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
+			capybara.setImageFile(BlobProxy.generateProxy(imageField.getInputStream(), imageField.getSize()));
 		}
-		if(analyticsField != null && !analyticsField.isEmpty()) {
+		if (analyticsField != null && !analyticsField.isEmpty()) {
 			capybara.setAnalytics(analyticsField.getOriginalFilename());
-			String path =  analyticsService.createAnalytics(analyticsField);
-		}
-		else if (capybara.getImage() == null || capybara.getImage().isEmpty() ) {
+			analyticsService.createAnalytics(analyticsField);
+		} else if (capybara.getImage() == null || capybara.getImage().isEmpty()) {
 			Capybara existingCapybara = capybaraRepository.findById(id).orElseThrow();
 			capybara.setImageFile(existingCapybara.getImageFile());
 			capybara.setImage(existingCapybara.getImage());
-		
-		}
-		else if(capybara.getAnalytics() == null || capybara.getAnalytics().isEmpty())
-		{	
+
+		} else if (capybara.getAnalytics() == null || capybara.getAnalytics().isEmpty()) {
 			Capybara existingCapybara = capybaraRepository.findById(id).orElseThrow();
 			capybara.setAnalytics(existingCapybara.getAnalytics());
-				
+
 		}
 		capybaraRepository.save(capybara);
 
@@ -156,6 +149,16 @@ public class CapybaraService {
 		Capybara capybara = capybaraRepository.findById(id).orElse(null);
 		capybara.setIsSponsored(isSponsored);
 		capybaraRepository.save(capybara);
+	}
+
+	public void setImageFile(long id, String image, MultipartFile imageFile) throws IOException {
+		Capybara capybara = this.findCapybaraById(id);
+		capybara.setImage(image);
+		if (imageFile != null && !imageFile.isEmpty()) {
+			capybara.setImageFile(BlobProxy.generateProxy(imageFile.getInputStream(), imageFile.getSize()));
+		} else {
+			capybara.setImageFile(null);
+		}
 	}
 
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.godfathercapybara.capybara.model.Comment;
 import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.Shop;
 import com.godfathercapybara.capybara.model.User;
@@ -27,7 +28,7 @@ import com.godfathercapybara.capybara.service.ProductService;
 import com.godfathercapybara.capybara.service.ShopService;
 import com.godfathercapybara.capybara.service.ValidateService;
 import com.godfathercapybara.capybara.service.UserService;
-
+import com.godfathercapybara.capybara.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -44,6 +45,9 @@ public class ProductWebController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private CommentService commentService;
+
 	@GetMapping("/products")
 	public String showProducts(Model model, @RequestParam(required = false) Boolean comment, @RequestParam(required = false) Double price, @RequestParam(required = false) String type) {
 
@@ -53,11 +57,21 @@ public class ProductWebController {
 	}
 
 	@GetMapping("/products/{id}")
-	public String showProduct(Model model, @PathVariable long id) {
+	public String showProduct(Model model, @PathVariable long id, HttpServletRequest request) {
 
 		Optional<Product> product = productService.findById(id);
 		if (product.isPresent()) {
 			model.addAttribute("product", product.get());
+			if(request.getUserPrincipal() != null) {
+				Principal principal = request.getUserPrincipal();
+				String name = principal.getName();
+				Product productOptional = product.get();
+				for(Comment comment : productOptional.getComments()) {
+					if(commentService.isAuthor(comment.getId(), name) || request.isUserInRole("ADMIN")){
+						model.addAttribute("commented", true);
+					}
+				}
+			}
 			return "product";
 		} else {
 			return "redirect:/products";

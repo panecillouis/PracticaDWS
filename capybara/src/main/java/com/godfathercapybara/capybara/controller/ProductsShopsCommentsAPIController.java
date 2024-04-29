@@ -59,7 +59,8 @@ public class ProductsShopsCommentsAPIController {
 
 	@JsonView(Product.Basic.class)
 	@GetMapping("/products")
-	public List<Product> getProducts(@RequestParam(required = false) Boolean comment, @RequestParam(required = false) Double price, @RequestParam(required = false) String type) {
+	public List<Product> getProducts(@RequestParam(required = false) Boolean comment,
+			@RequestParam(required = false) Double price, @RequestParam(required = false) String type) {
 		List<Product> products = productService.findAll(comment, price, type);
 		return products;
 	}
@@ -109,7 +110,7 @@ public class ProductsShopsCommentsAPIController {
 	@PostMapping("/products")
 	public ResponseEntity<?> createProduct(@RequestBody Product product, MultipartFile imageField,
 			@RequestParam(required = false) List<Long> selectedShops) throws IOException {
-				
+
 		String error = validateService.validateProduct(product, imageField);
 		if (error != null) {
 			Map<String, Object> response = new HashMap<>();
@@ -150,27 +151,27 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@SuppressWarnings("null")
-    @GetMapping("products/{id}/image")
-    public ResponseEntity<Resource> downloadImage(@PathVariable long id) {
-        try {
-            Product product = productService.findById(id).orElseThrow();
-            if (product.getImageFile() == null) {
-                return ResponseEntity.notFound().build();
-            }
+	@GetMapping("products/{id}/image")
+	public ResponseEntity<Resource> downloadImage(@PathVariable long id) {
+		try {
+			Product product = productService.findById(id).orElseThrow();
+			if (product.getImageFile() == null) {
+				return ResponseEntity.notFound().build();
+			}
 
-            Resource file = new InputStreamResource(product.getImageFile().getBinaryStream());
-            String mimeType = MimeTypeUtils.IMAGE_JPEG_VALUE;
+			Resource file = new InputStreamResource(product.getImageFile().getBinaryStream());
+			String mimeType = MimeTypeUtils.IMAGE_JPEG_VALUE;
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + product.getImage() + "\"")
-                    .contentType(MediaType.parseMediaType(mimeType))
-                    .contentLength(product.getImageFile().length())
-                    .body(file);
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + product.getImage() + "\"")
+					.contentType(MediaType.parseMediaType(mimeType))
+					.contentLength(product.getImageFile().length())
+					.body(file);
 
-        } catch (SQLException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Can't retrieve capybara image", ex);
-        }
-    }
+		} catch (SQLException ex) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Can't retrieve capybara image", ex);
+		}
+	}
 
 	@DeleteMapping("/products/{id}/image")
 	public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
@@ -184,41 +185,42 @@ public class ProductsShopsCommentsAPIController {
 	}
 
 	@PostMapping("/products/{id}/comments")
-	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment, HttpServletRequest request)
+	public ResponseEntity<?> createCommentForProduct(@PathVariable long id, @RequestBody Comment comment,
+			HttpServletRequest request)
 			throws IOException {
 		comment.setText(Jsoup.clean(comment.getText(), Safelist.relaxed()));
 		Principal principal = request.getUserPrincipal();
-        if (principal == null) {
+		if (principal == null) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-		else{
-			String name = principal.getName();
-            comment.setAuthor(name);
-		Optional<Product> productOptional = productService.findById(id);
-		String error = validateService.validateComment(comment);
-		if (error != null) {
-			Map<String, Object> response = new HashMap<>();
-			response.put("error", error);
-			response.put("comment", comment);
-			return ResponseEntity.badRequest().body(response);
 		} else {
-			if (productOptional.isPresent()) {
-				Product product = productOptional.get();
-				commentService.save(comment);
-				product.addComment(comment);
-				productService.updateProduct(product, id, null);
-				URI location = fromCurrentRequest().path("/{id}").buildAndExpand(comment.getId()).toUri();
-				return ResponseEntity.created(location).body(comment);
-
+			String name = principal.getName();
+			comment.setAuthor(name);
+			Optional<Product> productOptional = productService.findById(id);
+			String error = validateService.validateComment(comment);
+			if (error != null) {
+				Map<String, Object> response = new HashMap<>();
+				response.put("error", error);
+				response.put("comment", comment);
+				return ResponseEntity.badRequest().body(response);
 			} else {
-				return ResponseEntity.notFound().build();
+				if (productOptional.isPresent()) {
+					Product product = productOptional.get();
+					commentService.save(comment);
+					product.addComment(comment);
+					productService.updateProduct(product, id, null);
+					URI location = fromCurrentRequest().path("/{id}").buildAndExpand(comment.getId()).toUri();
+					return ResponseEntity.created(location).body(comment);
+
+				} else {
+					return ResponseEntity.notFound().build();
+				}
 			}
-		}
 		}
 	}
 
 	@DeleteMapping("/products/{id}/comments/{commentId}")
-	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId)
+	public ResponseEntity<Comment> deleteCommentForProduct(@PathVariable long id, @PathVariable long commentId,
+			HttpServletRequest request)
 			throws IOException {
 		Optional<Product> productOptional = productService.findById(id);
 		if (!productOptional.isPresent()) {
@@ -229,15 +231,25 @@ public class ProductsShopsCommentsAPIController {
 		if (!optionalComment.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
-		Comment comment = optionalComment.get();
-		if (!product.getComments().contains(comment)) {
-			return ResponseEntity.badRequest().build();
-		}
-		productService.deleteComment(id, commentId);
-		productService.updateProduct(product, id, null);
-		commentService.delete(commentId);
+		Principal principal = request.getUserPrincipal();
+		if (principal == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		} else {
+			Comment comment = optionalComment.get();
+			if (!product.getComments().contains(comment)) {
+				return ResponseEntity.badRequest().build();
+			}
+			String userName = principal.getName();
+			if (!commentService.isAuthor(commentId, userName) && !request.isUserInRole("ADMIN")) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			} else {
+				productService.deleteComment(id, commentId);
+				productService.updateProduct(product, id, null);
+				commentService.delete(commentId);
 
-		return ResponseEntity.ok(comment);
+				return ResponseEntity.ok(comment);
+			}
+		}
 	}
 
 	interface ShopDetail extends Shop.Basic, Shop.Products, Product.Basic {

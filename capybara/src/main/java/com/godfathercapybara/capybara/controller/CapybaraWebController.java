@@ -146,12 +146,13 @@ public class CapybaraWebController {
 
 	@GetMapping("/capybaras/{id}/delete")
 	public String deleteCapybara(Model model, @PathVariable long id) throws IOException{
-		Optional<Capybara> capybara = capybaraService.findById(id);
+		Optional<Capybara> capybaraOptional = capybaraService.findById(id);
 
-		if (capybara.isPresent()) {
-			capybaraService.delete(id);
+		if (capybaraOptional.isPresent()) {
+			Capybara capybara = capybaraOptional.get();
+            capybaraService.delete(capybara.getId());
 		}
-		model.addAttribute("name", capybara.get().getName());
+		model.addAttribute("name", capybaraOptional.get().getName());
 
 		return "removedcapybara";
 	}

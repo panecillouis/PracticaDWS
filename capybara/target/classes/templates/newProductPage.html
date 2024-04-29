@@ -1,7 +1,7 @@
 {{>header}}
 
 <form class="normal-form" action="/newproduct" method="post" enctype="multipart/form-data">
-  <input type="hidden" name="_csrf" value="{{token}}">
+  {{>csrf}} 
 
   <h2>Nuevo Producto</h2>
   {{#error}}

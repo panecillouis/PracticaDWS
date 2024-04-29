@@ -3,7 +3,7 @@
   <div class="container">
       
       <form action="/users/{{user.id}}/edit" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="_csrf" value="{{token}}">
+        {{>csrf}} 
 
         <p>
         <h2>Actualizando información de la cuenta</h2>
@@ -12,9 +12,7 @@
         <p class="error-message">{{error}}</p>
         {{/error}}
         <div>
-          <p><label>Nombre de Usuario:</label></p>
-          <p><input name="username" type="text" placeholder="Nombre de Usuario"
-         value={{#user.username}}{{user.username}}{{/user.username}}></p>
+          <p><label>Nombre de Usuario: </label> {{user.username}}</p>
         </div>
         <div>
          <p><label>Contraseña:</label></p>

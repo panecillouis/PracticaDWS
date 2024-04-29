@@ -50,5 +50,12 @@ public class CommentService {
 	public void delete(long id) {
 		commentRepository.deleteById(id);
 	}
+	public boolean isAuthor(long id, String username) {
+		Optional<Comment> comment = this.findById(id);
+		if (comment.isPresent()) {
+			return comment.get().getAuthor().equals(username);
+		}
+		return false;
+	}
 
 }

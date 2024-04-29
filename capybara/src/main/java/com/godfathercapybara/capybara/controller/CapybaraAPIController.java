@@ -1,6 +1,6 @@
 package com.godfathercapybara.capybara.controller;
 
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.*;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.hibernate.engine.jdbc.BlobProxy;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +128,7 @@ public class CapybaraAPIController {
                 
         Capybara capybara = capybaraService.findCapybaraById(id);
         URI location = fromCurrentRequest().build().toUri();
-        String path = analyticsService.createAnalytics(analytics);
+        analyticsService.createAnalytics(analytics);
         capybara.setAnalytics(location.toString());
         capybaraService.updateCapybara(capybara, id, null, analytics);
         return ResponseEntity.created(location).build();
@@ -142,8 +141,7 @@ public class CapybaraAPIController {
 
         Capybara capybara = capybaraService.findCapybaraById(id);
         URI location = fromCurrentRequest().build().toUri();
-        capybara.setImage(location.toString());
-        capybara.setImageFile(BlobProxy.generateProxy(image.getInputStream(), image.getSize()));
+        capybaraService.setImageFile(id, location.toString(), image);
         capybaraService.updateCapybara(capybara, id, image, null);
         return ResponseEntity.created(location).build();
 
@@ -152,8 +150,7 @@ public class CapybaraAPIController {
     @PostMapping("/{id}/sponsor")
 	public ResponseEntity<Object> sponsorCapybara(@PathVariable("id") long id, @RequestParam boolean isSponsored,
 			HttpServletRequest request) throws IOException {
-        Capybara capybara = capybaraService.findCapybaraById(id);
-        URI location = fromCurrentRequest().build().toUri();
+        
 		Principal principal = request.getUserPrincipal();
 		String userName = principal.getName();
 		Optional<User> userOptional = userService.findByUsername(userName);
@@ -185,8 +182,7 @@ public class CapybaraAPIController {
     public ResponseEntity<Object> deleteImage(@PathVariable long id) throws IOException {
         Capybara capybara = capybaraService.findCapybaraById(id);
 
-        capybara.setImage("no-image.png");
-        capybara.setImageFile(null);
+        capybaraService.setImageFile(id, "no-image.png", null);
         capybaraService.updateCapybara(capybara, id, null, null);
         return ResponseEntity.noContent().build();
     }

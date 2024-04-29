@@ -66,20 +66,26 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE,"/api/capybaras/**").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.PUT,"/api/capybaras/**").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.POST,"/api/capybaras/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST,"/api/products/**").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.DELETE,"/api/products/**").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.GET,"/api/capybaras/**").permitAll()
+
 					.requestMatchers(HttpMethod.POST,"/api/products/*/comments").hasAnyRole("USER","ADMIN")
-                    .requestMatchers(HttpMethod.DELETE,"/api/products/*/comments").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE,"/api/products/*/comments/**").hasAnyRole("USER","ADMIN")
+					.requestMatchers(HttpMethod.POST,"/api/products/**").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.DELETE,"/api/products/**").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.GET,"/api/products/**").permitAll()
+
                     .requestMatchers(HttpMethod.POST,"/api/shops/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE,"/api/shops/**").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.GET,"/api/shops/**").permitAll()
+
 					.requestMatchers(HttpMethod.POST,"/api/auth/login").anonymous()
 					.requestMatchers(HttpMethod.POST,"/api/auth/logout").authenticated()
 					.requestMatchers(HttpMethod.POST,"/api/users/signup").anonymous()
 					.requestMatchers(HttpMethod.GET,"/api/users").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.POST,"/api/users/**").authenticated()
+					.requestMatchers(HttpMethod.GET,"/api/users/me").authenticated()
+					.requestMatchers(HttpMethod.POST,"/api/auth/refresh").authenticated()
 					.requestMatchers(HttpMethod.DELETE,"/api/users/*/delete").hasAnyRole("ADMIN","USER")
-                    // PUBLIC ENDPOINTS
-                    .anyRequest().permitAll()
+					.requestMatchers(HttpMethod.POST,"/api/users/**").authenticated()
 			);
 		
             // Disable Form login Authentication
@@ -116,17 +122,18 @@ public class SecurityConfig {
 					.requestMatchers("/newcapybara").hasRole("ADMIN")
 					.requestMatchers("/capybaras/*/analytics").hasAnyRole("USER","ADMIN")
 					.requestMatchers("/capybaras/**").permitAll()
-					.requestMatchers("products/*/delete").hasRole("ADMIN")
-					.requestMatchers("/products/*/comments/*/delete").hasAnyRole("ADMIN")
+					.requestMatchers("/products/*/delete").hasRole("ADMIN")
+					.requestMatchers("/products/*/comments/*/delete").hasAnyRole("USER","ADMIN")
 					.requestMatchers("/products/*/newcomment").hasAnyRole("ADMIN", "USER")
 					.requestMatchers("/products/**").permitAll()
 					.requestMatchers("/shops/*/delete").hasRole("ADMIN")
 					.requestMatchers("/newshop").hasRole("ADMIN")
 					.requestMatchers("/shops/**").permitAll()
-					.requestMatchers("login").anonymous()
-					.requestMatchers("loginerror").anonymous()
-					.requestMatchers("signup").anonymous()
+					.requestMatchers("/login").anonymous()
+					.requestMatchers("/loginerror").anonymous()
+					.requestMatchers("/signup").anonymous()
 					.anyRequest().permitAll()
+					
 
 			);
 	

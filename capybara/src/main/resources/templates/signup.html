@@ -1,7 +1,7 @@
 {{>header}}
 
 	<form class="normal-form" action="/signup" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="_csrf" value="{{token}}">
+    {{>csrf}} 
 	<h2>Sign Up</h2>
 	{{#error}}
   	<p class="error-message">{{error}}</p>

@@ -1,6 +1,7 @@
 
 package com.godfathercapybara.capybara.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -23,10 +24,10 @@ public class AnalyticsService {
     public String createAnalytics(MultipartFile multiPartFile) {
 
         String originalName = multiPartFile.getOriginalFilename();
-        if (!originalName.matches(".*\\.pdf")) {
+        if (!originalName.matches(".*"+File.separatorChar+".pdf")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The URL does not represent a PDF resource");
         }
-        Path path = Paths.get(PDFS_FOLDER.toString() + "/" + originalName);
+        Path path = Paths.get(PDFS_FOLDER.toString() + File.separatorChar + originalName);
         String dest = Paths.get(PDFS_FOLDER.toString()).toString();
         if(!path.normalize().startsWith(dest))
         {
@@ -49,7 +50,7 @@ public class AnalyticsService {
 
     public Resource getAnalytics(String pdfName) {
 
-        Path path = Paths.get(PDFS_FOLDER.toString() + "/" + pdfName);
+        Path path = Paths.get(PDFS_FOLDER.toString() + File.separatorChar + pdfName);
         String source = Paths.get(PDFS_FOLDER.toString()).toString();
         if(!path.normalize().startsWith(source))
         {
@@ -65,7 +66,7 @@ public class AnalyticsService {
     }
 
     public void deleteAnalytics(String pdfName) throws IOException {
-        Path path = Paths.get(PDFS_FOLDER.toString() + "/" + pdfName);
+        Path path = Paths.get(PDFS_FOLDER.toString() + File.separatorChar + pdfName);
         String source = Paths.get(PDFS_FOLDER.toString()).toString();
         if(!path.normalize().startsWith(source))
         {

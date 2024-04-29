@@ -55,20 +55,7 @@ public class ValidateService {
 
         return null;
     }
-    public String validateUsernameUpdated(String username, long id)
-    {
-        if (username.isEmpty()) {
-            return "El campo nombre de usuario no puede ser nulo";
-        }
-        Optional<User> userOptional = userService.findByUsername(username);
-        User user1 = userOptional.get();
-        Optional<User> userid = userService.findById(id);
-        User user2 = userid.get();
-        if(username.equals(user1) && user2.getId()!=user1.getId()) {
-            return "El nombre de usuario ya existe";
-        }
-        return null;
-    }
+   
 
     public String validateName(String name) {
         if (name.isEmpty()) {
@@ -303,10 +290,7 @@ public class ValidateService {
         return null; // User is valid
     }
     public String validateUpdatedUser(User user, String confirmPassword) {
-        String usernameError = validateUsernameUpdated(user.getUsername(), user.getId());
-        if (usernameError != null) {
-            return usernameError;
-        }
+      
         String nameError = validateName(user.getName());
         if (nameError != null) {
             return nameError;
