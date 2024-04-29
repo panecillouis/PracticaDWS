@@ -1,6 +1,6 @@
 package com.godfathercapybara.capybara.controller;
 
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -56,7 +56,7 @@ public class CapybaraAPIController {
     private UserService userService;
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Capybara> deleteCapybara(@PathVariable long id) {
+    public ResponseEntity<Capybara> deleteCapybara(@PathVariable long id) throws IOException {
         Optional<Capybara> capybaraOptional = capybaraService.findById(id);
         if (capybaraOptional.isPresent()) {
             Capybara capybara = capybaraOptional.get();

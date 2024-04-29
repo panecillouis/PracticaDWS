@@ -8,20 +8,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.godfathercapybara.capybara.security.jwt.JwtRequestFilter;
 import com.godfathercapybara.capybara.security.jwt.UnauthorizedHandlerJwt;
 
 @Configuration
-@EnableWebMvc
+@EnableWebSecurity
 public class SecurityConfig {
 
 	@Autowired
@@ -79,6 +77,7 @@ public class SecurityConfig {
 					.requestMatchers(HttpMethod.POST,"/api/users/signup").anonymous()
 					.requestMatchers(HttpMethod.GET,"/api/users").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.POST,"/api/users/**").authenticated()
+					.requestMatchers(HttpMethod.DELETE,"/api/users/*/delete").hasAnyRole("ADMIN","USER")
                     // PUBLIC ENDPOINTS
                     .anyRequest().permitAll()
 			);
@@ -144,8 +143,6 @@ public class SecurityConfig {
 					.permitAll()
 			);
 		
-		http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-			.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()));
 		return http.build();
 	}
 

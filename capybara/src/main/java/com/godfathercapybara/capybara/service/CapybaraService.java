@@ -112,7 +112,7 @@ public class CapybaraService {
 		return capybara;
 	}
 
-	public void delete(long id) {
+	public void delete(long id) throws IOException{
 		Capybara existingCapybara = this.findCapybaraById(id);
 		String analyticsPdfName = existingCapybara.getAnalytics();
     

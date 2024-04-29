@@ -3,9 +3,9 @@ package com.godfathercapybara.capybara.service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -23,7 +23,9 @@ public class AnalyticsService {
     public String createAnalytics(MultipartFile multiPartFile) {
 
         String originalName = multiPartFile.getOriginalFilename();
-    
+        if (!originalName.matches(".*\\.pdf")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The URL does not represent a PDF resource");
+        }
         Path path = Paths.get(PDFS_FOLDER.toString() + "/" + originalName);
         String dest = Paths.get(PDFS_FOLDER.toString()).toString();
         if(!path.normalize().startsWith(dest))
@@ -31,9 +33,7 @@ public class AnalyticsService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid path");
         
         }
-        if (!originalName.matches(".*\\.pdf")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The URL does not represent a PDF resource");
-        }
+        
         Path pdfPath = PDFS_FOLDER.resolve(originalName);
     
         try {
@@ -64,15 +64,20 @@ public class AnalyticsService {
         }
     }
 
-    public void deleteAnalytics(String pdfName) {
+    public void deleteAnalytics(String pdfName) throws IOException {
+        Path path = Paths.get(PDFS_FOLDER.toString() + "/" + pdfName);
+        String source = Paths.get(PDFS_FOLDER.toString()).toString();
+        if(!path.normalize().startsWith(source))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid path");
         
+        }
+        Path pdfPath = PDFS_FOLDER.resolve(pdfName); 
         try {
-            PDFS_FOLDER.resolve(pdfName).toFile().delete();
-        } catch (Exception e) {
+            Files.delete(pdfPath);
+        } catch (MalformedURLException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Can't delete local PDF");
         }
     }
-
-
 
 }

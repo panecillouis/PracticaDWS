@@ -5,8 +5,6 @@ import java.security.Principal;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import javax.print.attribute.standard.PrinterName;
-
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
-import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +26,9 @@ import com.godfathercapybara.capybara.model.Capybara;
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.AnalyticsService;
 import com.godfathercapybara.capybara.service.CapybaraService;
-import com.godfathercapybara.capybara.service.ValidateService;
 import com.godfathercapybara.capybara.service.UserService;
+import com.godfathercapybara.capybara.service.ValidateService;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -148,7 +145,7 @@ public class CapybaraWebController {
 	}
 
 	@GetMapping("/capybaras/{id}/delete")
-	public String deleteCapybara(Model model, @PathVariable long id) {
+	public String deleteCapybara(Model model, @PathVariable long id) throws IOException{
 		Optional<Capybara> capybara = capybaraService.findById(id);
 
 		if (capybara.isPresent()) {
