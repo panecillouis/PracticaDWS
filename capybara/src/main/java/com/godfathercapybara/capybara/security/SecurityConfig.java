@@ -116,6 +116,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(authorize -> authorize
 					.requestMatchers("/users").hasRole("ADMIN")
 					.requestMatchers("/users/**").authenticated()
+					.requestMatchers("/me").authenticated()
 					.requestMatchers("/capybaras/*/edit").hasRole("ADMIN")
 					.requestMatchers("/capybaras/*/sponsor").hasRole("USER")
 					.requestMatchers("/capybaras/*/delete").hasRole("ADMIN")
@@ -140,7 +141,7 @@ public class SecurityConfig {
 		http.formLogin(formLogin -> formLogin
 					.loginPage("/login")
 					.failureUrl("/loginerror")
-					.defaultSuccessUrl("/users/home")
+					.defaultSuccessUrl("/me")
 					.permitAll()
 			);
 		

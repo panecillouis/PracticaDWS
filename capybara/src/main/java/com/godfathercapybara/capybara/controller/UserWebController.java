@@ -49,7 +49,7 @@ public class UserWebController {
 		if (auth == null || auth instanceof AnonymousAuthenticationToken) {
 			return "login";
 		} else {
-			return "redirect:/users/home";
+			return "redirect:/me";
 		}
 	}
 
@@ -65,7 +65,7 @@ public class UserWebController {
 		if (auth == null || auth instanceof AnonymousAuthenticationToken) {
 			return "signup";
 		} else {
-			return "redirect:/users/home";
+			return "redirect:/me";
 		}
 	}
 
@@ -92,7 +92,7 @@ public class UserWebController {
 		return "users";
 	}
 
-	@GetMapping("/users/home")
+	@GetMapping("/me")
 	public String privatePage(Model model) {
 
 		return "private";
