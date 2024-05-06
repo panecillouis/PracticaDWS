@@ -51,11 +51,12 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras",
+							"raw": "https://localhost:8443/api/capybaras",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras"
@@ -66,7 +67,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/capybaras?isSponsored=&price=&sex=Macho",
+					"name": "/api/capybaras/filter",
 					"event": [
 						{
 							"listen": "test",
@@ -105,11 +106,12 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras?isSponsored=&price=&sex=Hembra",
+							"raw": "https://localhost:8443/api/capybaras?isSponsored=&price=&sex=Hembra",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras"
@@ -153,11 +155,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/capybaras/1",
+							"raw": "https://localhost:8443/api/capybaras/1",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -188,11 +191,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/capybaras/1/analytics",
+							"raw": "https://localhost:8443/api/capybaras/1/analytics",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -224,11 +228,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/capybaras/1/image",
+							"raw": "https://localhost:8443/api/capybaras/1/image",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -251,7 +256,8 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -268,11 +274,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/",
+							"raw": "https://localhost:8443/api/capybaras/",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -294,7 +301,8 @@
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -312,16 +320,64 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/3/image",
+							"raw": "https://localhost:8443/api/capybaras/3/image",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
 								"3",
 								"image"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "/api/capybaras/{id}/sponsor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "https://localhost:8443/api/capybaras/1/sponsor?isSponsored=true",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"capybaras",
+								"1",
+								"sponsor"
+							],
+							"query": [
+								{
+									"key": "isSponsored",
+									"value": "true"
+								}
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -358,11 +414,12 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/3/analytics",
+							"raw": "https://localhost:8443/api/capybaras/3/analytics",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -402,7 +459,8 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "15461ac4-4da2-4f53-8bf6-2c0518e071ed"
 							}
 						],
 						"body": {
@@ -410,11 +468,12 @@
 							"raw": "{\r\n    \"id\": 3,\r\n    \"sex\": \"Hembra\",\r\n    \"color\": \"Marrona\",\r\n    \"price\": \"10\",\r\n    \"description\": \"En verdad no necesita que la apadrinen, ella es autosuficiente pero quiere algo de dinero.\",\r\n    \"name\": \"Trinidad\",\r\n    \"isSponsored\": false\r\n}"
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/3",
+							"raw": "https://localhost:8443/api/capybaras/3",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -437,7 +496,8 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -454,11 +514,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/3",
+							"raw": "https://localhost:8443/api/capybaras/3",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -481,7 +542,8 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -498,11 +560,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/3/image",
+							"raw": "https://localhost:8443/api/capybaras/3/image",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -544,11 +607,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/capybaras/3/analytics",
+							"raw": "https://localhost:8443/api/capybaras/3/analytics",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"capybaras",
@@ -597,11 +661,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products",
+							"raw": "https://localhost:8443/api/products",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products"
@@ -643,11 +708,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products?comment=&price=100&type=",
+							"raw": "https://localhost:8443/api/products?comment=&price=100&type=",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products"
@@ -691,11 +757,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/products/1",
+							"raw": "https://localhost:8443/api/products/1",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
@@ -726,11 +793,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/products/1/image",
+							"raw": "https://localhost:8443/api/products/1/image",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
@@ -774,15 +842,15 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/?selectedShops=1&selectedShops=2",
+							"raw": "https://localhost:8443/api/products?selectedShops=1&selectedShops=2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
-								"products",
-								""
+								"products"
 							],
 							"query": [
 								{
@@ -829,11 +897,12 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/1/image",
+							"raw": "https://localhost:8443/api/products/1/image",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
@@ -875,11 +944,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/3",
+							"raw": "https://localhost:8443/api/products/3",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
@@ -902,7 +972,8 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -919,11 +990,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/3/image",
+							"raw": "https://localhost:8443/api/products/3/image",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
@@ -972,11 +1044,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/shops",
+							"raw": "https://localhost:8443/api/shops",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"shops"
@@ -1018,11 +1091,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/shops?address=Madrid",
+							"raw": "https://localhost:8443/api/shops?address=Madrid",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"shops"
@@ -1058,11 +1132,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/shops/1",
+							"raw": "https://localhost:8443/api/shops/1",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"shops",
@@ -1106,15 +1181,15 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/shops/?selectedProducts=1&selectedProducts=2",
+							"raw": "https://localhost:8443/api/shops?selectedProducts=1&selectedProducts=2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
-								"shops",
-								""
+								"shops"
 							],
 							"query": [
 								{
@@ -1143,7 +1218,8 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1151,11 +1227,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/shops/3",
+							"raw": "https://localhost:8443/api/shops/3",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"shops",
@@ -1198,25 +1275,26 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "29f372d2-e079-4765-8b7f-e8fa821be291"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "   {\r\n            \"text\": \"Matadora, 3 de un tiro\",\r\n            \"author\": \"Mafia02\"\r\n    }"
+							"raw": "   {\r\n            \"text\": \"Matadora, 3 de un tiro\"\r\n    }"
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/1/comments/",
+							"raw": "https://localhost:8443/api/products/1/comments",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
 								"1",
-								"comments",
-								""
+								"comments"
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -1235,7 +1313,8 @@
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1252,11 +1331,12 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/1/comments/4",
+							"raw": "https://localhost:8443/api/products/1/comments/4",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8443",
 							"path": [
 								"api",
 								"products",
@@ -1266,6 +1346,342 @@
 							]
 						},
 						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "/api/auth/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Response status code is 403\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('timestamp');\r",
+									"    pm.expect(responseData).to.have.property('status');\r",
+									"    pm.expect(responseData).to.have.property('error');\r",
+									"    pm.expect(responseData).to.have.property('message');\r",
+									"    pm.expect(responseData).to.have.property('path');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Error message is not empty\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.error).to.exist.and.to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Path is a non-empty string\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"\r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.path).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"username\":\"maria\",\r\n        \"password\":\"mariap885\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/api/auth/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users/signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Response status code is 403\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('timestamp');\r",
+									"    pm.expect(responseData).to.have.property('status');\r",
+									"    pm.expect(responseData).to.have.property('error');\r",
+									"    pm.expect(responseData).to.have.property('message');\r",
+									"    pm.expect(responseData).to.have.property('path');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Error message is not empty\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.error).to.exist.and.to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Path is a non-empty string\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"\r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.path).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"name\": \"maria\",\r\n        \"lastName\": \"garcia\",\r\n        \"email\": \"mariag@gmail.com\",\r\n        \"username\": \"maria\",\r\n        \"password\": \"mariap885\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/api/users/signup",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"users",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/auth/refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/api/auth/refresh",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/auth/logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"username\":\"admin\",\r\n        \"password\":\"adminpass\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/api/auth/logout",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users/me",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/api/users/me",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/api/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users/{{id}}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:8443/api/users/{{id}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"users",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users/{{id}}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"mariota\",\r\n    \"lastName\": \"garcia\",\r\n    \"email\": \"mariag@gmail.com\",\r\n    \"password\": \"mariap885\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/api/users/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users/{{id}}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"maria\",\r\n    \"lastName\": \"garcia\",\r\n    \"email\": \"mariag@gmail.com\",\r\n    \"username\": \"maria\",\r\n    \"password\": \"mariap885\",\r\n    \"capybara\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:8443/api/users/{{id}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"users",
+								"{{id}}"
+							]
+						}
 					},
 					"response": []
 				}
