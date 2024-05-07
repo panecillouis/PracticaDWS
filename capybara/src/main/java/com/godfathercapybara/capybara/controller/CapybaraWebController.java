@@ -169,6 +169,7 @@ public class CapybaraWebController {
 	public String processEditCapybaraForm(Model model, @PathVariable("id") long id,
 			@ModelAttribute Capybara updatedCapybara, MultipartFile imageField, MultipartFile analyticsField)
 			throws IOException {
+		updatedCapybara.setDescription(Jsoup.clean(updatedCapybara.getDescription(), Safelist.relaxed()));
 		if (validateService.validateUpdatedCapybara(updatedCapybara) != null) {
 			model.addAttribute("error", validateService.validateUpdatedCapybara(updatedCapybara));
 			return "editCapybaraPage";

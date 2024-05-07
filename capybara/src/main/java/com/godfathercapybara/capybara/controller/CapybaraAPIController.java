@@ -1,6 +1,6 @@
 package com.godfathercapybara.capybara.controller;
 
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -104,6 +104,8 @@ public class CapybaraAPIController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCapybara(@PathVariable long id, @RequestBody Capybara newcapybara,
             MultipartFile imageField, MultipartFile analyticsField) throws IOException {
+        newcapybara.setDescription(Jsoup.clean(newcapybara.getDescription(), Safelist.relaxed()));
+
         String error = validateService.validateUpdatedCapybara(newcapybara);
         if (error != null) {
             Map<String, Object> response = new HashMap<>();

@@ -82,9 +82,11 @@ public class SecurityConfig {
 					.requestMatchers(HttpMethod.POST,"/api/auth/logout").authenticated()
 					.requestMatchers(HttpMethod.POST,"/api/users/signup").anonymous()
 					.requestMatchers(HttpMethod.GET,"/api/users").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.GET,"/api/users/**").hasAnyRole("ADMIN","USER")
+					.requestMatchers(HttpMethod.PUT,"/api/users/**").hasAnyRole("ADMIN","USER")
 					.requestMatchers(HttpMethod.GET,"/api/users/me").authenticated()
 					.requestMatchers(HttpMethod.POST,"/api/auth/refresh").authenticated()
-					.requestMatchers(HttpMethod.DELETE,"/api/users/*/delete").hasAnyRole("ADMIN","USER")
+					.requestMatchers(HttpMethod.DELETE,"/api/users/**").hasAnyRole("ADMIN","USER")
 					.requestMatchers(HttpMethod.POST,"/api/users/**").authenticated()
 			);
 		

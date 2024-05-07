@@ -19,8 +19,8 @@ import com.godfathercapybara.capybara.model.Product;
 import com.godfathercapybara.capybara.model.User;
 import com.godfathercapybara.capybara.service.CommentService;
 import com.godfathercapybara.capybara.service.ProductService;
-import com.godfathercapybara.capybara.service.ValidateService;
 import com.godfathercapybara.capybara.service.UserService;
+import com.godfathercapybara.capybara.service.ValidateService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -75,27 +75,35 @@ public class CommentWebController {
 
     @GetMapping("/products/{id}/comments/{idComment}/delete")
     public String deleteComment(Model model, @PathVariable long id, @PathVariable long idComment,
-            HttpServletRequest request) {
-        Principal principal = request.getUserPrincipal();
-        if (principal == null) {
-            return "redirect:/login";
-        } else {
-            String name = principal.getName();
-            Optional<User> userOptional = userService.findByUsername(name);
-            User user = userOptional.get();
-            String author = commentService.findById(idComment).get().getAuthor();
-            Optional<User> userComment = userService.findByUsername(author);
-            User userC = userComment.get();
-            if (userOptional.isPresent() && userComment.isPresent()
-                    && (userService.isUser(id, userC.getId()) || request.isUserInRole("ADMIN"))) {
-                productService.deleteComment(id, idComment);
-                commentService.delete(idComment);
+            HttpServletRequest request) throws IOException{
+        Optional<Product> productOptional = productService.findById(id);
+		if (!productOptional.isPresent()) {
+            return "redirect:/products/" + id;
+		}
+		Product product = productOptional.get();
+		Optional<Comment> optionalComment = commentService.findById(idComment);
+		if (!optionalComment.isPresent()) {
+            return "redirect:/products/" + id;
+		}
+		Principal principal = request.getUserPrincipal();
+		if (principal == null) {
+            return "redirect:/products/" + id;
+		} else {
+			Comment comment = optionalComment.get();
+			if (!product.getComments().contains(comment)) {
                 return "redirect:/products/" + id;
-            } else {
+			}
+			String userName = principal.getName();
+			if (!commentService.isAuthor(idComment, userName) && !request.isUserInRole("ADMIN")) {
                 return "redirect:/products/" + id;
+			} else {
+				productService.deleteComment(id, idComment);
+				productService.updateProduct(product, id, null);
+				commentService.delete(idComment);
 
-            }
-        }
+                return "redirect:/products/" + id;
+			}
+		}
     }
 
     @ModelAttribute
