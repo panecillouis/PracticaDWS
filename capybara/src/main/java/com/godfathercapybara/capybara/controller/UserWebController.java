@@ -22,7 +22,9 @@ import com.godfathercapybara.capybara.service.CapybaraService;
 import com.godfathercapybara.capybara.service.UserService;
 import com.godfathercapybara.capybara.service.ValidateService;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
@@ -99,7 +101,7 @@ public class UserWebController {
 	}
 
 	@GetMapping("/users/{id}/delete")
-	public String deleteUser(Model model, @PathVariable long id, HttpServletRequest request) {
+	public String deleteUser(Model model, @PathVariable long id, HttpServletRequest request,HttpServletResponse response) throws ServletException{
 		Optional<User> user = userService.findById(id);
 		Principal principal = request.getUserPrincipal();
 		if (principal != null) {
@@ -109,6 +111,10 @@ public class UserWebController {
 			if ((userOptional.isPresent()) && (userService.isUser(userLogged.getId(), id)|| request.isUserInRole("ADMIN"))) {
 				userService.delete(id);
 				model.addAttribute("name", user.get().getUsername());
+				if(userService.isUser(userLogged.getId(), id)){
+				request.logout();
+				response.setHeader("Set-Cookie", "token=; HttpOnly; Path=/; Max-Age=0");
+				}
 				return "removedUser";
 			} else {
 				return "redirect:/login";
